@@ -1242,4 +1242,27 @@ public function get_berita()
         ]);
     }
 }
+
+ public function get_organisasi_json()
+    {
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
+
+        try {
+            $list = $this->Organisasi_model->get_aktif();
+            $result = [];
+            foreach ($list as $org) {
+                $result[] = [
+                    'name' => $org->nama,
+                    'desc' => $org->deskripsi,
+                    'logo' => $org->logo,
+                    'icon' => $org->icon,
+                ];
+            }
+            echo json_encode(['status' => 'success', 'data' => $result]);
+        } catch (Exception $e) {
+            log_message('error', 'get_organisasi_json error: ' . $e->getMessage());
+            echo json_encode(['status' => 'error', 'data' => []]);
+        }
+    }
 }
