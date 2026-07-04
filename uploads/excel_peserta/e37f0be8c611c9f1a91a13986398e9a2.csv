@@ -1,0 +1,10 @@
+﻿"Kode Aset","Nama Aset",Kategori,"Jumlah Total",Kondisi,Deskripsi
+KBL-HDMI-001,"Kabel HDMI 2m",Kabel,15,Baik,"Kabel HDMI standar panjang 2 meter"
+KBL-USBC-001,"Kabel USB Type-C 1m",Kabel,20,Baik,"Kabel USB Type-C to Type-C"
+KBR-MECH-001,"Keyboard Mechanical",Peripheral,5,Baik,"Keyboard mechanical RGB"
+
+CATATAN:
+"- Kolom Kode Aset, Nama Aset, dan Kategori wajib diisi"
+"- Kondisi: Baik, Rusak Ringan, Rusak Berat (default: Baik)"
+"- Nama kategori harus sama persis dengan yang ada di database"
+"- Jumlah Total diisi angka (default: 1 jika kosong)"
