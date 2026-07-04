@@ -129,6 +129,8 @@ $route['sertifikat/update_status']          = 'sertifikat/update_status';
 $route['sertifikat/get_detail_json/(:num)'] = 'sertifikat/get_detail_json/$1';
 $route['sertifikat/export_excel_canva']     = 'sertifikat/export_excel_canva';
 $route['sertifikat/verifikasi/(.+)']        = 'sertifikat/verifikasi/$1';
+$route['sertifikat/generate']               = 'sertifikat/generate';
+$route['sertifikat/get_approved_json']      = 'sertifikat/get_approved_json';
 $route['sertifikat/download_export/(:num)'] = 'sertifikat/download_export/$1';
 
 // TAK Routes

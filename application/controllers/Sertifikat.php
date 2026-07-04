@@ -346,6 +346,37 @@ public function download_export($id)
     }
 
     /**
+     * Halaman Generate Sertifikat (pilih data + template)
+     */
+    public function generate()
+    {
+        $this->_check_admin();
+
+        // Ambil semua data yang sudah approved
+        $this->db->where('status', 'approved');
+        $this->db->order_by('approved_at', 'DESC');
+        $data['sertifikat_list'] = $this->db->get('pengajuan_sertifikat')->result_array();
+        $data['title']           = 'Generate Sertifikat';
+
+        $this->load->view('sertifikat/generate', $data);
+    }
+
+    /**
+     * Endpoint JSON: ambil semua data approved untuk AJAX
+     */
+    public function get_approved_json()
+    {
+        header('Content-Type: application/json');
+        $this->_check_admin_ajax();
+
+        $this->db->where('status', 'approved');
+        $this->db->order_by('approved_at', 'DESC');
+        $rows = $this->db->get('pengajuan_sertifikat')->result_array();
+
+        echo json_encode(['status' => 'success', 'data' => $rows]);
+    }
+
+    /**
      * Halaman verifikasi sertifikat publik (via QR Code)
      */
     public function verifikasi()
