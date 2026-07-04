@@ -23,7 +23,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://kemahasiswaan.test/';
+// Deteksi protokol (http atau https)
+$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+
+// Deteksi domain/host yang sedang diakses (localhost atau kemahasiswaan.test)
+$host = $_SERVER['HTTP_HOST'];
+
+// Deteksi sub-folder jika ada (seperti /PKL/kemahasiswaan/)
+$script_name = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+
+// Gabungkan semuanya secara otomatis
+$config['base_url'] = $protocol . "://" . $host . $script_name;
 
 /*
 |--------------------------------------------------------------------------
