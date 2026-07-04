@@ -590,6 +590,21 @@
                 
                 <div class="menu-divider"></div>
                 
+                <a href="<?= base_url('tak_admin') ?>">
+                    <i class="fas fa-file-signature"></i>
+                    <span>TAK</span>
+                </a>
+                <a href="<?= base_url('admin/proposal') ?>">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Proposal</span>
+                </a>
+                <a href="<?= base_url('sertifikat/admin') ?>">
+                    <i class="fas fa-certificate"></i>
+                    <span>Sertifikat</span>
+                </a>
+
+                <div class="menu-divider"></div>
+                
                 <a href="<?= base_url('dashboard') ?>">
                     <i class="fas fa-arrow-left"></i>
                     <span>Kembali ke Dashboard</span>
