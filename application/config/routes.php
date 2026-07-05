@@ -59,6 +59,11 @@ $route['login/register']                = 'Login/register';
 $route['login/proses_register']         = 'Login/proses_register';
 $route['logout']                        = 'Login/logout';
 $route['login/microsoft']                 = 'Login/microsoft';
+$route['admin/history_log/tambah_sso']       = 'admin/tambah_sso_whitelist';
+$route['admin/history_log/hapus_sso/(:num)'] = 'admin/hapus_sso_whitelist/$1';
+
+// Sertifikat routes
+$route['sertifikat/upload_template']         = 'sertifikat/upload_template';
 
 $route['proposal']                      = 'Proposal/index';
 $route['proposal/buat']                 = 'Proposal/buat';

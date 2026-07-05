@@ -179,7 +179,20 @@ class Login extends CI_Controller {
             exit;
         }
 
-        // Cari di database tabel users berdasarkan email
+        // 1. Cek apakah email di-whitelist di sso_email_whitelist
+        $this->db->where('email', $email);
+        $this->db->limit(1);
+        $whitelist = $this->db->get('sso_email_whitelist')->row();
+
+        if (!$whitelist) {
+            echo json_encode([
+                'status'  => 'error',
+                'message' => 'Email Microsoft Anda belum di-whitelist oleh Admin.'
+            ]);
+            exit;
+        }
+
+        // 2. Cari di database tabel users berdasarkan email
         $this->db->where('email', $email);
         $this->db->where('status', 'aktif');
         $this->db->limit(1);
@@ -227,7 +240,7 @@ class Login extends CI_Controller {
         } else {
             echo json_encode([
                 'status'  => 'error',
-                'message' => 'Email Microsoft tidak terdaftar dalam sistem.'
+                'message' => 'Email Microsoft terdaftar di Whitelist, namun tidak ditemukan akun user yang aktif dengan email tersebut.'
             ]);
             exit;
         }

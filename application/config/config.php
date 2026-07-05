@@ -26,7 +26,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 if (isset($_SERVER['HTTP_HOST']) && ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1')) {
     $config['base_url'] = 'http://localhost/kemahasiswaan/';
 } else {
-    $config['base_url'] = 'https://kemahasiswaan.forzasoftwarehouse.com/';
+    $config['base_url'] = 'http://kemahasiswaan.test';
 }
 
 /*

@@ -258,4 +258,232 @@ public function download_export($id)
     $this->load->helper('download');
     force_download($filename, file_get_contents($filepath));
 }
+
+    /**
+     * Export Excel untuk Canva Bulk Design
+     * Format kolom: nama_mahasiswa, nim, prodi, judul_kegiatan, tanggal_kegiatan,
+     *               lokasi_kegiatan, nomor_sertifikat, nama_pic, tanggal_pengajuan
+     */
+    public function export_excel_canva()
+    {
+        $this->_check_admin();
+
+        // Ambil semua sertifikat yang sudah approved
+        $this->db->where('status', 'approved');
+        $this->db->order_by('approved_at', 'DESC');
+        $data = $this->db->get('pengajuan_sertifikat')->result_array();
+
+        // Set header untuk download Excel
+        header('Content-Type: application/vnd.ms-excel; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="Sertifikat_Canva_' . date('Ymd_His') . '.xls"');
+        header('Cache-Control: max-age=0');
+
+        // BOM untuk UTF-8 agar Excel baca dengan benar
+        echo "\xEF\xBB\xBF";
+
+        // Buat konten HTML table (format .xls via HTML)
+        echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">';
+        echo '<head><meta charset="UTF-8">
+        <style>
+            th { background-color: #f97316; color: white; font-weight: bold; padding: 8px; border: 1px solid #ddd; text-align: center; }
+            td { padding: 6px 10px; border: 1px solid #ddd; vertical-align: middle; }
+            tr:nth-child(even) td { background-color: #fff7ed; }
+            .header-row td { background: #1e293b; color: white; font-size: 14pt; font-weight: bold; text-align: center; }
+            .info-row td { background: #f1f5f9; font-size: 9pt; color: #64748b; }
+        </style>
+        </head><body>';
+
+        echo '<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse; font-family:Arial, sans-serif; font-size:10pt;">';
+
+        // Header utama
+        echo '<tr class="header-row"><td colspan="10" style="padding:14px;font-size:14pt;font-weight:bold;background:#1e293b;color:white;text-align:center;">DATA SERTIFIKAT KEGIATAN — FORMAT CANVA BULK DESIGN</td></tr>';
+        echo '<tr class="info-row"><td colspan="10" style="padding:6px;font-size:9pt;color:#64748b;background:#f1f5f9;">Export tanggal: ' . date('d-m-Y H:i:s') . ' | Total: ' . count($data) . ' sertifikat disetujui</td></tr>';
+        echo '<tr><td colspan="10" style="height:4px;background:#f97316;"></td></tr>';
+
+        // Kolom header — sesuai format Canva Bulk Design
+        echo '<tr>
+            <th>No</th>
+            <th>Nama Lengkap</th>
+            <th>NIM</th>
+            <th>Program Studi</th>
+            <th>Judul Kegiatan</th>
+            <th>Tanggal Kegiatan</th>
+            <th>Lokasi Kegiatan</th>
+            <th>Nomor Sertifikat</th>
+            <th>Nama PIC / Penanggung Jawab</th>
+            <th>Tanggal Disetujui</th>
+        </tr>';
+
+        // Data rows
+        if (empty($data)) {
+            echo '<tr><td colspan="10" style="text-align:center;color:#999;padding:20px;">Belum ada sertifikat yang disetujui</td></tr>';
+        } else {
+            foreach ($data as $i => $row) {
+                $tanggal_kegiatan = !empty($row['tanggal_kegiatan'])
+                    ? date('d/m/Y', strtotime($row['tanggal_kegiatan']))
+                    : '-';
+                $tanggal_approved = !empty($row['approved_at'])
+                    ? date('d/m/Y', strtotime($row['approved_at']))
+                    : '-';
+
+                echo '<tr>
+                    <td style="text-align:center;">' . ($i + 1) . '</td>
+                    <td><strong>' . htmlspecialchars($row['nama_mahasiswa'] ?? '-') . '</strong></td>
+                    <td style="text-align:center;mso-number-format:\'\@\';">' . htmlspecialchars($row['nim'] ?? '-') . '</td>
+                    <td>' . htmlspecialchars($row['prodi'] ?? '-') . '</td>
+                    <td>' . htmlspecialchars($row['judul_kegiatan'] ?? '-') . '</td>
+                    <td style="text-align:center;">' . $tanggal_kegiatan . '</td>
+                    <td>' . htmlspecialchars($row['lokasi_kegiatan'] ?? '-') . '</td>
+                    <td style="text-align:center;font-weight:bold;color:#f97316;">' . htmlspecialchars($row['nomor_sertifikat'] ?? '-') . '</td>
+                    <td>' . htmlspecialchars($row['nama_pic'] ?? '-') . '</td>
+                    <td style="text-align:center;">' . $tanggal_approved . '</td>
+                </tr>';
+            }
+        }
+
+        echo '</table></body></html>';
+        exit;
+    }
+
+    /**
+     * Halaman Generate Sertifikat (pilih data + template)
+     */
+    public function generate()
+    {
+        $this->_check_admin();
+
+        // Ambil semua data yang sudah approved
+        $this->db->where('status', 'approved');
+        $this->db->order_by('approved_at', 'DESC');
+        $data['sertifikat_list'] = $this->db->get('pengajuan_sertifikat')->result_array();
+        $data['title']           = 'Generate Sertifikat';
+
+        // Scan folder custom template (tanpa butuh tabel DB)
+        $custom_dir   = FCPATH . 'templates/sertifikat/custom/';
+        $custom_files = [];
+        if (is_dir($custom_dir)) {
+            $idx = 1;
+            foreach (glob($custom_dir . '*.{png,jpg,jpeg}', GLOB_BRACE) as $filepath) {
+                $filename = basename($filepath);
+                // Nama template: nama file tanpa ekstensi, underscores → spasi
+                $name = ucwords(str_replace(['_', '-'], ' ', pathinfo($filename, PATHINFO_FILENAME)));
+                $custom_files[] = [
+                    'id'   => $idx++,
+                    'name' => $name,
+                    'file' => $filename,
+                ];
+            }
+        }
+        $data['custom_templates'] = $custom_files;
+
+        $this->load->view('sertifikat/generate', $data);
+    }
+
+    /**
+     * AJAX: Upload template custom ke folder templates/sertifikat/custom/
+     * Tidak butuh tabel database. Response JSON: { success, id, name, url }
+     */
+    public function upload_template()
+    {
+        header('Content-Type: application/json');
+        $this->_check_admin_ajax();
+
+        $custom_dir = FCPATH . 'templates/sertifikat/custom/';
+
+        // Pastikan folder ada
+        if (!is_dir($custom_dir)) {
+            mkdir($custom_dir, 0755, true);
+        }
+
+        if (empty($_FILES['template_file']['name'])) {
+            echo json_encode(['success' => false, 'message' => 'Tidak ada file yang diunggah.']);
+            return;
+        }
+
+        $allowed_types = ['image/png', 'image/jpeg', 'image/jpg'];
+        $file_type     = $_FILES['template_file']['type'];
+        if (!in_array($file_type, $allowed_types)) {
+            echo json_encode(['success' => false, 'message' => 'Tipe file tidak didukung. Gunakan PNG/JPG.']);
+            return;
+        }
+
+        // Ukuran maks 5 MB
+        if ($_FILES['template_file']['size'] > 5 * 1024 * 1024) {
+            echo json_encode(['success' => false, 'message' => 'Ukuran file melebihi batas 5 MB.']);
+            return;
+        }
+
+        // Nama template yang diinput (opsional), fallback ke nama file
+        $template_name = $this->input->post('template_name', TRUE);
+        if (empty($template_name)) {
+            $template_name = pathinfo($_FILES['template_file']['name'], PATHINFO_FILENAME);
+        }
+        $template_name = preg_replace('/[^a-zA-Z0-9\s_-]/', '', $template_name);
+
+        // Buat nama file unik agar tidak tumpang-tindih
+        $ext       = strtolower(pathinfo($_FILES['template_file']['name'], PATHINFO_EXTENSION));
+        $safe_name = 'custom_' . date('YmdHis') . '_' . uniqid() . '.' . $ext;
+        $dest      = $custom_dir . $safe_name;
+
+        if (!move_uploaded_file($_FILES['template_file']['tmp_name'], $dest)) {
+            echo json_encode(['success' => false, 'message' => 'Gagal menyimpan file ke server.']);
+            return;
+        }
+
+        // Hitung id urut berdasarkan jumlah file yang sudah ada
+        $existing = glob($custom_dir . '*.{png,jpg,jpeg}', GLOB_BRACE);
+        $new_id   = count($existing);
+
+        $url = base_url('templates/sertifikat/custom/' . $safe_name);
+        $display_name = ucwords(str_replace(['_', '-'], ' ', $template_name));
+
+        echo json_encode([
+            'success' => true,
+            'id'      => $new_id,
+            'name'    => $display_name,
+            'url'     => $url,
+        ]);
+    }
+
+    /**
+     * Endpoint JSON: ambil semua data approved untuk AJAX
+     */
+    public function get_approved_json()
+    {
+        header('Content-Type: application/json');
+        $this->_check_admin_ajax();
+
+        $this->db->where('status', 'approved');
+        $this->db->order_by('approved_at', 'DESC');
+        $rows = $this->db->get('pengajuan_sertifikat')->result_array();
+
+        echo json_encode(['status' => 'success', 'data' => $rows]);
+    }
+
+    /**
+     * Halaman verifikasi sertifikat publik (via QR Code)
+     */
+    public function verifikasi()
+    {
+        // Ambil semua segment URI mulai dari segment ke-4 ke bawah
+        $segments = $this->uri->segment_array();
+        // Segment 1: sertifikat, Segment 2: verifikasi, Segment 3 dst: nomor sertifikat
+        $nomor_segments = array_slice($segments, 2);
+        
+        if (empty($nomor_segments)) {
+            show_404();
+        }
+
+        $nomor_sertifikat = implode('/', $nomor_segments);
+
+        $this->db->where('nomor_sertifikat', $nomor_sertifikat);
+        $this->db->where('status', 'approved');
+        $sertifikat = $this->db->get('pengajuan_sertifikat')->row_array();
+
+        $data['title']       = 'Verifikasi Sertifikat - ' . $nomor_sertifikat;
+        $data['sertifikat']  = $sertifikat;
+        $data['nomor']       = $nomor_sertifikat;
+
+        $this->load->view('sertifikat/verifikasi', $data);
+    }
 }

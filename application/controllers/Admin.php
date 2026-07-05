@@ -400,16 +400,44 @@ class Admin extends CI_Controller {
     }
     
     // =========================================================================
-    // HISTORY LOGS
+    // HISTORY LOGS & SSO WHITELIST
     // =========================================================================
     public function history_log() {
+        // Ambil data whitelist email
+        $this->db->order_by('created_at', 'DESC');
+        $whitelist = $this->db->get('sso_email_whitelist')->result();
+
         $data = [
-            'title' => 'History Log Aktivitas',
+            'title' => 'History Log & Whitelist Email',
             'logs' => $this->Log_model->get_all_logs(),
+            'whitelist' => $whitelist,
             'nama_user' => $this->_nama(),
             'role' => $this->_role()
         ];
         
         $this->load->view('admin/logs', $data);
+    }
+
+    public function tambah_sso_whitelist() {
+        $email = trim($this->input->post('email', TRUE));
+
+        if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $cek = $this->db->get_where('sso_email_whitelist', ['email' => $email])->row();
+            if ($cek) {
+                $this->session->set_flashdata('error', 'Email ini sudah ada dalam whitelist.');
+            } else {
+                $this->db->insert('sso_email_whitelist', ['email' => $email]);
+                $this->session->set_flashdata('success', 'Email berhasil ditambahkan ke whitelist.');
+            }
+        } else {
+            $this->session->set_flashdata('error', 'Format email tidak valid.');
+        }
+        redirect('admin/history_log');
+    }
+
+    public function hapus_sso_whitelist($id) {
+        $this->db->delete('sso_email_whitelist', ['id' => $id]);
+        $this->session->set_flashdata('success', 'Email berhasil dihapus dari whitelist.');
+        redirect('admin/history_log');
     }
 }

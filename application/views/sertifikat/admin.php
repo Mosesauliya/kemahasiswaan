@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- QR Code Generator -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     
     <style>
         body {
@@ -480,28 +482,21 @@
                     <i class="fas fa-file-alt"></i>
                     <span>Proposal</span>
                 </a>
-                <a href="<?= base_url('sertifikat/admin') ?>"class="active">
+                <a href="<?= base_url('sertifikat/admin') ?>" class="active">
                     <i class="fas fa-certificate"></i>
                     <span>Sertifikat</span>
                 </a>
-                <a href="<?= base_url('tak_admin') ?>">
-                    <i class="fas fa-file-signature"></i>
-                    <span>TAK</span>
+                <a href="<?= base_url('sertifikat/generate') ?>" style="padding-left: 2.5rem; font-size: 0.85rem;">
+                    <i class="fas fa-magic"></i>
+                    <span>Generate Sertifikat</span>
+                </a>
+                <a href="<?= base_url('sertifikat/export_excel_canva') ?>" style="padding-left: 2.5rem; font-size: 0.85rem;">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Export Excel Canva</span>
                 </a>
                 <a href="<?= base_url('berita/admin') ?>">
                     <i class="fas fa-newspaper"></i>
                     <span>Berita</span>
-                </a>
-                <a href="<?= base_url('admin/organisasi') ?>">
-                    <i class="fas fa-users"></i>
-                    <span>Organisasi</span>
-                </a>
-                
-                <div class="menu-divider"></div>
-                
-                <a href="<?= base_url('admin/history_log') ?>">
-                    <i class="fas fa-history"></i>
-                    <span>History Log</span>
                 </a>
                 
                 <div class="menu-divider"></div>
@@ -518,6 +513,9 @@
             <div class="admin-header">
                 <h1>Manajemen Pengajuan Sertifikat</h1>
                 <div class="user-info">
+                    <a href="<?= base_url('sertifikat/export_excel_canva') ?>" class="btn" style="background:#27ae60;color:white;padding:0.5rem 1.2rem;border-radius:25px;text-decoration:none;font-weight:600;font-size:0.85rem;transition:all 0.3s;" title="Export semua data approved ke Excel format Canva">
+                        <i class="fas fa-file-excel me-2"></i>Export Excel Canva
+                    </a>
                     <span><i class="fas fa-user-circle me-2" style="color: #E67E22;"></i> <?= $this->session->userdata('nama') ?></span>
                     <a href="<?= base_url('login/logout') ?>" class="logout-btn">
                         <i class="fas fa-sign-out-alt me-2"></i>Logout
@@ -691,6 +689,15 @@
                                                     <i class="fas fa-file-pdf"></i>
                                                 </a>
                                             <?php endif; ?>
+
+                                            <?php if ($p['status'] == 'approved' && !empty($p['qr_code'])): ?>
+                                                <!-- Lihat QR -->
+                                                <button class="btn-action btn-show-qr" title="Lihat QR Code" style="background:#6366f1;color:white;"
+													data-qr="<?= htmlspecialchars($p['qr_code'], ENT_QUOTES) ?>"
+													data-nomor="<?= htmlspecialchars($p['nomor_sertifikat'], ENT_QUOTES) ?>">
+													<i class="fas fa-qrcode"></i>
+												</button>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
                                 </tr>
@@ -755,8 +762,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">QR Code / Link (Opsional)</label>
-                        <input type="text" class="form-control" id="qrCode" placeholder="Link verifikasi atau data QR">
+                        <label class="form-label">QR Code / Link Verifikasi (Opsional)</label>
+                        <input type="text" class="form-control" id="qrCode" placeholder="Kosongkan untuk generate otomatis" oninput="updateQrPreview()">
+                        <small class="text-muted">Jika dikosongkan, QR akan di-generate otomatis dari nomor sertifikat</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Preview QR Code</label>
+                        <div style="background:#f8f9fa;border-radius:12px;padding:16px;text-align:center;">
+                            <canvas id="qrCanvas" style="border-radius:8px;"></canvas>
+                            <p class="text-muted mt-2" style="font-size:0.8rem;" id="qrInfo">Isi nomor sertifikat untuk generate QR</p>
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -799,6 +814,32 @@
                     <button type="button" class="btn btn-danger" onclick="submitReject()">
                         <i class="fas fa-times me-2"></i>Tolak
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal QR Code Viewer -->
+    <div class="modal fade" id="modalQR" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content" style="border-radius:20px;overflow:hidden;">
+                <div class="modal-header" style="background:linear-gradient(135deg,#6366f1,#4f46e5);color:white;border:none;">
+                    <h5 class="modal-title"><i class="fas fa-qrcode me-2"></i>QR Code Sertifikat</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <p class="text-muted mb-2" style="font-size:0.8rem;">Nomor Sertifikat</p>
+                    <p id="qrModalNomor" class="fw-bold text-dark mb-3" style="font-size:0.9rem;"></p>
+                    <div style="background:#f8f9fa;border-radius:16px;padding:20px;display:inline-block;">
+                        <canvas id="qrModalCanvas"></canvas>
+                    </div>
+                    <p class="text-muted mt-3 mb-0" style="font-size:0.75rem;" id="qrModalLink"></p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button class="btn btn-sm" style="background:#6366f1;color:white;border-radius:20px;padding:8px 24px;" onclick="downloadQR()">
+                        <i class="fas fa-download me-2"></i>Download QR
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" style="border-radius:20px;padding:8px 24px;">Tutup</button>
                 </div>
             </div>
         </div>
@@ -955,78 +996,106 @@
             document.getElementById('qrCode').value = '';
             document.getElementById('catatanApprove').value = '';
             document.getElementById('nomorError').style.display = 'none';
-            
+
+            // Reset QR canvas
+            const canvas = document.getElementById('qrCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.getElementById('qrInfo').textContent = 'Isi nomor sertifikat untuk generate QR';
+
             new bootstrap.Modal(document.getElementById('modalApprove')).show();
         }
 
-        // Submit Approve
-function submitApprove() {
-    const nomor = document.getElementById('nomorSertifikat').value.trim();
-    if (!nomor) {
-        document.getElementById('nomorError').style.display = 'block';
-        return;
-    }
+        // Update QR when nomor sertifikat changes
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('nomorSertifikat').addEventListener('input', updateQrPreview);
+        });
 
-    // Show loading
-    const btn = event.target;
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Memproses...';
-    btn.disabled = true;
+        // Generate QR Code preview
+        function updateQrPreview() {
+            const nomor = document.getElementById('nomorSertifikat').value.trim();
+            const customLink = document.getElementById('qrCode').value.trim();
+            const canvas = document.getElementById('qrCanvas');
+            const qrInfo = document.getElementById('qrInfo');
 
-    const formData = new URLSearchParams();
-    formData.append('id', currentId);
-    formData.append('action', 'approve');
-    formData.append('nomor_sertifikat', nomor);
-    formData.append('qr_code', document.getElementById('qrCode').value.trim());
-    formData.append('catatan', document.getElementById('catatanApprove').value.trim());
+            const qrData = customLink || (nomor ? '<?= base_url('sertifikat/verifikasi/') ?>' + nomor : '');
 
-    // Log untuk debugging
-    console.log('Submitting approve:', Object.fromEntries(formData));
+            if (!qrData) {
+                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                qrInfo.textContent = 'Isi nomor sertifikat untuk generate QR';
+                return;
+            }
 
-    fetch('<?= base_url("sertifikat/update_status") ?>', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: formData.toString()
-    })
-    .then(response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) {
-            return response.text().then(text => {
-                console.error('Error response:', text.substring(0, 200));
-                throw new Error('Server error: ' + response.status);
+            QRCode.toCanvas(canvas, qrData, { width: 180, margin: 2, color: { dark: '#1e293b', light: '#ffffff' } }, function(error) {
+                if (!error) {
+                    qrInfo.textContent = customLink ? 'QR dari link custom' : 'QR dari nomor sertifikat';
+                }
             });
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Response data:', data);
-        
-        if (data.status === 'success') {
-            // Tutup modal approve
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalApprove'));
-            if (modal) modal.hide();
-            
-            // Tampilkan pesan sukses
-            alert('Pengajuan sertifikat berhasil disetujui!');
-            
-            // Reload halaman
-            location.reload();
-        } else {
-            alert('Error: ' + (data.message || 'Unknown error'));
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+
+        // Submit Approve — FIXED: tidak pakai event.target global
+        function submitApprove() {
+            const nomor = document.getElementById('nomorSertifikat').value.trim();
+            if (!nomor) {
+                document.getElementById('nomorError').style.display = 'block';
+                return;
+            }
+
+            // Get button by selector (fix: tidak pakai event.target)
+            const btn = document.querySelector('#modalApprove .btn-success');
+            const originalText = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Memproses...';
+                btn.disabled = true;
+            }
+
+            // Generate QR code data
+            const customLink = document.getElementById('qrCode').value.trim();
+            const qrData = customLink || '<?= base_url('sertifikat/verifikasi/') ?>' + nomor;
+
+            const formData = new URLSearchParams();
+            formData.append('id', currentId);
+            formData.append('action', 'approve');
+            formData.append('nomor_sertifikat', nomor);
+            formData.append('qr_code', qrData);
+            formData.append('catatan', document.getElementById('catatanApprove').value.trim());
+
+            fetch('<?= base_url("sertifikat/update_status") ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData.toString()
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error('Server error ' + response.status + ': ' + text.substring(0, 300));
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalApprove'));
+                    if (modal) modal.hide();
+                    // Tampilkan notifikasi sukses
+                    const alertEl = document.createElement('div');
+                    alertEl.className = 'alert alert-success alert-dismissible fade show';
+                    alertEl.innerHTML = '<i class="fas fa-check-circle me-2"></i><strong>Berhasil!</strong> Pengajuan sertifikat disetujui. QR Code telah disimpan. <button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                    document.querySelector('.admin-main').prepend(alertEl);
+                    setTimeout(() => location.reload(), 1800);
+                } else {
+                    alert('Gagal: ' + (data.message || 'Unknown error'));
+                    if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+                }
+            })
+            .catch(error => {
+                alert('Terjadi kesalahan: ' + error.message);
+                if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+            });
         }
-    })
-    .catch(error => {
-        console.error('Fetch error:', error);
-        alert('Terjadi kesalahan koneksi: ' + error.message);
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    });
-}
         // Open Reject Modal
         function openReject(id, judul) {
             currentId = id;
@@ -1069,6 +1138,41 @@ function submitApprove() {
             .catch(error => {
                 alert('Terjadi kesalahan koneksi');
             });
+        }
+
+        // Show QR Code Modal
+        let currentQrData = '';
+        function showQR(qrData, nomor) {
+            currentQrData = qrData;
+            document.getElementById('qrModalNomor').textContent = nomor;
+            document.getElementById('qrModalLink').textContent = qrData;
+
+            const canvas = document.getElementById('qrModalCanvas');
+            QRCode.toCanvas(canvas, qrData, {
+                width: 220,
+                margin: 2,
+                color: { dark: '#1e293b', light: '#ffffff' }
+            }, function(error) {
+                if (error) console.error('QR Error:', error);
+            });
+
+            new bootstrap.Modal(document.getElementById('modalQR')).show();
+        }
+
+		document.querySelectorAll('.btn-show-qr').forEach(function(btn) {
+			btn.addEventListener('click', function() {
+				showQR(this.dataset.qr, this.dataset.nomor);
+			});
+		});
+
+        // Download QR sebagai PNG
+        function downloadQR() {
+            const canvas = document.getElementById('qrModalCanvas');
+            const nomor = document.getElementById('qrModalNomor').textContent.replace(/[^a-zA-Z0-9\-]/g, '_');
+            const link = document.createElement('a');
+            link.download = 'QR_' + nomor + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
         }
 
         // Auto hide alerts
