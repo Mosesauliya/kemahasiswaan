@@ -347,10 +347,10 @@
             .right-panel { width: 100%; padding: 2rem; }
         }
     </style>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 
-<!-- Left Branding Panel -->
 <div class="left-panel">
     <div class="logo-wrap">
         <img src="<?= base_url('assets/Tel-U_logo.png') ?>"
@@ -376,20 +376,17 @@
     </div>
 </div>
 
-<!-- Right Form Panel -->
 <div class="right-panel">
     <div class="form-header">
         <h2>Selamat Datang</h2>
         <p>Masuk menggunakan akun SSO / NIM Anda</p>
     </div>
 
-    <!-- Tab: Login / Daftar -->
     <div class="tab-login">
         <button class="active" onclick="switchTab('login', this)">Masuk</button>
         <button onclick="window.location='<?= site_url('login/register') ?>'">Daftar Akun</button>
     </div>
 
-    <!-- Alert -->
     <?php if ($error): ?>
     <div class="alert alert-error">
         <i class="fas fa-exclamation-circle"></i>
@@ -404,7 +401,6 @@
     </div>
     <?php endif; ?>
 
-    <!-- Login Form -->
     <form method="POST" action="<?= site_url('login/proses') ?>">
         <?= form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash()) ?>
 
@@ -424,6 +420,9 @@
             </div>
         </div>
 
+        <div class="form-group" style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+            <div class="g-recaptcha" data-sitekey="MASUKKAN_SITE_KEY_ANDA_DI_SINI"></div>
+        </div>
         <button type="submit" class="btn-login">
             <i class="fas fa-sign-in-alt"></i> Masuk ke Portal
         </button>
@@ -448,7 +447,6 @@
     </form>
 
     <?php /* ── Modal & Style Microsoft — di-comment sementara ──
-    <!-- Modal Simulasi Microsoft SSO Login -->
     <div id="microsoftModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
         <div style="background: white; width: 440px; padding: 44px; box-shadow: 0 4px 28px rgba(0,0,0,0.2); position: relative; text-align: left; color: #333; border-radius: 4px;">
             <div style="margin-bottom: 24px;">
