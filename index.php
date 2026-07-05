@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 /**
  * CodeIgniter
  *
@@ -66,8 +67,8 @@
 switch (ENVIRONMENT)
 {
 	case 'development':
-		error_reporting(E_ALL & ~8192 & ~2048 & ~8);
-		ini_set('display_errors', 1);
+    	error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
+    	ini_set('display_errors', 1);
 	break;
 
 	case 'testing':

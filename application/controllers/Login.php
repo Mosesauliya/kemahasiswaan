@@ -6,6 +6,7 @@ class Login extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('Login_model');
+        $this->load->model('Log_model');
         $this->load->library(['session', 'form_validation']);
         $this->load->helper(['url', 'form']);
     }
@@ -51,6 +52,10 @@ class Login extends CI_Controller {
                 'logged_in'  => TRUE,
             ];
             $this->session->set_userdata($session_data);
+            
+            // Catat ke log history
+            $this->Log_model->insert_log($user->id, $user->nama, $user->role, 'Login Berhasil');
+            
             redirect($this->_redirect_after_login($user->role));
         } else {
             $this->session->set_flashdata('error', 'NIM/Username atau password salah.');
@@ -149,6 +154,93 @@ class Login extends CI_Controller {
         $this->session->sess_destroy();
         $this->session->set_flashdata('success', 'Berhasil logout. Sampai jumpa!');
         redirect('login');
+    }
+
+    /* ─── Login dengan Microsoft (SSO) ─── */
+    public function microsoft() {
+        header('Content-Type: application/json');
+
+        // Pastikan hanya request POST/AJAX
+        if ($this->input->method() !== 'post') {
+            echo json_encode(['status' => 'error', 'message' => 'Method not allowed.']);
+            exit;
+        }
+
+        $email = trim($this->input->post('email', TRUE));
+        $password = $this->input->post('password');
+
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['status' => 'error', 'message' => 'Format email Microsoft tidak valid.']);
+            exit;
+        }
+
+        if (empty($password)) {
+            echo json_encode(['status' => 'error', 'message' => 'Password tidak boleh kosong.']);
+            exit;
+        }
+
+        // 1. Cek apakah email di-whitelist di sso_email_whitelist
+        $this->db->where('email', $email);
+        $this->db->limit(1);
+        $whitelist = $this->db->get('sso_email_whitelist')->row();
+
+        if (!$whitelist) {
+            echo json_encode([
+                'status'  => 'error',
+                'message' => 'Email Microsoft Anda belum di-whitelist oleh Admin.'
+            ]);
+            exit;
+        }
+
+        // 2. Cari di database tabel users berdasarkan email
+        $this->db->where('email', $email);
+        $this->db->where('status', 'aktif');
+        $this->db->limit(1);
+        $user = $this->db->get('users')->row();
+
+        if ($user) {
+            // Verifikasi password (menggunakan method yang sama dengan Login_model)
+            $password_correct = false;
+            if (password_verify($password, $user->password)) {
+                $password_correct = true;
+            } elseif ($user->password === md5($password)) {
+                $password_correct = true;
+            }
+
+            if ($password_correct) {
+                $session_data = [
+                    'user_id'    => $user->id,
+                    'username'   => $user->username ?? $user->nim,
+                    'nama'       => $user->nama,
+                    'nim'        => $user->nim     ?? null,
+                    'nidn'       => $user->nidn    ?? null,
+                    'role'       => $user->role,
+                    'prodi'      => $user->program_studi ?? null,
+                    'foto'       => $user->foto    ?? null,
+                    'logged_in'  => TRUE,
+                    'login_time' => time(), // Simpan waktu login
+                ];
+                $this->session->set_userdata($session_data);
+
+                echo json_encode([
+                    'status'   => 'success',
+                    'redirect' => base_url($this->_redirect_after_login($user->role))
+                ]);
+                exit;
+            } else {
+                echo json_encode([
+                    'status'  => 'error',
+                    'message' => 'Password yang Anda masukkan salah.'
+                ]);
+                exit;
+            }
+        } else {
+            echo json_encode([
+                'status'  => 'error',
+                'message' => 'Email Microsoft terdaftar di Whitelist, namun tidak ditemukan akun user yang aktif dengan email tersebut.'
+            ]);
+            exit;
+        }
     }
 
     /* ─── Helper Redirect ─── */

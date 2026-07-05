@@ -12,6 +12,7 @@ class Dashboard extends CI_Controller
         $this->load->model('Dashboard_model'); // Model utama dashboard
          $this->load->model('Berita_model'); 
         $this->load->model('ChatML_model');    // Model untuk machine learning
+        $this->load->model('Organisasi_model'); // Model organisasi kemahasiswaan
 
         // Load library yang diperlukan
         $this->load->library('session');
@@ -19,7 +20,7 @@ class Dashboard extends CI_Controller
 
         // Enable debugging
         ini_set('display_errors', 1);
-        error_reporting(E_ALL);
+        error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
         // Set timezone
         date_default_timezone_set('Asia/Jakarta');
@@ -1242,4 +1243,33 @@ public function get_berita()
         ]);
     }
 }
+
+    // ==================== ORGANISASI JSON (Public) ====================
+
+    /**
+     * Endpoint JSON: daftar organisasi aktif untuk dashboard
+     * Accessible tanpa login
+     */
+    public function get_organisasi_json()
+    {
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Origin: *');
+
+        try {
+            $list = $this->Organisasi_model->get_aktif();
+            $result = [];
+            foreach ($list as $org) {
+                $result[] = [
+                    'name' => $org->nama,
+                    'desc' => $org->deskripsi,
+                    'logo' => $org->logo,
+                    'icon' => $org->icon,
+                ];
+            }
+            echo json_encode(['status' => 'success', 'data' => $result]);
+        } catch (Exception $e) {
+            log_message('error', 'get_organisasi_json error: ' . $e->getMessage());
+            echo json_encode(['status' => 'error', 'data' => []]);
+        }
+    }
 }

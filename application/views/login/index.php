@@ -427,7 +427,78 @@
         <button type="submit" class="btn-login">
             <i class="fas fa-sign-in-alt"></i> Masuk ke Portal
         </button>
+
+        <?php /* ── MICROSOFT LOGIN — di-comment sementara atas permintaan pembimbing ──
+        <div style="display: flex; align-items: center; margin: 1.5rem 0 1rem; color: #ccc;">
+            <div style="flex: 1; height: 1px; background: #e0dbd4;"></div>
+            <span style="padding: 0 10px; font-size: 0.75rem; color: #888; font-weight: 600; text-transform: uppercase;">atau</span>
+            <div style="flex: 1; height: 1px; background: #e0dbd4;"></div>
+        </div>
+
+        <button type="button" class="btn-login" onclick="openMicrosoftModal()" style="background: #2f2f2f; border: 1px solid #444; color: white;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 23 23" style="margin-right: 8px;">
+                <path fill="#f35325" d="M0 0h11v11H0z"/>
+                <path fill="#80a300" d="M12 0h11v11H12z"/>
+                <path fill="#00a1f1" d="M0 12h11v11H0z"/>
+                <path fill="#ffb900" d="M12 12h11v11H12z"/>
+            </svg>
+            Masuk dengan Microsoft
+        </button>
+        */ ?>
     </form>
+
+    <?php /* ── Modal & Style Microsoft — di-comment sementara ──
+    <!-- Modal Simulasi Microsoft SSO Login -->
+    <div id="microsoftModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <div style="background: white; width: 440px; padding: 44px; box-shadow: 0 4px 28px rgba(0,0,0,0.2); position: relative; text-align: left; color: #333; border-radius: 4px;">
+            <div style="margin-bottom: 24px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="108" height="24" viewBox="0 0 137 32">
+                    <path fill="#f35325" d="M0 0h15v15H0z"/>
+                    <path fill="#80a300" d="M16 0h15v15H16z"/>
+                    <path fill="#00a1f1" d="M0 16h15v15H0z"/>
+                    <path fill="#ffb900" d="M16 16h15v15H16z"/>
+                    <text x="36" y="22" font-family="'Segoe UI', Arial" font-weight="600" font-size="21" fill="#737373">Microsoft</text>
+                </svg>
+            </div>
+            <div id="ms-step-email">
+                <h3 style="font-size: 1.5rem; margin-bottom: 8px; font-weight: 600; color: #1b1b1b;">Sign in</h3>
+                <p style="font-size: 0.9rem; color: #505050; margin-bottom: 20px;">Use your Telkom University Microsoft account</p>
+                <div style="margin-bottom: 20px;">
+                    <input type="email" id="ms-email" placeholder="someone@telkomuniversity.ac.id" style="width: 100%; padding: 8px 10px; font-size: 0.95rem; border: none; border-bottom: 1px solid #0067b8; outline: none; border-radius: 0; background: transparent;" required>
+                    <div id="ms-error" style="color: #e81123; font-size: 0.82rem; margin-top: 8px; display: none;"></div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 36px;">
+                    <button type="button" onclick="closeMicrosoftModal()" style="padding: 6px 16px; font-size: 0.9rem; background: #cccccc; color: #333; border: none; border-radius: 0; cursor: pointer;">Cancel</button>
+                    <button type="button" onclick="goToPasswordStep()" style="padding: 6px 32px; font-size: 0.9rem; background: #0067b8; color: white; border: none; border-radius: 0; cursor: pointer; font-weight: 600;">Next</button>
+                </div>
+            </div>
+            <div id="ms-step-password" style="display: none;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 0.9rem; color: #505050;">
+                    <button type="button" onclick="backToEmailStep()" style="border: none; background: transparent; cursor: pointer; padding: 0; display: inline-flex; align-items: center;">
+                        <i class="fas fa-arrow-left" style="font-size: 0.95rem; color: #505050;"></i>
+                    </button>
+                    <span id="ms-display-email" style="font-weight: 500; word-break: break-all;">email@telkomuniversity.ac.id</span>
+                </div>
+                <h3 style="font-size: 1.5rem; margin-bottom: 8px; font-weight: 600; color: #1b1b1b;">Enter password</h3>
+                <div style="margin-bottom: 20px;">
+                    <input type="password" id="ms-password" placeholder="Password" style="width: 100%; padding: 8px 10px; font-size: 0.95rem; border: none; border-bottom: 1px solid #0067b8; outline: none; border-radius: 0; background: transparent;" required>
+                    <div id="ms-error-pw" style="color: #e81123; font-size: 0.82rem; margin-top: 8px; display: none;"></div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 36px;">
+                    <button type="button" onclick="closeMicrosoftModal()" style="padding: 6px 16px; font-size: 0.9rem; background: #cccccc; color: #333; border: none; border-radius: 0; cursor: pointer;">Cancel</button>
+                    <button type="button" onclick="submitMicrosoftLogin()" style="padding: 6px 32px; font-size: 0.9rem; background: #0067b8; color: white; border: none; border-radius: 0; cursor: pointer; font-weight: 600;">Sign in</button>
+                </div>
+            </div>
+            <div id="ms-step-loading" style="display: none; text-align: center; padding: 20px 0;">
+                <div style="width: 32px; height: 32px; border: 3px solid rgba(0,103,184,0.2); border-top-color: #0067b8; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;"></div>
+                <p style="font-size: 0.9rem; color: #505050;">Signing in...</p>
+            </div>
+        </div>
+    </div>
+    <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+    */ ?>
 
     <div class="register-link">
         Belum punya akun? <a href="<?= site_url('login/register') ?>">Daftar di sini</a>
@@ -463,6 +534,79 @@ function fillDemo(role) {
         document.getElementById('pw-field').value = d.p;
     }
 }
+
+/* ── JS Microsoft — di-comment sementara ──
+function openMicrosoftModal() {
+    document.getElementById('microsoftModal').style.display = 'flex';
+    document.getElementById('ms-step-email').style.display = 'block';
+    document.getElementById('ms-step-password').style.display = 'none';
+    document.getElementById('ms-step-loading').style.display = 'none';
+    document.getElementById('ms-error').style.display = 'none';
+    document.getElementById('ms-error-pw').style.display = 'none';
+    document.getElementById('ms-email').value = '';
+    document.getElementById('ms-password').value = '';
+}
+function closeMicrosoftModal() {
+    document.getElementById('microsoftModal').style.display = 'none';
+}
+function goToPasswordStep() {
+    const email = document.getElementById('ms-email').value.trim();
+    const errorEl = document.getElementById('ms-error');
+    errorEl.style.display = 'none';
+    if (!email || !email.includes('@')) {
+        errorEl.textContent = 'Enter a valid email address.';
+        errorEl.style.display = 'block';
+        return;
+    }
+    document.getElementById('ms-display-email').textContent = email;
+    document.getElementById('ms-step-email').style.display = 'none';
+    document.getElementById('ms-step-password').style.display = 'block';
+    document.getElementById('ms-password').focus();
+}
+function backToEmailStep() {
+    document.getElementById('ms-step-password').style.display = 'none';
+    document.getElementById('ms-step-email').style.display = 'block';
+    document.getElementById('ms-error-pw').style.display = 'none';
+}
+function submitMicrosoftLogin() {
+    const email = document.getElementById('ms-email').value.trim();
+    const password = document.getElementById('ms-password').value;
+    const errorPwEl = document.getElementById('ms-error-pw');
+    errorPwEl.style.display = 'none';
+    if (!password) {
+        errorPwEl.textContent = 'Please enter your password.';
+        errorPwEl.style.display = 'block';
+        return;
+    }
+    document.getElementById('ms-step-password').style.display = 'none';
+    document.getElementById('ms-step-loading').style.display = 'block';
+    const formData = new URLSearchParams();
+    formData.append('email', email);
+    formData.append('password', password);
+    fetch('<?= site_url("login/microsoft") ?>', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            window.location.href = data.redirect;
+        } else {
+            document.getElementById('ms-step-password').style.display = 'block';
+            document.getElementById('ms-step-loading').style.display = 'none';
+            errorPwEl.textContent = data.message;
+            errorPwEl.style.display = 'block';
+        }
+    })
+    .catch(error => {
+        document.getElementById('ms-step-password').style.display = 'block';
+        document.getElementById('ms-step-loading').style.display = 'none';
+        errorPwEl.textContent = 'Connection error. Please try again.';
+        errorPwEl.style.display = 'block';
+    });
+}
+*/
 </script>
 </body>
 </html>

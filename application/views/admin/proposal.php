@@ -565,6 +565,17 @@
                     <i class="fas fa-newspaper"></i>
                     <span>Berita</span>
                 </a>
+                <a href="<?= base_url('admin/organisasi') ?>">
+                    <i class="fas fa-users"></i>
+                    <span>Organisasi</span>
+                </a>
+                
+                <div class="menu-divider"></div>
+                
+                <a href="<?= base_url('admin/history_log') ?>">
+                    <i class="fas fa-history"></i>
+                    <span>History Log</span>
+                </a>
                 
                 <div class="menu-divider"></div>
                 
@@ -1024,9 +1035,9 @@ function openDetail(id) {
                 <div class="detail-section">
                     <div class="detail-section-title"><i class="fas fa-scroll"></i> Pendahuluan</div>
                     <div class="mb-2"><strong>Latar Belakang</strong></div>
-                    <div class="detail-text-block mb-3">${p.latar_belakang ? p.latar_belakang.replace(/\n/g,'<br>') : '-'}</div>
+                    <div class="detail-text-block mb-3" id="admin-latar-belakang"></div>
                     <div class="mb-2"><strong>Tujuan & Manfaat</strong></div>
-                    <div class="detail-text-block">${p.tujuan_manfaat ? p.tujuan_manfaat.replace(/\n/g,'<br>') : '-'}</div>
+                    <div class="detail-text-block" id="admin-tujuan"></div>
                 </div>
 
                 <div class="detail-section">
@@ -1055,6 +1066,15 @@ function openDetail(id) {
                     </div>
                 </div>
             `;
+
+            // Render HTML dari TinyMCE
+            (function() {
+                var el;
+                el = document.getElementById('admin-latar-belakang');
+                if (el) el.innerHTML = p.latar_belakang || '-';
+                el = document.getElementById('admin-tujuan');
+                if (el) el.innerHTML = p.tujuan_manfaat || '-';
+            })();
 
             // Show/hide action buttons in modal footer
             const approveBtn = document.getElementById('modalApproveBtn');

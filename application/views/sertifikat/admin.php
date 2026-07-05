@@ -486,10 +486,13 @@
                     <i class="fas fa-certificate"></i>
                     <span>Sertifikat</span>
                 </a>
-                <a href="<?= base_url('tak_admin') ?>">
-                    <i class="fas fa-file-signature"></i>
-                    <span>TAK</span>
+                <a href="<?= base_url('sertifikat/generate') ?>" style="padding-left: 2.5rem; font-size: 0.85rem;">
+                    <i class="fas fa-magic"></i>
+                    <span>Generate Sertifikat</span>
                 </a>
+                <a href="<?= base_url('sertifikat/export_excel_canva') ?>" style="padding-left: 2.5rem; font-size: 0.85rem;">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Export Excel Canva</span>
                 </a>
                 <a href="<?= base_url('berita/admin') ?>">
                     <i class="fas fa-newspaper"></i>

@@ -27,62 +27,63 @@ class Proposal_model extends CI_Model {
         return $this->db->get()->result();
     }
 
-    public function get_all_proposals($tipe = null, $status = null, $search = null) {
-        $this->db->select('p.*, u.nama AS nama_pengaju, u.nim, u.program_studi');
-        $this->db->from('proposal p');
-        $this->db->join('users u', 'u.id = p.dibuat_oleh', 'left');
-        $this->db->where('p.deleted_at IS NULL', NULL, FALSE);
-        
-        if ($tipe) {
-            $this->db->where('p.tipe_proposal', $tipe);
-        }
-        
-        if ($status) {
-            $this->db->where('p.status', $status);
-        }
-        
-        if ($search) {
-            $this->db->group_start();
-            $this->db->like('p.nama_kegiatan', $search);
-            $this->db->or_like('p.nama_ormawa', $search);
-            $this->db->or_like('u.nama', $search);
-            $this->db->or_like('p.kode_proposal', $search);
-            $this->db->group_end();
-        }
-        
-        $this->db->order_by('p.created_at', 'DESC');
-        return $this->db->get()->result();
+    public function get_all_proposals($tipe = null, $status = null, $search = null)
+{
+    $this->db->select('p.*, u.nama AS nama_pengaju, u.nim, u.program_studi');
+    $this->db->from('proposal p');
+    $this->db->join('users u', 'u.id = p.dibuat_oleh', 'left');
+    $this->db->where('p.deleted_at IS NULL', NULL, FALSE);
+    
+    if ($tipe) {
+        $this->db->where('p.tipe_proposal', $tipe);
     }
-
-    public function get_by_id($id, $owner_id = null) {
-        $this->db->select('p.*, u.nama AS nama_pengaju, u.nim, u.program_studi, u.email AS email_pengaju');
-        $this->db->from('proposal p');
-        $this->db->join('users u', 'u.id = p.dibuat_oleh', 'left');
-        $this->db->where('p.id', $id);
-        $this->db->where('p.deleted_at IS NULL', NULL, FALSE);
-        
-        if ($owner_id) {
-            $this->db->where('p.dibuat_oleh', $owner_id);
-        }
-        
-        $query = $this->db->get();
-        if ($query->num_rows() > 0) {
-            return $query->row();
-        }
-        return null;
+    
+    if ($status) {
+        $this->db->where('p.status', $status);
     }
+    
+    if ($search) {
+        $this->db->group_start();
+        $this->db->like('p.nama_kegiatan', $search);
+        $this->db->or_like('p.nama_ormawa', $search);
+        $this->db->or_like('u.nama', $search);
+        $this->db->or_like('p.kode_proposal', $search);
+        $this->db->group_end();
+    }
+    
+    $this->db->order_by('p.created_at', 'DESC');
+    return $this->db->get()->result();
+}
 
+    public function get_by_id($id, $owner_id = null)
+{
+    $this->db->select('p.*, u.nama AS nama_pengaju, u.nim, u.program_studi, u.email AS email_pengaju');
+    $this->db->from('proposal p');
+    $this->db->join('users u', 'u.id = p.dibuat_oleh', 'left');
+    $this->db->where('p.id', $id);
+    $this->db->where('p.deleted_at IS NULL', NULL, FALSE);
+    
+    if ($owner_id) {
+        $this->db->where('p.dibuat_oleh', $owner_id);
+    }
+    
+    $query = $this->db->get();
+    
+    if ($query->num_rows() > 0) {
+        return $query->row();
+    }
+    
+    return null;
+}
     /* ─────────────────────────────────────────────
-        CRUD (FIXED STATUS FLOW)
+       CRUD
     ───────────────────────────────────────────── */
 
     public function create($data, $rab_items = []) {
         $this->db->trans_start();
 
         $data['kode_proposal'] = $this->generate_kode($data['tipe_proposal'] ?? 'himpunan');
-        
-        // FIX AMAN: Awal buat lewat simpan draft harus berstatus 'draft'
-        $data['status']        = 'draft'; 
+        $data['status']        = 'disetujui';
         $data['created_at']    = date('Y-m-d H:i:s');
         $data['updated_at']    = date('Y-m-d H:i:s');
 
@@ -93,7 +94,7 @@ class Proposal_model extends CI_Model {
             $this->_save_rab($id, $rab_items);
         }
 
-        $this->_log($id, null, 'draft', $data['dibuat_oleh'], 'Proposal dibuat sebagai draft');
+        $this->_log($id, null, 'draft', $data['dibuat_oleh'], 'Proposal dibuat');
 
         $this->db->trans_complete();
         return $this->db->trans_status() ? $id : false;
@@ -101,12 +102,6 @@ class Proposal_model extends CI_Model {
 
     public function update($id, $data, $rab_items = []) {
         $this->db->trans_start();
-
-        // Jika dia mengedit proposal yang ditolak, status dikembalikan ke draft agar bisa diajukan ulang
-        $existing = $this->get_by_id($id);
-        if ($existing && $existing->status === 'ditolak') {
-            $data['status'] = 'draft';
-        }
 
         $data['updated_at'] = date('Y-m-d H:i:s');
         $this->db->where('id', $id)->update('proposal', $data);
@@ -121,6 +116,7 @@ class Proposal_model extends CI_Model {
     }
 
     public function soft_delete($id, $user_id) {
+        // Hanya bisa hapus jika draft atau ditolak
         $this->db->where('id', $id)
                  ->where('dibuat_oleh', $user_id)
                  ->where_in('status', ['draft', 'ditolak']);
@@ -131,35 +127,37 @@ class Proposal_model extends CI_Model {
     }
 
     /* ─────────────────────────────────────────────
-        WORKFLOW (FIXED APPROVAL LOGIC)
+       WORKFLOW
     ───────────────────────────────────────────── */
 
     /**
-     * Mahasiswa submit proposal → status berubah ke 'submitted' agar terbaca oleh Admin
+     * Mahasiswa submit proposal → status: submitted
      */
     public function submit($id, $user_id) {
         $proposal = $this->get_by_id($id, $user_id);
         if (!$proposal) return ['ok' => false, 'msg' => 'Proposal tidak ditemukan.'];
 
-        // FIX AMAN: Status diubah ke 'submitted', bukan langsung 'disetujui'
+        
+
         $this->db->where('id', $id)->update('proposal', [
-            'status'     => 'submitted',
+            'status'     => 'disetujui',
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
 
-        $this->_log($id, $proposal->status, 'submitted', $user_id, 'Proposal resmi diajukan oleh mahasiswa ke Admin');
-        return ['ok' => true, 'msg' => 'Proposal berhasil diajukan ke admin!'];
+        $this->_log($id, $proposal->status, 'disetujui', $user_id, 'Proposal diajukan oleh mahasiswa');
+        return ['ok' => true, 'msg' => 'Proposal berhasil dibuat!'];
     }
 
     /**
      * Admin setujui → status: disetujui
+     * Setelah disetujui, mahasiswa baru bisa lihat PDF
      */
     public function approve($id, $admin_id, $catatan = '') {
         $proposal = $this->get_by_id($id);
         if (!$proposal) return ['ok' => false, 'msg' => 'Proposal tidak ditemukan.'];
 
         if ($proposal->status !== 'submitted') {
-            return ['ok' => false, 'msg' => 'Hanya proposal berstatus "Diajukan" (Submitted) yang dapat disetujui.'];
+            return ['ok' => false, 'msg' => 'Hanya proposal berstatus "Diajukan" yang dapat disetujui.'];
         }
 
         $this->db->where('id', $id)->update('proposal', [
@@ -176,17 +174,18 @@ class Proposal_model extends CI_Model {
 
     /**
      * Admin tolak → status: ditolak
+     * Mahasiswa wajib perbaiki lalu submit ulang
      */
     public function reject($id, $admin_id, $catatan) {
         if (empty(trim($catatan))) {
-            return ['ok' => false, 'msg' => 'Alasan penolakan/revisi wajib diisi.'];
+            return ['ok' => false, 'msg' => 'Alasan penolakan wajib diisi.'];
         }
 
         $proposal = $this->get_by_id($id);
         if (!$proposal) return ['ok' => false, 'msg' => 'Proposal tidak ditemukan.'];
 
         if ($proposal->status !== 'submitted') {
-            return ['ok' => false, 'msg' => 'Hanya proposal berstatus "Diajukan" (Submitted) yang dapat ditolak.'];
+            return ['ok' => false, 'msg' => 'Hanya proposal berstatus "Diajukan" yang dapat ditolak.'];
         }
 
         $this->db->where('id', $id)->update('proposal', [
@@ -198,6 +197,7 @@ class Proposal_model extends CI_Model {
             'updated_at'        => date('Y-m-d H:i:s'),
         ]);
 
+        // Simpan ke tabel revisi agar mahasiswa tahu apa yang harus diperbaiki
         $this->db->insert('proposal_revisi', [
             'proposal_id'    => $id,
             'catatan_revisi' => $catatan,
@@ -206,21 +206,23 @@ class Proposal_model extends CI_Model {
         ]);
 
         $this->_log($id, 'submitted', 'ditolak', $admin_id, $catatan);
-        return ['ok' => true, 'msg' => 'Proposal berhasil ditolak dan dikembalikan ke mahasiswa.'];
+        return ['ok' => true, 'msg' => 'Proposal ditolak. Mahasiswa akan diberitahu untuk perbaikan.'];
     }
 
     /* ─────────────────────────────────────────────
-        CEK AKSES PDF
+       CEK AKSES PDF
+       Mahasiswa hanya boleh lihat PDF jika sudah disetujui
     ───────────────────────────────────────────── */
+
     public function can_view_pdf($proposal, $role) {
-        // Hak istimewa untuk berbagai role admin
-        if (in_array($role, ['admin', 'kemahasiswaan', 'kaprodi', 'dosen_pembina'])) return true;
+        if ($role === 'admin') return true;
         return $proposal->status === 'disetujui';
     }
 
     /* ─────────────────────────────────────────────
-        RAB
+       RAB
     ───────────────────────────────────────────── */
+
     private function _save_rab($proposal_id, $rab_items) {
         $total  = 0;
         $urutan = 1;
@@ -252,8 +254,9 @@ class Proposal_model extends CI_Model {
     }
 
     /* ─────────────────────────────────────────────
-        LOG & REVISI
+       LOG & REVISI
     ───────────────────────────────────────────── */
+
     private function _log($proposal_id, $status_lama, $status_baru, $user_id, $catatan = '') {
         $this->db->insert('proposal_log', [
             'proposal_id'    => $proposal_id,
@@ -284,8 +287,9 @@ class Proposal_model extends CI_Model {
     }
 
     /* ─────────────────────────────────────────────
-        STATISTIK
+       STATISTIK
     ───────────────────────────────────────────── */
+
     public function count_by_status($user_id = null) {
         $this->db->select('status, COUNT(*) AS jumlah');
         $this->db->from('proposal');
@@ -302,8 +306,9 @@ class Proposal_model extends CI_Model {
     }
 
     /* ─────────────────────────────────────────────
-        SANITIZE
+       SANITIZE
     ───────────────────────────────────────────── */
+
     public function sanitize($raw) {
         return [
             'tipe_proposal'      => in_array($raw['tipe_proposal'] ?? '', ['himpunan','bemdpm'])
@@ -316,7 +321,7 @@ class Proposal_model extends CI_Model {
             'balai_divisi'       => trim($raw['balai_divisi']       ?? ''),
             'latar_belakang'     => trim($raw['latar_belakang']     ?? ''),
             'tujuan_manfaat'     => trim($raw['tujuan_manfaat']     ?? ''),
-            'sasaran_kegiatan'   => trim($raw['sasaran_kegiatan']   ?? ''),
+            'sasaran_kegiatan'   => trim($raw['sasaran_kegiatan'] ?? ''),
             'peserta'            => trim($raw['peserta']            ?? ''),
             'tanggal_kegiatan'   => $raw['tanggal_kegiatan']        ?? null,
             'waktu_mulai'        => $raw['waktu_mulai']             ?? null,

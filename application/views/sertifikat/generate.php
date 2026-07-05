@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -437,6 +438,52 @@
         .cert-date   { font-size: 0.82vw; color: #6b7280; margin-bottom: 14px; font-family: 'Montserrat', sans-serif; }
         .cert-nomor  { font-size: 0.72vw; color: #9ca3af; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; }
 
+        /* ── Signature block (Dean of School) ── */
+        #cert-signature-wrap {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 10px;
+        }
+        #cert-signature-wrap .sig-role {
+            font-size: 0.82vw;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #d35400;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        /* Ruang kosong buat tempel gambar tanda tangan (upload logo/ttd manual) */
+        #cert-signature-wrap .sig-space {
+            width: 220px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        #cert-signature-wrap .sig-space img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        #cert-signature-wrap .sig-name {
+            font-size: 0.85vw;
+            font-weight: 700;
+            color: #2C3E50;
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+        #cert-signature-wrap .sig-nip {
+            font-size: 0.68vw;
+            color: #6b7280;
+            margin-top: 1px;
+        }
+
         /* ── Buttons (sama style dengan admin.php) ── */
         .btn-orange {
             background: linear-gradient(135deg, #E67E22, #d35400);
@@ -704,11 +751,21 @@
         <!-- ─── STEP 2: Pilih Template ─── -->
         <div class="step-panel" id="step-2">
             <div class="panel">
-                <div class="panel-title"><i class="fas fa-palette"></i> Pilih Template Sertifikat</div>
+                <div class="panel-title d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-palette text-warning me-2"></i>Pilih Template Sertifikat</span>
+
+                    <!-- Tombol Import Template Sendiri -->
+                    <div>
+                        <input type="file" id="customTemplateInput" accept="image/png, image/jpeg, image/jpg" style="display:none;" onchange="handleCustomTemplateUpload(this)">
+                        <button class="btn btn-sm btn-outline-secondary" id="btn-import-template" onclick="document.getElementById('customTemplateInput').click()" style="border-radius:20px; font-family:'Montserrat'; font-size:0.8rem; font-weight:600;">
+                            <i class="fas fa-upload me-1" style="color:#E67E22;"></i> Import Template Sendiri
+                        </button>
+                    </div>
+                </div>
 
                 <div class="selected-bar" id="sel-data-bar"></div>
 
-                <div class="template-grid">
+                <div class="template-grid" id="templateGridContainer">
                     <?php
                     $templates = [
                         ['id'=>1, 'name'=>'Steel Wave',  'desc'=>'Elegan biru abu modern'],
@@ -719,7 +776,7 @@
                     ];
                     foreach ($templates as $t): ?>
                     <div class="template-card" id="tpl-card-<?= $t['id'] ?>"
-                         onclick="selectTemplate(<?= $t['id'] ?>, '<?= $t['name'] ?>')">
+                         onclick="selectTemplate(<?= $t['id'] ?>, '<?= $t['name'] ?>', false)">
                         <span class="template-label">Template <?= $t['id'] ?></span>
                         <img src="<?= base_url('templates/sertifikat/template'.$t['id'].'.png') ?>"
                              alt="<?= $t['name'] ?>" loading="lazy">
@@ -732,6 +789,26 @@
                         </div>
                     </div>
                     <?php endforeach; ?>
+
+                    <?php
+                    // Template custom yang sudah pernah diupload sebelumnya (tersimpan permanen di server)
+                    // $custom_templates dikirim dari controller, berisi array ['id'=>..., 'name'=>..., 'file'=>...]
+                    if (!empty($custom_templates)):
+                        foreach ($custom_templates as $ct): ?>
+                    <div class="template-card" id="tpl-card-custom-<?= $ct['id'] ?>"
+                         onclick="selectTemplate('custom-<?= $ct['id'] ?>', '<?= htmlspecialchars($ct['name']) ?>', true, '<?= base_url('templates/sertifikat/custom/'.$ct['file']) ?>')">
+                        <span class="template-label" style="background:#27ae60;">Custom Upload</span>
+                        <img src="<?= base_url('templates/sertifikat/custom/'.$ct['file']) ?>"
+                             alt="<?= htmlspecialchars($ct['name']) ?>" loading="lazy">
+                        <div class="template-card-info">
+                            <div>
+                                <div class="template-card-name"><?= htmlspecialchars($ct['name']) ?></div>
+                                <div class="template-card-desc">Template yang diunggah</div>
+                            </div>
+                            <div class="template-check"><i class="fas fa-check"></i></div>
+                        </div>
+                    </div>
+                    <?php endforeach; endif; ?>
                 </div>
 
                 <div class="btn-group-actions">
@@ -754,18 +831,50 @@
 
                 <!-- Preview -->
                 <div id="cert-preview-wrap">
-                    <div id="cert-canvas-container">
+                    <div id="cert-canvas-container" style="position:relative;display:inline-block;">
                         <img id="cert-template-img" src="" alt="Template">
                         <div id="cert-text-overlay">
-                            <div style="text-align:center;pointer-events:none;">
-                                <div class="cert-intro">Diberikan kepada:</div>
-                                <div class="cert-name" id="prev-nama">—</div>
-                                <div class="cert-nim" id="prev-nim">—</div>
-                                <div class="cert-desc">Atas keikutsertaan dalam:</div>
-                                <div class="cert-event" id="prev-judul">—</div>
-                                <div class="cert-date" id="prev-tanggal">—</div>
-                                <div class="cert-nomor" id="prev-nomor">No: —</div>
+                            <!-- Judul CERTIFICATE di atas -->
+                            <div class="cert-title-main" style="font-size: 2.3vw; font-weight: 800; color: #d35400; letter-spacing: 2px; margin-bottom: 2px; text-transform: uppercase;">Certificate</div>
+
+                            <!-- Nomor Sertifikat di bawah judul -->
+                            <div class="cert-nomor" id="prev-nomor" style="font-size: 0.72vw; font-weight: 700; color: #2C3E50; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase;">Certificate Number: 020/S-AKD05/IK-DEK/2026</div>
+
+                            <!-- Kalimat pembuka / partisipasi -->
+                            <div class="cert-intro" style="font-size: 0.8vw; font-style: italic; color: #7f8c8d; margin-bottom: 6px;">THIS CERTIFICATE IS PRESENT TO</div>
+
+                            <!-- Nama Penerima besar dengan garis bawah -->
+                            <div class="cert-name-container" style="border-bottom: 2px solid #E67E22; padding-bottom: 4px; margin-bottom: 12px; min-width: 280px; text-align: center;">
+                                <div class="cert-name" id="prev-nama" style="font-size: 1.8vw; font-weight: 800; color: #2C3E50; font-family: 'Montserrat', sans-serif;">TEGUH AKBAR, ST</div>
                             </div>
+
+                            <!-- Keterangan Partisipasi & Kegiatan -->
+                            <div class="cert-desc" id="prev-desc" style="font-size: 0.8vw; color: #7f8c8d; margin-bottom: 6px;">For the Participation as <strong style="color: #d35400;" id="prev-role">Committee</strong> at :</div>
+                            <div class="cert-event" id="prev-judul" style="font-size: 1.2vw; font-weight: 700; color: #2C3E50; text-transform: uppercase; margin-bottom: 6px; text-align: center;">BERWARA ADVERTISING EXHIBITION & AWARD</div>
+
+                            <!-- Waktu & Tempat -->
+                            <div class="cert-date" id="prev-tanggal" style="font-size: 0.72vw; color: #7f8c8d; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">HELD AT SCHOOL OF CREATIVE INDUSTRIES</div>
+
+                            <!-- Tanda tangan Dean of School, di tengah, di bawah tanggal -->
+                            <div id="cert-signature-wrap">
+                                <div class="sig-role" id="sig-role">Dean of School</div>
+                                <div class="sig-space" id="sig-space">
+                                    <img id="sig-image" src="" alt="Tanda tangan" style="display:none;">
+                                </div>
+                                <div class="sig-name" id="sig-nama">Dandi Yunidar, S.Sn., M.Ds., Ph.D.</div>
+                                <div class="sig-nip" id="sig-nip">NIP: 14760039</div>
+                            </div>
+                        </div>
+                        <!-- QR Code di pojok kiri bawah (sesuai layout gambar) -->
+                        <div id="cert-qr-wrap" style="
+                            position:absolute; bottom:5%; left:4%;
+                            background:white; padding:6px; border-radius:6px;
+                            box-shadow:0 3px 12px rgba(0,0,0,0.12);
+                            display:flex; flex-direction:column; align-items:center; gap:2px;
+                            border: 1px solid #ddd;
+                        ">
+                            <canvas id="cert-qr-canvas"></canvas>
+                            <span id="cert-qr-label" style="font-size:4.5px;color:#7f8c8d;font-family:monospace;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;">verify</span>
                         </div>
                     </div>
                 </div>
@@ -784,6 +893,22 @@
                     <div>
                         <label>Warna Teks Isi</label>
                         <input type="color" id="textColor" value="#374151" oninput="adjustText()">
+                    </div>
+                    <div>
+                        <label>Jabatan Penandatangan</label>
+                        <input type="text" id="deanRole" value="Dean of School" style="border:1px solid #e0e0e0;border-radius:8px;padding:6px 10px;font-size:0.8rem;font-family:'Montserrat';width:200px;" oninput="updateSignature()">
+                    </div>
+                    <div>
+                        <label>Nama Dean / Penandatangan</label>
+                        <input type="text" id="deanName" value="Dandi Yunidar, S.Sn., M.Ds., Ph.D." style="border:1px solid #e0e0e0;border-radius:8px;padding:6px 10px;font-size:0.8rem;font-family:'Montserrat';width:230px;" oninput="updateSignature()">
+                    </div>
+                    <div>
+                        <label>NIP</label>
+                        <input type="text" id="deanNip" value="14760039" style="border:1px solid #e0e0e0;border-radius:8px;padding:6px 10px;font-size:0.8rem;font-family:'Montserrat';width:140px;" oninput="updateSignature()">
+                    </div>
+                    <div>
+                        <label>Gambar Tanda Tangan (opsional)</label>
+                        <input type="file" id="sigImageInput" accept="image/png, image/jpeg" style="font-size:0.78rem;" onchange="handleSignatureImageUpload(this)">
                     </div>
                 </div>
 
@@ -816,7 +941,8 @@
 <script>
     const BASE_URL = '<?= base_url() ?>';
     let selectedRow      = null;
-    let selectedTemplate = null;
+    let selectedTemplate = null;   // id template (angka, atau 'custom-<id>')
+    let selectedTemplateUrl = null; // url gambar template yang sedang dipakai (kalau custom)
 
     /* ── Step navigation ── */
     function goStep(n) {
@@ -848,12 +974,84 @@
         document.getElementById('btn-next-1').disabled = false;
     }
 
-    /* ── Pilih template ── */
-    function selectTemplate(id, name) {
+    /* ── Pilih template ──
+       id            : id template (angka untuk bawaan, 'custom-<id>' untuk hasil upload)
+       name          : nama template
+       isCustom      : true kalau ini template hasil upload
+       customUrl     : url gambar template di server (khusus custom)
+    */
+    function selectTemplate(id, name, isCustom, customUrl) {
         document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
-        document.getElementById('tpl-card-' + id).classList.add('selected');
-        selectedTemplate = id;
+        const cardId = isCustom ? ('tpl-card-' + id) : ('tpl-card-' + id);
+        const card = document.getElementById(cardId);
+        if (card) card.classList.add('selected');
+
+        selectedTemplate    = id;
+        selectedTemplateUrl = isCustom ? customUrl : (BASE_URL + 'templates/sertifikat/template' + id + '.png');
         document.getElementById('btn-next-2').disabled = false;
+    }
+
+    /* ── Handle Custom Template Upload ──
+       File langsung diupload ke server (endpoint: sertifikat/upload_template) supaya
+       benar-benar tersimpan permanen dan tidak hilang saat pindah step / reload halaman.
+       Lihat catatan controller di bagian bawah chat.
+    */
+    function handleCustomTemplateUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        if (!file.type.match('image.*')) {
+            alert('File harus berupa gambar (PNG/JPG)!');
+            return;
+        }
+
+        const btn = document.getElementById('btn-import-template');
+        const originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Mengunggah...';
+
+        const formData = new FormData();
+        formData.append('template_file', file);
+        formData.append('template_name', file.name.replace(/\.[^/.]+$/, ''));
+
+        fetch(BASE_URL + 'sertifikat/upload_template', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(resp => {
+            if (!resp.success) {
+                throw new Error(resp.message || 'Upload gagal');
+            }
+
+            // resp harus berisi: { success: true, id: <id_baru>, name: <nama>, url: <url_gambar_di_server> }
+            const container = document.getElementById('templateGridContainer');
+            const cardHtml = `
+                <div class="template-card selected" id="tpl-card-custom-${resp.id}"
+                     onclick="selectTemplate('custom-${resp.id}', '${resp.name}', true, '${resp.url}')">
+                    <span class="template-label" style="background:#27ae60;">Custom Upload</span>
+                    <img src="${resp.url}" alt="${resp.name}">
+                    <div class="template-card-info">
+                        <div>
+                            <div class="template-card-name">${resp.name}</div>
+                            <div class="template-card-desc">Template yang diunggah</div>
+                        </div>
+                        <div class="template-check"><i class="fas fa-check"></i></div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('afterbegin', cardHtml);
+
+            selectTemplate('custom-' + resp.id, resp.name, true, resp.url);
+        })
+        .catch(err => {
+            alert('Gagal mengunggah template: ' + err.message);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            input.value = ''; // reset input supaya bisa upload file yang sama lagi kalau perlu
+        });
     }
 
     /* ── Render info bar ── */
@@ -871,22 +1069,110 @@
     /* ── Render preview ── */
     function renderPreview() {
         renderSelBar();
-        document.getElementById('cert-template-img').src =
-            BASE_URL + 'templates/sertifikat/template' + selectedTemplate + '.png';
+        const img = document.getElementById('cert-template-img');
+        img.onload = function() { renderQR(); };
+
+        img.src = selectedTemplateUrl;
+        if (img.complete) renderQR();
 
         const d = selectedRow;
         document.getElementById('prev-nama').textContent  = d.nama_mahasiswa;
-        document.getElementById('prev-nim').textContent   = (d.nim ?? '') + (d.prodi ? ' · ' + d.prodi : '');
         document.getElementById('prev-judul').textContent = d.judul_kegiatan;
 
-        const tgl    = new Date(d.tanggal_kegiatan);
-        const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli',
-                        'Agustus','September','Oktober','November','Desember'];
+        // ── Tanggal kegiatan: tampilkan APA ADANYA sesuai data, tidak menerka/menambah rentang tanggal.
+        // Kalau di data ada tanggal_kegiatan_selesai (rentang beberapa hari), baru ditampilkan sebagai range.
+        // Kalau tidak ada, tampilkan tanggal tunggal.
+        const months = ['January','February','March','April','May','June','July',
+                        'August','September','October','November','December'];
+
+        function formatSingleDate(dateStr) {
+            const dt = new Date(dateStr);
+            return `${months[dt.getMonth()].toUpperCase()} ${dt.getDate()}, ${dt.getFullYear()}`;
+        }
+
+        let tanggalStr = '';
+        if (d.tanggal_kegiatan) {
+            if (d.tanggal_kegiatan_selesai && d.tanggal_kegiatan_selesai !== d.tanggal_kegiatan) {
+                // ada rentang tanggal beneran dari database
+                const start = new Date(d.tanggal_kegiatan);
+                const end   = new Date(d.tanggal_kegiatan_selesai);
+                if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+                    tanggalStr = `FROM ${months[start.getMonth()].toUpperCase()} ${start.getDate()} – ${end.getDate()}, ${end.getFullYear()}`;
+                } else {
+                    tanggalStr = `FROM ${formatSingleDate(d.tanggal_kegiatan)} TO ${formatSingleDate(d.tanggal_kegiatan_selesai)}`;
+                }
+            } else {
+                // hanya satu tanggal → tampilkan sebagai tanggal tunggal, bukan rentang
+                tanggalStr = `ON ${formatSingleDate(d.tanggal_kegiatan)}`;
+            }
+        }
+
+        const lokasi = d.lokasi_kegiatan ? d.lokasi_kegiatan.toUpperCase() : 'SCHOOL OF CREATIVE INDUSTRIES';
         document.getElementById('prev-tanggal').textContent =
-            (d.lokasi_kegiatan ?? '') + ', ' + tgl.getDate() + ' ' + months[tgl.getMonth()] + ' ' + tgl.getFullYear();
-        document.getElementById('prev-nomor').textContent = 'No: ' + (d.nomor_sertifikat ?? '-');
+            tanggalStr ? `HELD AT ${lokasi} ${tanggalStr}` : `HELD AT ${lokasi}`;
+
+        document.getElementById('prev-nomor').textContent = 'CERTIFICATE NUMBER: ' + (d.nomor_sertifikat ?? '-');
+
+        // Isi deskripsi sesuai role / prodi (Committee/Participant/Presenter)
+        const role = d.prodi ? d.prodi : 'Committee';
+        const roleCapitalized = role.charAt(0).toUpperCase() + role.slice(1);
+        document.getElementById('prev-desc').innerHTML = `For the Participation as <strong style="color: #d35400;" id="prev-role">${roleCapitalized}</strong> at :`;
+
+        // Isi tanda tangan Dean of School (ambil dari field input, atau default dari data kalau ada)
+        updateSignature();
 
         adjustText();
+    }
+
+    /* ── Render QR Code di pojok kiri bawah sertifikat ── */
+    function renderQR() {
+        const d = selectedRow;
+        const qrUrl = d.qr_code
+            ? d.qr_code
+            : BASE_URL + 'sertifikat/verifikasi/' + encodeURIComponent(d.nomor_sertifikat ?? '');
+
+        document.getElementById('cert-qr-label').textContent = d.nomor_sertifikat ?? 'verify';
+
+        const img  = document.getElementById('cert-template-img');
+        const size = Math.max(70, Math.round(img.clientWidth * 0.10));
+
+        const canvas = document.getElementById('cert-qr-canvas');
+        QRCode.toCanvas(canvas, qrUrl, {
+            width:  size,
+            margin: 1,
+            color: { dark: '#000000', light: '#ffffff' }
+        }, function(err) {
+            if (err) console.error('QR render error:', err);
+        });
+    }
+
+    /* ── Update tanda tangan Dean of School (jabatan + nama + NIP) ── */
+    function updateSignature() {
+        const role = document.getElementById('deanRole').value || 'Dean of School';
+        const nama = document.getElementById('deanName').value || 'Dandi Yunidar, S.Sn., M.Ds., Ph.D.';
+        const nip  = document.getElementById('deanNip').value || '14760039';
+        document.getElementById('sig-role').textContent = role;
+        document.getElementById('sig-nama').textContent = nama;
+        document.getElementById('sig-nip').textContent  = 'NIP: ' + nip;
+    }
+
+    /* ── Upload gambar tanda tangan (ditampilkan langsung di ruang kosong tanda tangan) ── */
+    function handleSignatureImageUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        if (!file.type.match('image.*')) {
+            alert('File harus berupa gambar (PNG/JPG)!');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById('sig-image');
+            img.src = e.target.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
     }
 
     /* ── Adjust teks posisi & warna ── */
@@ -904,7 +1190,7 @@
         const tc = document.getElementById('textColor').value;
         document.getElementById('prev-nama').style.color  = nc;
         document.getElementById('prev-judul').style.color = nc;
-        document.querySelectorAll('.cert-intro,.cert-nim,.cert-desc,.cert-date,.cert-nomor')
+        document.querySelectorAll('.cert-intro, .cert-desc, .cert-date, .cert-nomor')
             .forEach(el => el.style.color = tc);
     }
 

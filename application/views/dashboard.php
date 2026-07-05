@@ -1934,17 +1934,7 @@
 </main>
 
 <script>
-  // ==================== DATA ORGANISASI (UKM) dengan logo dari folder assets ====================
-  const organizations = [
-    { name: "UKM Djawa Tjap Parabola", desc: "Bidang seni dan kebudayaan khususnya budaya Jawa.", logo: "assets/UKM Djawa Tjap Parabola.png", icon: "fas fa-mask" },
-    { name: "UKM Aceh", desc: "UKM yang bergerak di bidang seni dan kebudayaan kedaerahan Aceh.", logo: "assets/UKM Aceh.png", icon: "fas fa-map-marker-alt" },
-    { name: "UKM Tel-U Choir", desc: "UKM yang bergerak di bidang seni paduan suara.", logo: "assets/UKM Tel-U Choir.png", icon: "fas fa-music" },
-    { name: "UKM Basket", desc: "UKM yang bergerak di bidang olahraga bola basket.", logo: "assets/UKM Basket.png", icon: "fas fa-basketball-ball" },
-    { name: "UKM Bola", desc: "UKM yang bergerak di bidang olahraga sepak bola dan futsal.", logo: "assets/UKM Bola.png", icon: "fas fa-futbol" },
-    { name: "UKM Karate-do", desc: "UKM yang bergerak di bidang seni bela diri karate.", logo: "assets/UKM Karate-do.png", icon: "fas fa-fist-raised" },
-    { name: "UKM Merpati Putih", desc: "UKM yang bergerak di bidang seni bela diri pencak silat Merpati Putih.", logo: "assets/UKM Merpati Putih.png", icon: "fas fa-dove" },
-    { name: "UKM Bengkel Seni Embun", desc: "Bidang seni dan kebudayaan tradisional maupun kontemporer.", logo: "assets/UKM Bengkel Seni Embun.png", icon: "fas fa-palette" }
-  ];
+  // ==================== DATA ORGANISASI (UKM) – diambil dari database ====================
 
   function splitArray(arr) {
     const mid = Math.ceil(arr.length / 2);
@@ -1955,21 +1945,23 @@
     const container = document.getElementById(containerId);
     if (!container) return;
     container.innerHTML = '';
-    
+
     let itemsToRender = [...dataArray];
-    if (isDuplicated) {
+    if (isDuplicated && dataArray.length > 0) {
       itemsToRender = [...dataArray, ...dataArray];
     }
-    
+
     const gridDiv = document.createElement('div');
     gridDiv.className = 'org-grid-one';
-    
+
     itemsToRender.forEach((org) => {
       const card = document.createElement('div');
       card.className = 'org-card';
-      
-      const logoContent = `<img src="${org.logo}" alt="${org.name}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.classList.add('no-image'); this.remove(); this.parentElement.innerHTML='<i class=\\'${org.icon}\\'></i>'">`;
-      
+
+      const logoContent = org.logo
+        ? `<img src="${org.logo}" alt="${org.name}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.classList.add('no-image'); this.remove(); this.parentElement.innerHTML='<i class=\\'${org.icon}\\'></i>'">`
+        : `<i class="${org.icon}"></i>`;
+
       card.innerHTML = `
         <div class="org-logo">
           ${logoContent}
@@ -1979,17 +1971,24 @@
           <p>${org.desc}</p>
         </div>
       `;
-      
+
       gridDiv.appendChild(card);
     });
-    
+
     container.appendChild(gridDiv);
   }
 
-  function renderOrganizations() {
-    const { left, right } = splitArray(organizations);
-    renderGrid('orgLeftContent', left, true);
-    renderGrid('orgRightContent', right, true);
+  async function renderOrganizations() {
+    try {
+      const res  = await fetch('<?= base_url('dashboard/get_organisasi_json') ?>');
+      const json = await res.json();
+      const organizations = (json.status === 'success' && json.data.length > 0) ? json.data : [];
+      const { left, right } = splitArray(organizations);
+      renderGrid('orgLeftContent', left, true);
+      renderGrid('orgRightContent', right, true);
+    } catch (e) {
+      console.warn('Gagal memuat data organisasi dari server:', e);
+    }
   }
 
   // ==================== DATA MITRA KERJASAMA ====================

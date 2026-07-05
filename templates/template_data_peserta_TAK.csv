@@ -1,6 +1,14 @@
-NIM,Nama Mahasiswa,Email,Program Studi,No HP
-12345678,Budi Santoso,budi.santoso@student.telkomuniversity.ac.id,Desain Komunikasi Visual,081234567890
-87654321,Ani Wijaya,ani.wijaya@student.telkomuniversity.ac.id,Desain Interior,087654321098
-11223344,Citra Dewi,citra.dewi@student.telkomuniversity.ac.id,Desain Produk,081122334455
-44332211,Dwi Prasetyo,dwi.prasetyo@student.telkomuniversity.ac.id,Kriya Tekstil & Mode,084433221122
-55667788,Eka Putra,eka.putra@student.telkomuniversity.ac.id,Film dan Animasi,085566778899
+NIM,Nama Mahasiswa,Email,Program Studi,No HP,Status
+12345678,Budi Santoso,budi.santoso@student.telkomuniversity.ac.id,Desain Komunikasi Visual,081234567890,Mahasiswa Aktif
+87654321,Ani Wijaya,ani.wijaya@student.telkomuniversity.ac.id,Desain Interior,087654321098,Mahasiswa Aktif
+11223344,Citra Dewi,citra.dewi@student.telkomuniversity.ac.id,Desain Produk,081122334455,Mahasiswa Aktif
+44332211,Dwi Prasetyo,dwi.prasetyo@student.telkomuniversity.ac.id,Kriya Tekstil & Mode,084433221122,Mahasiswa Aktif
+55667788,Eka Putra,eka.putra@student.telkomuniversity.ac.id,Film dan Animasi,085566778899,Mahasiswa Aktif
+
+===========================================================================
+Catatan:
+1. Gunakan template ini untuk mengisi data peserta
+2. Jangan mengubah header kolom
+3. Isi data sesuai dengan format yang sudah ditentukan
+4. Simpan file dalam format .xlsx atau .csv
+===========================================================================

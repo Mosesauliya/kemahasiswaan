@@ -1379,6 +1379,10 @@
             }
         }
     </style>
+
+    <!-- TinyMCE -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js" referrerpolicy="origin"></script>
+
 </head>
 <body>
 
@@ -1608,17 +1612,17 @@
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label class="form-label">Latar Belakang <span class="required">*</span></label>
-                                    <textarea class="form-control" id="f_latar_belakang" rows="5" placeholder="Jelaskan alasan mengapa kegiatan ini perlu dilaksanakan..." maxlength="1500"></textarea>
+                                    <textarea class="form-control tinymce-editor" id="f_latar_belakang" rows="5" placeholder="Jelaskan alasan mengapa kegiatan ini perlu dilaksanakan..."></textarea>
                                     <div class="char-counter"><span id="cc_latar">0</span> / 1500</div>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Tujuan & Manfaat <span class="required">*</span></label>
-                                    <textarea class="form-control" id="f_tujuan" rows="4" placeholder="1. Tujuan Pertama&#10;2. Tujuan Kedua&#10;3. Manfaat bagi peserta..." maxlength="1000"></textarea>
+                                    <textarea class="form-control tinymce-editor" id="f_tujuan" rows="4" placeholder="1. Tujuan Pertama&#10;2. Tujuan Kedua&#10;3. Manfaat bagi peserta..."></textarea>
                                     <div class="char-counter"><span id="cc_tujuan">0</span> / 1000</div>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Sasaran Kegiatan <span class="required">*</span></label>
-                                    <textarea class="form-control" id="f_sasaran" rows="3" placeholder="Mahasiswa FIK, Dosen, Komunitas Eksternal..." maxlength="500"></textarea>
+                                    <textarea class="form-control tinymce-editor" id="f_sasaran" rows="3" placeholder="Mahasiswa FIK, Dosen, Komunitas Eksternal..."></textarea>
                                     <div class="char-counter"><span id="cc_sasaran">0</span> / 500</div>
                                 </div>
                             </div>
@@ -1894,8 +1898,30 @@
             if (counter) counter.textContent = el.value.length;
         }
 
-        // Attach char counter events
+        function initTinyMCE() {
+            var selector = 'textarea.tinymce-editor';
+            if (document.querySelector(selector) && typeof tinymce !== 'undefined') {
+                tinymce.init({
+                    selector: selector,
+                    height: 300,
+                    menubar: false,
+                    plugins: 'lists link image preview',
+                    toolbar: 'undo redo | bold italic underline | bullist numlist | removeformat',
+                    branding: false,
+                    promotion: false,
+                    setup: function (editor) {
+                        editor.on('change', function () {
+                            var text = editor.getContent({ format: 'text' });
+                            var ccEl = document.getElementById('cc_' + editor.id.replace('f_', ''));
+                            if (ccEl) ccEl.textContent = text.length + ' karakter';
+                        });
+                    }
+                });
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            initTinyMCE();
             const latar = document.getElementById('f_latar_belakang');
             const tujuan = document.getElementById('f_tujuan');
             const sasaran = document.getElementById('f_sasaran');
@@ -2103,8 +2129,14 @@
             
             const fields = requiredFields[step] || [];
             for (const fieldId of fields) {
-                const el = document.getElementById(fieldId);
-                if (!el || !el.value.trim()) {
+                var val = '';
+                var el = document.getElementById(fieldId);
+                if (typeof tinymce !== 'undefined' && tinymce.get(fieldId)) {
+                    val = tinymce.get(fieldId).getContent({ format: 'text' }).trim();
+                } else if (el) {
+                    val = el.value.trim();
+                }
+                if (!val) {
                     showToast(`${labels[fieldId] || 'Field'} wajib diisi`, 'error');
                     if (el) el.focus();
                     return false;
@@ -2116,6 +2148,10 @@
         // ==================== REVIEW ====================
         function populateReview() {
             const getVal = (id, fallback = '-') => {
+                if (typeof tinymce !== 'undefined' && tinymce.get(id)) {
+                    var c = tinymce.get(id).getContent({ format: 'text' }).trim();
+                    return c || fallback;
+                }
                 const el = document.getElementById(id);
                 return el && el.value.trim() ? el.value.trim() : fallback;
             };
@@ -2157,6 +2193,15 @@
         }
 
         // ==================== FORM HELPERS ====================
+        function setTinyMCEContent(id, content) {
+            if (typeof tinymce !== 'undefined' && tinymce.get(id)) {
+                tinymce.get(id).setContent(content || '');
+            } else {
+                const el = document.getElementById(id);
+                if (el) el.value = content || '';
+            }
+        }
+
         function fillFormData(p) {
             const setVal = (id, val) => {
                 const el = document.getElementById(id);
@@ -2168,9 +2213,9 @@
             setVal('f_jenis', p.jenis);
             setVal('f_nama_kegiatan', p.nama_kegiatan);
             setVal('f_balai', p.balai);
-            setVal('f_latar_belakang', p.latar_belakang);
-            setVal('f_tujuan', p.tujuan);
-            setVal('f_sasaran', p.sasaran);
+            setTinyMCEContent('f_latar_belakang', p.latar_belakang);
+            setTinyMCEContent('f_tujuan', p.tujuan);
+            setTinyMCEContent('f_sasaran', p.sasaran);
             setVal('f_tanggal', p.tanggal);
             setVal('f_waktu_mulai', p.waktu_mulai);
             setVal('f_waktu_selesai', p.waktu_selesai);
@@ -2191,6 +2236,13 @@
                 const el = document.getElementById(id);
                 if (el) el.value = '';
             });
+            // Clear TinyMCE
+            if (typeof tinymce !== 'undefined') {
+                ['f_latar_belakang', 'f_tujuan', 'f_sasaran'].forEach(function (id) {
+                    var ed = tinymce.get(id);
+                    if (ed) ed.setContent('');
+                });
+            }
             const budgetRows = document.getElementById('budget-rows');
             if (budgetRows) budgetRows.innerHTML = '';
             budgetRowCount = 0;
@@ -2280,8 +2332,8 @@
                 jenis_kegiatan: document.getElementById('f_jenis')?.value || '',
                 balai_divisi: document.getElementById('f_balai')?.value || '',
                 rekap_proposal: '',
-                latar_belakang: document.getElementById('f_latar_belakang')?.value || '',
-                tujuan_manfaat: document.getElementById('f_tujuan')?.value || '',
+                latar_belakang: (typeof tinymce !== 'undefined' && tinymce.get('f_latar_belakang')) ? tinymce.get('f_latar_belakang').getContent() : (document.getElementById('f_latar_belakang')?.value || ''),
+                tujuan_manfaat: (typeof tinymce !== 'undefined' && tinymce.get('f_tujuan')) ? tinymce.get('f_tujuan').getContent() : (document.getElementById('f_tujuan')?.value || ''),
                 nama_tema_kegiatan: document.getElementById('f_tema')?.value || '',
                 bentuk_kegiatan: document.getElementById('f_jenis')?.value || '',
                 peserta: document.getElementById('f_peserta')?.value || '',
@@ -2294,7 +2346,7 @@
                 susunan_acara: document.getElementById('f_rundown')?.value || '',
                 susunan_panitia: document.getElementById('f_panitia')?.value || '',
                 penutup: '',
-                sasaran_kegiatan: document.getElementById('f_sasaran')?.value || '',
+                sasaran_kegiatan: (typeof tinymce !== 'undefined' && tinymce.get('f_sasaran')) ? tinymce.get('f_sasaran').getContent() : (document.getElementById('f_sasaran')?.value || ''),
                 sumber_dana: document.getElementById('f_sumber_dana')?.value || '',
                 dana_diajukan: (document.getElementById('f_dana_ajukan')?.value || '0').replace(/\./g, ''),
                 rab_items: rabItems

@@ -358,7 +358,91 @@ public function download_export($id)
         $data['sertifikat_list'] = $this->db->get('pengajuan_sertifikat')->result_array();
         $data['title']           = 'Generate Sertifikat';
 
+        // Scan folder custom template (tanpa butuh tabel DB)
+        $custom_dir   = FCPATH . 'templates/sertifikat/custom/';
+        $custom_files = [];
+        if (is_dir($custom_dir)) {
+            $idx = 1;
+            foreach (glob($custom_dir . '*.{png,jpg,jpeg}', GLOB_BRACE) as $filepath) {
+                $filename = basename($filepath);
+                // Nama template: nama file tanpa ekstensi, underscores → spasi
+                $name = ucwords(str_replace(['_', '-'], ' ', pathinfo($filename, PATHINFO_FILENAME)));
+                $custom_files[] = [
+                    'id'   => $idx++,
+                    'name' => $name,
+                    'file' => $filename,
+                ];
+            }
+        }
+        $data['custom_templates'] = $custom_files;
+
         $this->load->view('sertifikat/generate', $data);
+    }
+
+    /**
+     * AJAX: Upload template custom ke folder templates/sertifikat/custom/
+     * Tidak butuh tabel database. Response JSON: { success, id, name, url }
+     */
+    public function upload_template()
+    {
+        header('Content-Type: application/json');
+        $this->_check_admin_ajax();
+
+        $custom_dir = FCPATH . 'templates/sertifikat/custom/';
+
+        // Pastikan folder ada
+        if (!is_dir($custom_dir)) {
+            mkdir($custom_dir, 0755, true);
+        }
+
+        if (empty($_FILES['template_file']['name'])) {
+            echo json_encode(['success' => false, 'message' => 'Tidak ada file yang diunggah.']);
+            return;
+        }
+
+        $allowed_types = ['image/png', 'image/jpeg', 'image/jpg'];
+        $file_type     = $_FILES['template_file']['type'];
+        if (!in_array($file_type, $allowed_types)) {
+            echo json_encode(['success' => false, 'message' => 'Tipe file tidak didukung. Gunakan PNG/JPG.']);
+            return;
+        }
+
+        // Ukuran maks 5 MB
+        if ($_FILES['template_file']['size'] > 5 * 1024 * 1024) {
+            echo json_encode(['success' => false, 'message' => 'Ukuran file melebihi batas 5 MB.']);
+            return;
+        }
+
+        // Nama template yang diinput (opsional), fallback ke nama file
+        $template_name = $this->input->post('template_name', TRUE);
+        if (empty($template_name)) {
+            $template_name = pathinfo($_FILES['template_file']['name'], PATHINFO_FILENAME);
+        }
+        $template_name = preg_replace('/[^a-zA-Z0-9\s_-]/', '', $template_name);
+
+        // Buat nama file unik agar tidak tumpang-tindih
+        $ext       = strtolower(pathinfo($_FILES['template_file']['name'], PATHINFO_EXTENSION));
+        $safe_name = 'custom_' . date('YmdHis') . '_' . uniqid() . '.' . $ext;
+        $dest      = $custom_dir . $safe_name;
+
+        if (!move_uploaded_file($_FILES['template_file']['tmp_name'], $dest)) {
+            echo json_encode(['success' => false, 'message' => 'Gagal menyimpan file ke server.']);
+            return;
+        }
+
+        // Hitung id urut berdasarkan jumlah file yang sudah ada
+        $existing = glob($custom_dir . '*.{png,jpg,jpeg}', GLOB_BRACE);
+        $new_id   = count($existing);
+
+        $url = base_url('templates/sertifikat/custom/' . $safe_name);
+        $display_name = ucwords(str_replace(['_', '-'], ' ', $template_name));
+
+        echo json_encode([
+            'success' => true,
+            'id'      => $new_id,
+            'name'    => $display_name,
+            'url'     => $url,
+        ]);
     }
 
     /**
