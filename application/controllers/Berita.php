@@ -638,7 +638,7 @@ class Berita extends CI_Controller
         
         $this->db->select('berita_komentar.*, berita.judul as berita_judul, berita.slug as berita_slug');
         $this->db->from('berita_komentar');
-        $this->db->join('berita', 'berita.id = berita_komentar.berita_id');
+        $this->db->join('berita', 'berita.id = berita_komentar.berita_id', 'left');
         
         if ($status != 'all') {
             $this->db->where('berita_komentar.status', $status);

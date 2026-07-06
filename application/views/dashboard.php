@@ -2145,9 +2145,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const diff = index - currentIndex;
             // Wrap-around distances
-            const wrapDiff = ((diff + totalCards) % totalCards <= totalCards / 2)
-                ? (diff + totalCards) % totalCards
-                : diff - totalCards;
+            let wrapDiff = (diff % totalCards + totalCards) % totalCards;
+            if (wrapDiff > Math.floor(totalCards / 2)) {
+                wrapDiff -= totalCards;
+            }
 
             if (index === currentIndex) {
                 card.classList.add('active');
