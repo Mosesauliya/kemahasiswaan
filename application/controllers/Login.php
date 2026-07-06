@@ -29,24 +29,24 @@ class Login extends CI_Controller {
         $this->form_validation->set_rules('username', 'Username/NIM', 'required|trim');
         $this->form_validation->set_rules('password', 'Password', 'required|trim');
 
-        // TAMBAHAN CAPTCHA
-        $recaptchaResponse = $this->input->post('g-recaptcha-response');
-        $secretKey = 'MASUKKAN_SECRET_KEY_ANDA_DI_SINI';
+        // // TAMBAHAN CAPTCHA
+        // $recaptchaResponse = $this->input->post('g-recaptcha-response');
+        // $secretKey = 'MASUKKAN_SECRET_KEY_ANDA_DI_SINI';
         
-        if (empty($recaptchaResponse)) {
-            $this->session->set_flashdata('error', 'Silakan centang kotak verifikasi CAPTCHA terlebih dahulu.');
-            redirect('login');
-        }
+        // if (empty($recaptchaResponse)) {
+        //     $this->session->set_flashdata('error', 'Silakan centang kotak verifikasi CAPTCHA terlebih dahulu.');
+        //     redirect('login');
+        // }
 
-        $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $recaptchaResponse;
-        $verifyResponse = file_get_contents($verifyUrl);
-        $responseData = json_decode($verifyResponse);
+        // $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $recaptchaResponse;
+        // $verifyResponse = file_get_contents($verifyUrl);
+        // $responseData = json_decode($verifyResponse);
 
-        if (!$responseData->success) {
-            $this->session->set_flashdata('error', 'Validasi CAPTCHA gagal. Anda terdeteksi sebagai bot.');
-            redirect('login');
-        }
-        // AKHIR TAMBAHAN CAPTCHA
+        // if (!$responseData->success) {
+        //     $this->session->set_flashdata('error', 'Validasi CAPTCHA gagal. Anda terdeteksi sebagai bot.');
+        //     redirect('login');
+        // }
+        // // AKHIR TAMBAHAN CAPTCHA
 
         if ($this->form_validation->run() == FALSE) {
             $this->session->set_flashdata('error', validation_errors());
@@ -240,6 +240,9 @@ class Login extends CI_Controller {
                     'login_time' => time(), // Simpan waktu login
                 ];
                 $this->session->set_userdata($session_data);
+
+                // Catat ke log history
+                $this->Log_model->insert_log($user->id, $user->nama, $user->role, 'Login Berhasil (Microsoft SSO)');
 
                 echo json_encode([
                     'status'   => 'success',

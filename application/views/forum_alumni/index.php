@@ -1274,6 +1274,9 @@
                     }
                 } else if (response.error) {
                     showToast(response.error, 'error');
+                    if (response.redirect) {
+                        setTimeout(() => window.location.href = response.redirect, 1000);
+                    }
                 }
             },
             error: function(xhr, status, error) {
@@ -1405,6 +1408,9 @@
                     showToast('Komentar berhasil ditambahkan!', 'success');
                 } else {
                     showToast(response.error || 'Gagal menambahkan komentar', 'error');
+                    if (response.redirect) {
+                        setTimeout(() => window.location.href = response.redirect, 1000);
+                    }
                 }
             },
             error: function(xhr, status, error) {
@@ -1478,6 +1484,9 @@
                     showToast('Komentar berhasil ditambahkan!', 'success');
                 } else {
                     showToast(response.error || 'Gagal menambahkan komentar', 'error');
+                    if (response.redirect) {
+                        setTimeout(() => window.location.href = response.redirect, 1000);
+                    }
                 }
             },
             error: function() {

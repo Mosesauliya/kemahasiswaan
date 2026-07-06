@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
+date_default_timezone_set('Asia/Jakarta'); // WIB (UTC+7)
 /**
  * CodeIgniter
  *

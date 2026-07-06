@@ -2224,7 +2224,7 @@
             setVal('f_panitia', p.panitia);
             setVal('f_rundown', p.rundown);
             setVal('f_sumber_dana', p.sumber_dana);
-            setVal('f_dana_ajukan', p.dana_ajukan);
+            setVal('f_dana_ajukan', p.dana_diajukan);
         }
 
         function resetForm() {
@@ -2440,6 +2440,8 @@
                         id: p.id,
                         nama_kegiatan: p.nama_kegiatan,
                         ormawa: p.nama_ormawa,
+                        tahun: p.tahun_kegiatan,
+                        tema: p.tema_kegiatan,
                         tanggal: p.tanggal_kegiatan,
                         waktu_mulai: p.waktu_mulai,
                         waktu_selesai: p.waktu_selesai,
@@ -2452,6 +2454,9 @@
                         total_rab: p.total_rab,
                         sumber_dana: p.sumber_dana,
                         dana_diajukan: p.dana_diajukan,
+                        balai: p.balai_divisi,
+                        panitia: p.susunan_panitia,
+                        rundown: p.susunan_acara,
                         catatan_admin: p.catatan_admin,
                         status: p.status || 'draft',
                         type: p.tipe_proposal === 'himpunan' ? 'ormawa' : 'kompetisi'

@@ -83,7 +83,7 @@ class Proposal_model extends CI_Model {
         $this->db->trans_start();
 
         $data['kode_proposal'] = $this->generate_kode($data['tipe_proposal'] ?? 'himpunan');
-        $data['status']        = 'disetujui';
+        $data['status']        = 'draft';
         $data['created_at']    = date('Y-m-d H:i:s');
         $data['updated_at']    = date('Y-m-d H:i:s');
 
@@ -140,11 +140,11 @@ class Proposal_model extends CI_Model {
         
 
         $this->db->where('id', $id)->update('proposal', [
-            'status'     => 'disetujui',
+            'status'     => 'submitted',
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
 
-        $this->_log($id, $proposal->status, 'disetujui', $user_id, 'Proposal diajukan oleh mahasiswa');
+        $this->_log($id, $proposal->status, 'submitted', $user_id, 'Proposal diajukan oleh mahasiswa');
         return ['ok' => true, 'msg' => 'Proposal berhasil dibuat!'];
     }
 

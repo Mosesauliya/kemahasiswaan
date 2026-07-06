@@ -298,45 +298,11 @@ class Forum_alumni extends CI_Controller {
         
         $post_id = $this->input->post('post_id');
         
-        // Untuk user yang tidak login, gunakan session sementara atau IP address
-        // Tapi untuk kemudahan, kita izinkan semua (termasuk tidak login)
-        // Atau bisa menggunakan cookie/session sementara
-        
+        // Wajib login untuk melakukan like
         $user_id = $this->session->userdata('user_id');
         
-        // Jika user tidak login, buat session sementara berdasarkan IP
         if (!$user_id) {
-            // Gunakan kombinasi IP + User Agent sebagai identifier sementara
-            $ip = $this->input->ip_address();
-            $user_agent = $this->input->user_agent();
-            $temp_user_id = 'guest_' . md5($ip . $user_agent);
-            
-            // Cek apakah guest sudah like sebelumnya
-            $this->db->where('post_id', $post_id);
-            $this->db->where('user_id', $temp_user_id);
-            $exists = $this->db->get('forum_alumni_likes')->num_rows() > 0;
-            
-            if ($exists) {
-                // Unlike untuk guest
-                $this->db->where('post_id', $post_id);
-                $this->db->where('user_id', $temp_user_id);
-                $this->db->delete('forum_alumni_likes');
-                $this->db->set('likes_count', 'likes_count-1', FALSE);
-                $this->db->where('id', $post_id);
-                $this->db->update('forum_alumni_posts');
-                echo json_encode(['liked' => false, 'count' => $this->ForumAlumniModel->get_like_count($post_id)]);
-            } else {
-                // Like untuk guest
-                $this->db->insert('forum_alumni_likes', array(
-                    'post_id' => $post_id,
-                    'user_id' => $temp_user_id,
-                    'created_at' => date('Y-m-d H:i:s')
-                ));
-                $this->db->set('likes_count', 'likes_count+1', FALSE);
-                $this->db->where('id', $post_id);
-                $this->db->update('forum_alumni_posts');
-                echo json_encode(['liked' => true, 'count' => $this->ForumAlumniModel->get_like_count($post_id)]);
-            }
+            echo json_encode(['error' => 'Silakan login terlebih dahulu untuk berinteraksi.', 'redirect' => base_url('login')]);
             return;
         }
         
@@ -388,11 +354,10 @@ class Forum_alumni extends CI_Controller {
         $user_id = $this->session->userdata('user_id');
         $user_nama = $this->session->userdata('nama');
         
-        // Jika user tidak login, gunakan nama "Tamu" atau input nama
+        // Wajib login untuk komentar
         if (!$user_id) {
-            $ip = $this->input->ip_address();
-            $user_id = 'guest_' . md5($ip);
-            $user_nama = 'Tamu';
+            echo json_encode(['error' => 'Silakan login terlebih dahulu untuk berinteraksi.', 'redirect' => base_url('login')]);
+            return;
         }
         
         if (!$post_id) {
