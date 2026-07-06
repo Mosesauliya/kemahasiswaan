@@ -149,106 +149,6 @@
             width: 100%;
         }
 
-        /* Dropdown Menu Styles */
-        .dropdown-menu-custom {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 0.8rem 0;
-            min-width: 240px;
-            border: 1px solid rgba(255,255,255,0.15);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .nav-item-dropdown {
-            position: relative;
-        }
-
-        .nav-item-dropdown:hover .dropdown-menu-custom {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-menu-custom a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            color: white;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            border-bottom: none !important;
-        }
-
-        .dropdown-menu-custom a::after {
-            display: none;
-        }
-
-        .dropdown-menu-custom a:hover {
-            background: rgba(249,115,22,0.3);
-            color: var(--orange);
-            padding-left: 28px;
-        }
-
-        .dropdown-menu-custom i {
-            width: 24px;
-            font-size: 1.1rem;
-            color: var(--orange);
-        }
-
-        .dropdown-toggle-icon {
-            margin-left: 6px;
-            font-size: 0.7rem;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-item-dropdown:hover .dropdown-toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        /* Mobile Dropdown */
-        @media (max-width: 768px) {
-            .dropdown-menu-custom {
-                position: static;
-                background: transparent;
-                backdrop-filter: none;
-                padding-left: 20px;
-                min-width: auto;
-                opacity: 1;
-                visibility: visible;
-                transform: none;
-                display: none;
-                border: none;
-            }
-            
-            .dropdown-menu-custom.show-mobile {
-                display: block;
-            }
-            
-            .dropdown-menu-custom a {
-                padding: 10px 0 10px 20px;
-                color: rgba(255,255,255,0.8);
-            }
-            
-            .dropdown-menu-custom a:hover {
-                background: transparent;
-                color: var(--orange);
-                padding-left: 28px;
-            }
-            
-            .nav-item-dropdown .dropdown-toggle-icon {
-                display: inline-block;
-            }
-        }
 
         .btn-mytelu-custom {
             background: linear-gradient(105deg, var(--orange), var(--orange-dark));
@@ -740,28 +640,28 @@
         /* Responsive */
         @media (max-width: 768px) {
             .navbar-glass {
-                flex-direction: row;
-                flex-wrap: wrap;
+                flex-direction: column;
+                align-items: stretch;
                 padding: 12px 20px;
             }
             
             .nav-links {
                 display: none;
-                width: 100%;
                 flex-direction: column;
-                margin-top: 16px;
-                gap: 14px;
-                align-items: flex-start;
+                align-items: center;
+                margin-top: 12px;
+                gap: 16px;
             }
             
             .nav-links.open {
-                display: flex;
+                display: flex !important;
             }
             
             .mobile-toggle {
                 display: block;
+                align-self: flex-end;
             }
-            
+
             .berita-header h1 {
                 font-size: 2rem;
             }
@@ -789,68 +689,7 @@
     <div class="progress-bar-custom" id="readingProgressBar"></div>
 </div>
 
-<!-- Header -->
-<header class="header-glass" id="mainHeader">
-    <div class="container" style="max-width: 1280px;">
-        <div class="navbar-glass" id="navbar">
-            <div class="logo-area">
-                <div class="logo-icon"><i class="fas fa-palette"></i></div>
-                <div class="logo-text">
-                    <h5>Unit Kemahasiswaan</h5>
-                    <span>Fakultas Industri Kreatif</span>
-                </div>
-            </div>
-            
-            <div class="nav-links" id="navLinks">
-                <a href="<?= base_url('dashboard') ?>">Dashboard</a>
-                <a href="<?= base_url('berita') ?>">Informasi</a>
-                
-                <!-- Dropdown Layanan -->
-                <div class="nav-item-dropdown">
-                    <a href="#" class="dropdown-toggle">
-                        Layanan <i class="fas fa-chevron-down dropdown-toggle-icon"></i>
-                    </a>
-                    <div class="dropdown-menu-custom" id="layananDropdown">
-                        <a href="<?= base_url('beasiswa') ?>">
-                            <i class="fas fa-graduation-cap"></i> Pengajuan Beasiswa
-                        </a>
-                        <a href="<?= base_url('sertifikat') ?>">
-                            <i class="fas fa-certificate"></i> Pengajuan Sertifikat
-                        </a>
-                        <a href="<?= base_url('proposal') ?>">
-                            <i class="fas fa-file-alt"></i> Pengajuan Proposal
-                        </a>
-                        <a href="<?= base_url('tak') ?>">
-                            <i class="fas fa-clipboard-list"></i> Pengajuan TAK
-                        </a>
-                        <a href="<?= base_url('layanan/forum_alumni') ?>">
-                            <i class="fas fa-users"></i> Layanan Alumni
-                        </a>
-                    </div>
-                </div>
-                
-                <a href="#">Forum Alumni</a>
-            </div>
-            
-            <?php if(isset($user_data) && $user_data && $user_data['logged_in']): ?>
-                <a href="<?= base_url('dashboard/profile') ?>" class="btn-mytelu-custom">
-                    <?php if(!empty($user_data['foto'])): ?>
-                        <img src="<?= base_url('uploads/users/' . $user_data['foto']) ?>" class="user-avatar-small">
-                    <?php else: ?>
-                        <i class="fas fa-user-circle"></i>
-                    <?php endif; ?>
-                    <?= htmlspecialchars($user_data['nama']) ?>
-                </a>
-            <?php else: ?>
-                <a href="<?= base_url('login') ?>" class="btn-mytelu-custom">
-                    <i class="fas fa-sign-in-alt"></i> MyTeLU
-                </a>
-            <?php endif; ?>
-            
-            <button class="mobile-toggle" id="mobileNavBtn"><i class="fas fa-bars"></i></button>
-        </div>
-    </div>
-</header>
+<?php $this->load->view('partials/navbar', ['active_menu' => 'informasi']); ?>
 
 <!-- Hero Section -->
 <div class="berita-header">
@@ -1111,45 +950,6 @@
             progressBar.style.width = scrolled + '%';
         }
     });
-
-    // Mobile toggle
-    const mobileBtn = document.getElementById('mobileNavBtn');
-    const navLinks = document.getElementById('navLinks');
-    if(mobileBtn) {
-        mobileBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('open');
-            
-            // Untuk mobile, handle dropdown Layanan
-            if(navLinks.classList.contains('open')) {
-                const dropdown = document.querySelector('.nav-item-dropdown .dropdown-menu-custom');
-                const dropdownParent = document.querySelector('.nav-item-dropdown');
-                if(dropdown && dropdownParent) {
-                    setTimeout(() => {
-                        dropdown.classList.add('show-mobile');
-                    }, 100);
-                }
-            } else {
-                const dropdown = document.querySelector('.nav-item-dropdown .dropdown-menu-custom');
-                if(dropdown) {
-                    dropdown.classList.remove('show-mobile');
-                }
-            }
-        });
-    }
-    
-    // Mobile dropdown toggle untuk layanan
-    if(window.innerWidth <= 768) {
-        const dropdownToggle = document.querySelector('.nav-item-dropdown > a');
-        if(dropdownToggle) {
-            dropdownToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const dropdownMenu = document.querySelector('.nav-item-dropdown .dropdown-menu-custom');
-                if(dropdownMenu) {
-                    dropdownMenu.classList.toggle('show-mobile');
-                }
-            });
-        }
-    }
 
     // Navbar scroll effect
     window.addEventListener('scroll', () => {

@@ -125,222 +125,8 @@
       border-bottom-color: #f97316;
     }
 
-    /* DROPDOWN LAYANAN */
-    .dropdown-wrapper {
-      position: relative;
-    }
 
-    .dropdown-wrapper > a {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 0;
-    }
 
-    .dropdown-wrapper > a i {
-      font-size: 0.7rem;
-      transition: transform 0.3s ease;
-    }
-
-    .dropdown-wrapper.open > a i {
-      transform: rotate(180deg);
-    }
-
-    .dropdown-menu-custom {
-      position: absolute;
-      top: calc(100% + 16px);
-      left: 50%;
-      transform: translateX(-50%) translateY(-12px);
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(30px);
-      border-radius: 24px;
-      padding: 16px 20px;
-      min-width: 820px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 100;
-    }
-
-    .dropdown-wrapper.open .dropdown-menu-custom {
-      opacity: 1;
-      visibility: visible;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .dropdown-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-    }
-
-    .dropdown-item {
-      padding: 24px 16px;
-      text-align: center;
-      border-radius: 16px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      text-decoration: none;
-      color: #1f2937;
-      background: rgba(249, 115, 22, 0.02);
-      position: relative;
-      overflow: hidden;
-      min-height: 160px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .dropdown-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(249, 115, 22, 0.02) 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      border-radius: 16px;
-    }
-
-    .dropdown-item:hover::before {
-      opacity: 1;
-    }
-
-    .dropdown-item:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 28px rgba(249, 115, 22, 0.15);
-    }
-
-    .dropdown-item .d-icon-wrapper {
-      width: 56px;
-      height: 56px;
-      margin: 0 auto 12px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      background: #f8fafc;
-      position: relative;
-      z-index: 1;
-    }
-
-    .dropdown-item:hover .d-icon-wrapper {
-      background: #fff7ed;
-      transform: scale(1.05);
-    }
-
-    .dropdown-item .d-icon-wrapper i {
-      font-size: 1.6rem;
-      transition: all 0.3s ease;
-    }
-
-    .dropdown-item:nth-child(1) .d-icon-wrapper i { color: #f97316; }
-    .dropdown-item:nth-child(2) .d-icon-wrapper i { color: #8b5cf6; }
-    .dropdown-item:nth-child(3) .d-icon-wrapper i { color: #3b82f6; }
-    .dropdown-item:nth-child(4) .d-icon-wrapper i { color: #ef4444; }
-    .dropdown-item:nth-child(5) .d-icon-wrapper i { color: #10b981; }
-
-    .dropdown-item:hover .d-icon-wrapper i {
-      transform: scale(1.15);
-    }
-
-    .dropdown-item .d-title {
-      font-size: 0.9rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: #1f2937;
-      position: relative;
-      z-index: 1;
-      white-space: nowrap;
-    }
-
-    .dropdown-item .d-desc {
-      font-size: 0.75rem;
-      color: #6b7280;
-      line-height: 1.5;
-      font-weight: 400;
-      position: relative;
-      z-index: 1;
-      max-width: 140px;
-      margin: 0 auto;
-    }
-
-    @media (max-width: 1024px) {
-      .dropdown-menu-custom {
-        min-width: unset;
-        width: 90vw;
-        max-width: 600px;
-        left: 50%;
-        transform: translateX(-50%) translateY(-12px);
-        padding: 12px;
-      }
-      .dropdown-wrapper.open .dropdown-menu-custom {
-        transform: translateX(-50%) translateY(0);
-      }
-      .dropdown-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-      }
-      .dropdown-item {
-        padding: 16px 12px;
-        min-height: 130px;
-      }
-      .dropdown-item .d-icon-wrapper {
-        width: 44px;
-        height: 44px;
-        margin-bottom: 8px;
-      }
-      .dropdown-item .d-icon-wrapper i {
-        font-size: 1.2rem;
-      }
-      .dropdown-item .d-title {
-        font-size: 0.8rem;
-        white-space: normal;
-      }
-      .dropdown-item .d-desc {
-        font-size: 0.65rem;
-        max-width: 100px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .dropdown-menu-custom {
-        width: 95vw;
-        max-width: 380px;
-        left: 50%;
-        padding: 10px;
-      }
-      .dropdown-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 4px;
-      }
-      .dropdown-item {
-        padding: 12px 8px;
-        min-height: 100px;
-      }
-      .dropdown-item .d-icon-wrapper {
-        width: 36px;
-        height: 36px;
-        margin-bottom: 6px;
-      }
-      .dropdown-item .d-icon-wrapper i {
-        font-size: 1rem;
-      }
-      .dropdown-item .d-title {
-        font-size: 0.7rem;
-        white-space: normal;
-      }
-      .dropdown-item .d-desc {
-        font-size: 0.6rem;
-        max-width: unset;
-      }
-    }
 
     .btn-mytelu-custom {
       background: #f97316;
@@ -1299,20 +1085,7 @@
       .partner-content p { font-size: 0.9rem; }
     }
 
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-12px) scale(0.96);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0) scale(1);
-      }
-    }
 
-    .dropdown-wrapper.open .dropdown-menu-custom {
-      animation: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
     /* ==================== BERITA CAROUSEL ==================== */
 .berita-carousel-container {
     position: relative;
@@ -1634,88 +1407,7 @@
   </style>
 </head>
 <body>
-<header class="header-glass">
-  <div class="container-custom">
-    <div class="navbar-glass">
-      <div class="logo-area">
-        <div class="logo-icon"><i class="fas fa-paintbrush-fine"></i></div>
-        <div class="logo-text">
-          <h5>Unit Kemahasiswaan</h5>
-          <span>Fakultas Industri Kreatif</span>
-        </div>
-      </div>
-      
-      <div class="nav-links" id="navLinks">
-        <a href="<?= base_url() ?>" class="active">Dashboard</a>
-        <a href="<?= base_url('berita') ?>">Informasi</a>
-        
-        <!-- ===== DROPDOWN LAYANAN - WIDE ===== -->
-        <div class="dropdown-wrapper" id="layananDropdown">
-          <a href="#" id="layananToggle">
-            Layanan <i class="fas fa-chevron-down"></i>
-          </a>
-          <div class="dropdown-menu-custom">
-            <div class="dropdown-grid">
-              <a href="<?= base_url('beasiswa') ?>" class="dropdown-item">
-                <div class="d-icon-wrapper">
-                  <i class="fas fa-graduation-cap"></i>
-                </div>
-                <div class="d-title">Pengajuan Beasiswa</div>
-                <div class="d-desc">Ajukan beasiswa prestasi & bantuan pendidikan</div>
-              </a>
-              <a href="<?= base_url('sertifikat') ?>" class="dropdown-item">
-                <div class="d-icon-wrapper">
-                  <i class="fas fa-certificate"></i>
-                </div>
-                <div class="d-title">Pengajuan Sertifikat</div>
-                <div class="d-desc">Cetak sertifikat prestasi mahasiswa & kegiatan</div>
-              </a>
-              <a href="<?= base_url('proposal') ?>" class="dropdown-item">
-                <div class="d-icon-wrapper">
-                  <i class="fas fa-clipboard-list"></i>
-                </div>
-                <div class="d-title">Pengajuan Proposal</div>
-                <div class="d-desc">Ajukan proposal kegiatan, PKM, & penelitian</div>
-              </a>
-              <!-- ===== PERUBAHAN: Layanan PPKPT diganti menjadi Pengajuan TAK ===== -->
-              <a href="<?= base_url('tak') ?>" class="dropdown-item">
-                <div class="d-icon-wrapper">
-                  <i class="fas fa-file-alt"></i>
-                </div>
-                <div class="d-title">Pengajuan TAK</div>
-                <div class="d-desc">Ajukan pengakuan kegiatan & kompetensi mahasiswa</div>
-              </a>
-              <a href="<?= base_url('alumni') ?>" class="dropdown-item">
-                <div class="d-icon-wrapper">
-                  <i class="fas fa-users"></i>
-                </div>
-                <div class="d-title">Layanan Alumni</div>
-                <div class="d-desc">Forum alumni, tracer study, & jejaring karir</div>
-              </a>
-            </div>
-          </div>
-        </div>
-        
-        <a href="<?= base_url('forum_alumni') ?>">Forum Alumni</a>
-      </div>
-      
-      <?php if (isset($user_data) && $user_data && $user_data['logged_in']): ?>
-  <a href="<?= base_url('dashboard/profile') ?>" class="btn-mytelu-custom">
-    <?php if (!empty($user_data['foto'])): ?>
-      <img src="<?= base_url('uploads/users/' . $user_data['foto']) ?>" class="user-avatar-small">
-    <?php else: ?>
-      <i class="fas fa-user-circle"></i>
-    <?php endif; ?>
-    <?= htmlspecialchars($user_data['nama']) ?>
-  </a>
-<?php else: ?>
-  <a href="<?= base_url('login') ?>" class="btn-mytelu-custom">
-    <i class="fas fa-sign-in-alt"></i> MyTeLU
-  </a>
-<?php endif; ?>
-    </div>
-  </div>
-</header>
+<?php $this->load->view('partials/navbar', ['active_menu' => 'dashboard']); ?>
 
 <main>
   <!-- Hero Section -->
@@ -2080,35 +1772,6 @@
     }
   }
 
-  // ==================== DROPDOWN LAYANAN ====================
-  function initDropdown() {
-    const dropdownToggle = document.getElementById('layananToggle');
-    const dropdownWrapper = document.getElementById('layananDropdown');
-    
-    if (dropdownToggle && dropdownWrapper) {
-      dropdownToggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        dropdownWrapper.classList.toggle('open');
-      });
-      document.addEventListener('click', function(e) {
-        if (!dropdownWrapper.contains(e.target)) {
-          dropdownWrapper.classList.remove('open');
-        }
-      });
-    }
-  }
-
-  // ==================== MOBILE TOGGLE ====================
-  function initMobileToggle() {
-    const mobileBtn = document.getElementById('mobileNavBtn');
-    const navLinksDiv = document.getElementById('navLinks');
-    if(mobileBtn) {
-      mobileBtn.addEventListener('click', () => {
-        navLinksDiv.classList.toggle('open');
-      });
-    }
-  }
-
   // ==================== CAROUSEL NAVIGATION (placeholder – actual init is below) ====================
   function initCarouselNav() { /* handled by the DOMContentLoaded block below */ }
 
@@ -2117,8 +1780,6 @@
     renderOrganizations();
     renderPartnerLogos();
     renderRecognitionLogos();
-    initDropdown();
-    initMobileToggle();
     
     window.addEventListener('scroll', checkAndAnimateNumbers);
     setTimeout(checkAndAnimateNumbers, 500);

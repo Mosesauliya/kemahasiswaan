@@ -35,16 +35,15 @@
 
         /* Header Navigation */
         .header-glass {
-            position: fixed;
-            top: 20px;
+            position: absolute;
+            top: 24px;
             left: 0;
             right: 0;
-            z-index: 1000;
-            padding: 0 24px;
+            z-index: 50;
         }
 
         .navbar-glass {
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0, 0, 0, 0.55);
             backdrop-filter: blur(20px);
             border-radius: 60px;
             padding: 12px 32px;
@@ -53,8 +52,6 @@
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            max-width: 1280px;
-            margin: 0 auto;
         }
 
         .logo-area {
@@ -93,6 +90,7 @@
             display: flex;
             gap: 2rem;
             align-items: center;
+            position: relative;
         }
 
         .nav-links a {
@@ -100,34 +98,20 @@
             text-decoration: none;
             font-weight: 600;
             font-size: 0.9rem;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 4px;
             transition: all 0.3s ease;
-            padding: 8px 0;
         }
 
-        .nav-links a.active {
-            color: #f97316;
+        .nav-links a.active, .nav-links a:hover {
+            border-bottom-color: #f97316;
         }
 
-        .nav-links a:hover {
-            color: #f97316;
-        }
 
-        .btn-logout {
-            background: rgba(255,255,255,0.15);
-            padding: 8px 28px;
-            border-radius: 40px;
-            font-weight: 700;
-            color: white;
-            transition: 0.2s;
-            text-decoration: none;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .btn-logout:hover {
-            background: #dc2626;
-            border-color: #dc2626;
-            transform: translateY(-2px);
-        }
+        .mobile-toggle { display: none; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 8px 14px; font-size: 1.4rem; color: white; cursor: pointer; }
+        .btn-mytelu-custom { background: #f97316; padding: 8px 28px; border-radius: 40px; font-weight: 700; color: white; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
+        .btn-mytelu-custom:hover { background: #ea580c; color: white; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3); }
+        .user-avatar-small { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
 
         /* Main Container */
         .profile-container {
@@ -601,15 +585,19 @@
             
             .navbar-glass {
                 flex-direction: column;
-                gap: 16px;
+                align-items: stretch;
             }
             
             .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 1rem;
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 12px;
+                gap: 16px;
             }
-            
+            .nav-links.open { display: flex !important; }
+            .mobile-toggle { display: block; align-self: flex-end; }
+
             .welcome-banner {
                 padding: 24px;
             }
@@ -649,29 +637,7 @@
 </head>
 <body>
 
-<!-- Header Navigation -->
-<header class="header-glass">
-    <div class="navbar-glass">
-        <div class="logo-area">
-            <div class="logo-icon"><i class="fas fa-paintbrush-fine"></i></div>
-            <div class="logo-text">
-                <h5>Unit Kemahasiswaan</h5>
-                <span>Fakultas Industri Kreatif</span>
-            </div>
-        </div>
-        
-        <div class="nav-links">
-            <a href="<?= base_url() ?>">Dashboard</a>
-            <a href="<?= base_url('berita') ?>">Informasi</a>
-            <a href="<?= base_url('profile') ?>" class="active">Profil Saya</a>
-            <a href="<?= base_url('forum_alumni') ?>">Forum Alumni</a>
-        </div>
-        
-        <a href="<?= base_url('logout') ?>" class="btn-logout">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
-    </div>
-</header>
+<?php $this->load->view('partials/navbar', ['active_menu' => 'dashboard']); ?>
 
 <main>
     <div class="profile-container">

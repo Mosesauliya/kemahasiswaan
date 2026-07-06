@@ -203,70 +203,21 @@
             width: 100%;
         }
 
-        /* Dropdown Menu */
-        .nav-item-dropdown {
-            position: relative;
-        }
-        
-        .dropdown-menu-custom {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 0.8rem 0;
-            min-width: 240px;
-            border: 1px solid rgba(255,255,255,0.15);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .nav-item-dropdown:hover .dropdown-menu-custom {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .dropdown-menu-custom a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            color: white;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-        
-        .dropdown-menu-custom a::after {
-            display: none;
-        }
-        
-        .dropdown-menu-custom a:hover {
-            background: rgba(249,115,22,0.3);
-            color: var(--orange);
-            padding-left: 28px;
-        }
-        
-        .dropdown-menu-custom i {
-            width: 24px;
-            font-size: 1.1rem;
-            color: var(--orange);
-        }
-        
-        .dropdown-toggle-icon {
-            margin-left: 6px;
-            font-size: 0.7rem;
-            transition: transform 0.3s ease;
-        }
-        
-        .nav-item-dropdown:hover .dropdown-toggle-icon {
-            transform: rotate(180deg);
-        }
+        /* Dropdown Layanan - Dashboard Style */
+        .dropdown-wrapper { position: relative; }
+        .dropdown-wrapper > a { display: flex; align-items: center; gap: 8px; padding: 6px 0; color: white; text-decoration: none; font-weight: 600; font-size: 0.9rem; border-bottom: 2px solid transparent; padding-bottom: 4px; transition: all 0.3s ease; }
+        .dropdown-wrapper > a i { font-size: 0.7rem; transition: transform 0.3s ease; }
+        .dropdown-wrapper.open > a i { transform: rotate(180deg); }
+        .dropdown-wrapper > a.active, .dropdown-wrapper > a:hover { border-bottom-color: #f97316; }
+        .dropdown-menu-custom { position: absolute; top: calc(100% + 16px); left: 50%; transform: translateX(-50%) translateY(-12px); background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(30px); border-radius: 24px; padding: 16px 20px; min-width: 820px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); opacity: 0; visibility: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100; }
+        .dropdown-wrapper.open .dropdown-menu-custom { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .dropdown-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .dropdown-item { padding: 24px 16px; text-align: center; border-radius: 16px; transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: #1f2937; background: rgba(249, 115, 22, 0.02); min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .dropdown-item:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(249, 115, 22, 0.15); background: #fff7ed; }
+        .dropdown-item .d-icon-wrapper { width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: #f8fafc; }
+        .dropdown-item .d-icon-wrapper i { font-size: 1.6rem; color: #f97316; }
+        .dropdown-item .d-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: #1f2937; }
+        .dropdown-item .d-desc { font-size: 0.75rem; color: #6b7280; line-height: 1.5; font-weight: 400; max-width: 140px; margin: 0 auto; }
 
         .btn-mytelu-custom {
             background: linear-gradient(105deg, var(--orange), var(--orange-dark));
@@ -964,41 +915,17 @@
 
         /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
-            .header-glass {
-                top: 12px;
-            }
-            .navbar-glass {
-                padding: 12px 20px;
-                border-radius: 40px;
-            }
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                align-items: center;
-                margin-top: 16px;
-                gap: 16px;
-                width: 100%;
-            }
-            .nav-links.open {
-                display: flex !important;
-            }
-            .mobile-toggle {
-                display: block;
-            }
-            .dropdown-menu-custom {
-                position: static;
-                opacity: 1;
-                visibility: visible;
-                transform: none;
-                display: none;
-                background: transparent;
-                backdrop-filter: none;
-                padding-left: 20px;
-                border: none;
-            }
-            .dropdown-menu-custom.show-mobile {
-                display: block;
-            }
+            .navbar-glass { flex-direction: column; align-items: stretch; }
+            .nav-links { display: none; flex-direction: column; align-items: center; margin-top: 12px; gap: 16px; }
+            .nav-links.open { display: flex !important; }
+            .mobile-toggle { display: block; align-self: flex-end; }
+            .dropdown-menu-custom { min-width: unset; width: 95vw; max-width: 380px; left: 50%; padding: 10px; }
+            .dropdown-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
+            .dropdown-item { padding: 12px 8px; min-height: 100px; }
+            .dropdown-item .d-icon-wrapper { width: 36px; height: 36px; margin-bottom: 6px; }
+            .dropdown-item .d-icon-wrapper i { font-size: 1rem; }
+            .dropdown-item .d-title { font-size: 0.7rem; white-space: normal; }
+            .dropdown-item .d-desc { font-size: 0.6rem; max-width: unset; }
             .hero-tak {
                 padding: 120px 0 60px;
             }
@@ -1057,60 +984,7 @@
     </div>
 </div>
 
-<!-- ========== HEADER GLASS ========== -->
-<header class="header-glass" id="mainHeader">
-    <div class="container-custom">
-        <div class="navbar-glass" id="navbar">
-            <div class="logo-area">
-                <div class="logo-icon"><i class="fas fa-palette"></i></div>
-                <div class="logo-text">
-                    <h5>Unit Kemahasiswaan</h5>
-                    <span>Fakultas Industri Kreatif</span>
-                </div>
-            </div>
-            
-            <div class="nav-links" id="navLinks">
-                <a href="<?= base_url('dashboard') ?>">Dashboard</a>
-                <a href="<?= base_url('berita') ?>">Informasi</a>
-                
-                <!-- Dropdown Layanan -->
-                <div class="nav-item-dropdown">
-                    <a href="#">Layanan <i class="fas fa-chevron-down dropdown-toggle-icon"></i></a>
-                    <div class="dropdown-menu-custom">
-                        <a href="<?= base_url('sertifikat') ?>"><i class="fas fa-certificate"></i> Pengajuan Sertifikat</a>
-                        <a href="<?= base_url('proposal') ?>"><i class="fas fa-file-alt"></i> Pengajuan Proposal</a>
-                        <a href="<?= base_url('beasiswa') ?>"><i class="fas fa-graduation-cap"></i> Pengajuan Beasiswa</a>
-                        <a href="<?= base_url('tak') ?>" class="active"><i class="fas fa-clipboard-list"></i> Pengajuan TAK</a>
-                        <a href="<?= base_url('forum_alumni') ?>"><i class="fas fa-users"></i> Layanan Alumni</a>
-                    </div>
-                </div>
-                
-                <a href="#">Forum Alumni</a>
-            </div>
-            
-            <?php 
-            // Safe user data check
-            $is_logged_in = isset($user_data) && is_array($user_data) && isset($user_data['logged_in']) && $user_data['logged_in'] === true;
-            if($is_logged_in): 
-            ?>
-                <a href="<?= base_url('dashboard/profile') ?>" class="btn-mytelu-custom">
-                    <?php if(!empty($user_data['foto'])): ?>
-                        <img src="<?= base_url('uploads/users/' . $user_data['foto']) ?>" class="user-avatar-small">
-                    <?php else: ?>
-                        <i class="fas fa-user-circle"></i>
-                    <?php endif; ?>
-                    <?= isset($user_data['nama']) ? htmlspecialchars($user_data['nama']) : 'User' ?>
-                </a>
-            <?php else: ?>
-                <a href="<?= base_url('login') ?>" class="btn-mytelu-custom">
-                    <i class="fas fa-sign-in-alt"></i> MyTeLU
-                </a>
-            <?php endif; ?>
-            
-            <button class="mobile-toggle" id="mobileNavBtn"><i class="fas fa-bars"></i></button>
-        </div>
-    </div>
-</header>
+<?php $this->load->view('partials/navbar', ['active_menu' => 'layanan']); ?>
 
 <!-- ========== HERO SECTION ========== -->
 <section class="hero-tak">
@@ -1419,36 +1293,6 @@
 <script>
     // Initialize AOS
     AOS.init({ duration: 800, once: true, offset: 50 });
-
-    // Mobile toggle
-    const mobileBtn = document.getElementById('mobileNavBtn');
-    const navLinksDiv = document.getElementById('navLinks');
-    if (mobileBtn) {
-        mobileBtn.addEventListener('click', () => {
-            navLinksDiv.classList.toggle('open');
-            
-            // Handle mobile dropdown
-            if(navLinksDiv.classList.contains('open')) {
-                const dropdown = document.querySelector('.nav-item-dropdown .dropdown-menu-custom');
-                if(dropdown) dropdown.classList.add('show-mobile');
-            } else {
-                const dropdown = document.querySelector('.nav-item-dropdown .dropdown-menu-custom');
-                if(dropdown) dropdown.classList.remove('show-mobile');
-            }
-        });
-    }
-
-    // Mobile dropdown toggle
-    if(window.innerWidth <= 768) {
-        const dropdownToggle = document.querySelector('.nav-item-dropdown > a');
-        if(dropdownToggle) {
-            dropdownToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const dropdownMenu = document.querySelector('.nav-item-dropdown .dropdown-menu-custom');
-                if(dropdownMenu) dropdownMenu.classList.toggle('show-mobile');
-            });
-        }
-    }
 
     // Navbar scroll effect
     window.addEventListener('scroll', () => {

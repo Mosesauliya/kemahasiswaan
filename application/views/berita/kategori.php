@@ -99,43 +99,7 @@
 </head>
 <body>
 
-<header class="header-glass">
-  <div class="container-custom">
-    <div class="navbar-glass">
-      <div class="logo-area">
-        <div class="logo-icon"><i class="fas fa-paintbrush-fine"></i></div>
-        <div class="logo-text">
-          <h5>Unit Kemahasiswaan</h5>
-          <span>Fakultas Industri Kreatif</span>
-        </div>
-      </div>
-      
-      <div class="nav-links" id="navLinks">
-        <a href="<?= base_url('dashboard') ?>">Dashboard</a>
-        <a href="<?= base_url('berita') ?>" class="active">Informasi</a>
-        <a href="#">Layanan</a>
-        <a href="#">Forum Alumni</a>
-      </div>
-      
-      <?php if(isset($user_data) && $user_data && $user_data['logged_in']): ?>
-        <a href="<?= base_url('dashboard/profile') ?>" class="btn-mytelu-custom">
-          <?php if(!empty($user_data['foto'])): ?>
-            <img src="<?= base_url('uploads/users/' . $user_data['foto']) ?>" class="user-avatar-small">
-          <?php else: ?>
-            <i class="fas fa-user-circle"></i>
-          <?php endif; ?>
-          <?= htmlspecialchars($user_data['nama']) ?>
-        </a>
-      <?php else: ?>
-        <a href="<?= base_url('login') ?>" class="btn-mytelu-custom">
-          <i class="fas fa-sign-in-alt"></i> MyTeLU
-        </a>
-      <?php endif; ?>
-      
-      <button class="mobile-toggle" id="mobileNavBtn"><i class="fas fa-bars"></i></button>
-    </div>
-  </div>
-</header>
+<?php $this->load->view('partials/navbar', ['active_menu' => 'informasi']); ?>
 
 <main>
   <section class="hero-berita">
@@ -290,11 +254,6 @@
 </footer>
 
 <script>
-  const mobileBtn = document.getElementById('mobileNavBtn');
-  const navLinks = document.getElementById('navLinks');
-  if(mobileBtn) {
-    mobileBtn.addEventListener('click', () => { navLinks.classList.toggle('open'); });
-  }
 </script>
 </body>
 </html>

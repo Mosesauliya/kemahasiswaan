@@ -553,32 +553,17 @@
         }
 
         @media (max-width: 768px) {
-            .navbar-glass {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                align-items: center;
-                margin-top: 12px;
-                gap: 16px;
-            }
-            .nav-links.open {
-                display: flex !important;
-            }
-            .mobile-toggle {
-                display: block;
-                align-self: flex-end;
-            }
-            .dropdown-menu-custom {
-                left: 50%;
-                width: 95vw;
-                max-width: 380px;
-            }
-            .dropdown-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+            .navbar-glass { flex-direction: column; align-items: stretch; }
+            .nav-links { display: none; flex-direction: column; align-items: center; margin-top: 12px; gap: 16px; }
+            .nav-links.open { display: flex !important; }
+            .mobile-toggle { display: block; align-self: flex-end; }
+            .dropdown-menu-custom { min-width: unset; width: 95vw; max-width: 380px; left: 50%; padding: 10px; }
+            .dropdown-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
+            .dropdown-item { padding: 12px 8px; min-height: 100px; }
+            .dropdown-item .d-icon-wrapper { width: 36px; height: 36px; margin-bottom: 6px; }
+            .dropdown-item .d-icon-wrapper i { font-size: 1rem; }
+            .dropdown-item .d-title { font-size: 0.7rem; white-space: normal; }
+            .dropdown-item .d-desc { font-size: 0.6rem; max-width: unset; }
             .create-container {
                 padding: 80px 16px 40px;
             }
@@ -596,82 +581,7 @@
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header-glass">
-    <div class="container-custom">
-        <div class="navbar-glass">
-            <div class="logo-area">
-                <div class="logo-icon"><i class="fas fa-paintbrush-fine"></i></div>
-                <div class="logo-text">
-                    <h5>Unit Kemahasiswaan</h5>
-                    <span>Fakultas Industri Kreatif</span>
-                </div>
-            </div>
-            
-            <div class="mobile-toggle" id="mobileNavBtn">
-                <i class="fas fa-bars"></i>
-            </div>
-            
-            <div class="nav-links" id="navLinks">
-                <a href="<?= base_url() ?>">Dashboard</a>
-                <a href="<?= base_url('berita') ?>">Informasi</a>
-                
-                <!-- Dropdown Layanan -->
-                <div class="dropdown-wrapper" id="layananDropdown">
-                    <a href="#" id="layananToggle">
-                        Layanan <i class="fas fa-chevron-down"></i>
-                    </a>
-                    <div class="dropdown-menu-custom">
-                        <div class="dropdown-grid">
-                            <a href="<?= base_url('beasiswa') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-graduation-cap"></i></div>
-                                <div class="d-title">Pengajuan Beasiswa</div>
-                                <div class="d-desc">Ajukan beasiswa prestasi & bantuan pendidikan</div>
-                            </a>
-                            <a href="<?= base_url('sertifikat') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-certificate"></i></div>
-                                <div class="d-title">Pengajuan Sertifikat</div>
-                                <div class="d-desc">Cetak sertifikat prestasi mahasiswa & kegiatan</div>
-                            </a>
-                            <a href="<?= base_url('proposal') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-clipboard-list"></i></div>
-                                <div class="d-title">Pengajuan Proposal</div>
-                                <div class="d-desc">Ajukan proposal kegiatan, PKM, & penelitian</div>
-                            </a>
-                            <a href="<?= base_url('tak') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-file-alt"></i></div>
-                                <div class="d-title">Pengajuan TAK</div>
-                                <div class="d-desc">Ajukan pengakuan kegiatan & kompetensi mahasiswa</div>
-                            </a>
-                            <a href="<?= base_url('forum_alumni') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-users"></i></div>
-                                <div class="d-title">Layanan Alumni</div>
-                                <div class="d-desc">Forum alumni, tracer study, & jejaring karir</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <a href="<?= base_url('forum_alumni') ?>" class="active">Forum Alumni</a>
-            </div>
-            
-            <?php if (isset($user_data) && $user_data && $user_data['logged_in']): ?>
-                <a href="<?= base_url('dashboard/profile') ?>" class="btn-mytelu-custom">
-                    <?php if (!empty($user_data['foto'])): ?>
-                        <img src="<?= base_url('uploads/users/' . $user_data['foto']) ?>" class="user-avatar-small">
-                    <?php else: ?>
-                        <i class="fas fa-user-circle"></i>
-                    <?php endif; ?>
-                    <?= htmlspecialchars($user_data['nama']) ?>
-                </a>
-            <?php else: ?>
-                <a href="<?= base_url('login') ?>" class="btn-mytelu-custom">
-                    <i class="fas fa-sign-in-alt"></i> MyTeLU
-                </a>
-            <?php endif; ?>
-        </div>
-    </div>
-</header>
+<?php $this->load->view('partials/navbar', ['active_menu' => 'forum_alumni']); ?>
 
 <!-- MAIN CONTENT CREATE POST -->
 <div class="create-container">
@@ -814,34 +724,7 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-    // Dropdown functionality
-    function initDropdown() {
-        const dropdownToggle = document.getElementById('layananToggle');
-        const dropdownWrapper = document.getElementById('layananDropdown');
-        
-        if (dropdownToggle && dropdownWrapper) {
-            dropdownToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                dropdownWrapper.classList.toggle('open');
-            });
-            document.addEventListener('click', function(e) {
-                if (!dropdownWrapper.contains(e.target)) {
-                    dropdownWrapper.classList.remove('open');
-                }
-            });
-        }
-    }
-    
-    // Mobile toggle
-    function initMobileToggle() {
-        const mobileBtn = document.getElementById('mobileNavBtn');
-        const navLinksDiv = document.getElementById('navLinks');
-        if(mobileBtn) {
-            mobileBtn.addEventListener('click', () => {
-                navLinksDiv.classList.toggle('open');
-            });
-        }
-    }
+
     
     // Media Type Selector
     const textTypeBtn = document.getElementById('textTypeBtn');
@@ -966,8 +849,6 @@
     
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
-        initDropdown();
-        initMobileToggle();
         validateForm();
     });
 </script>

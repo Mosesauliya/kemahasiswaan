@@ -54,25 +54,15 @@
     .logo-icon { width: 48px; height: 48px; background: linear-gradient(145deg, var(--orange), var(--orange-dark)); border-radius: 18px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.4rem; box-shadow: 0 6px 12px rgba(249,115,22,0.3); }
     .logo-text h5 { font-size: 0.9rem; font-weight: 800; color: white; margin: 0; letter-spacing: -0.3px; }
     .logo-text span { font-size: 0.7rem; color: rgba(255,255,255,0.85); }
-    .nav-links { display: flex; gap: 2rem; align-items: center; }
-    .nav-links a { color: white; text-decoration: none; font-weight: 600; font-size: 0.9rem; position: relative; padding-bottom: 4px; }
-    .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 2px; background: var(--orange); transition: 0.3s ease; }
-    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; position: relative; }
+    .nav-links a { color: white; text-decoration: none; font-weight: 600; font-size: 0.9rem; position: relative; padding-bottom: 4px; border-bottom: 2px solid transparent; transition: all 0.3s ease; }
+    .nav-links a.active, .nav-links a:hover { border-bottom-color: #f97316; }
+    .nav-links a::after { display: none; }
 
-    /* Dropdown Menu */
-    .nav-item-dropdown { position: relative; }
-    .dropdown-menu-custom { position: absolute; top: 100%; left: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); border-radius: 20px; padding: 0.8rem 0; min-width: 240px; border: 1px solid rgba(255,255,255,0.15); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000; }
-    .nav-item-dropdown:hover .dropdown-menu-custom { opacity: 1; visibility: visible; transform: translateY(0); }
-    .dropdown-menu-custom a { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: white; text-decoration: none; transition: all 0.2s ease; font-weight: 500; border-bottom: none !important; }
-    .dropdown-menu-custom a::after { display: none; }
-    .dropdown-menu-custom a:hover { background: rgba(249,115,22,0.3); color: var(--orange); padding-left: 28px; }
-    .dropdown-menu-custom i { width: 24px; font-size: 1.1rem; color: var(--orange); }
-    .dropdown-toggle-icon { margin-left: 6px; font-size: 0.7rem; transition: transform 0.3s ease; }
-    .nav-item-dropdown:hover .dropdown-toggle-icon { transform: rotate(180deg); }
 
-    .btn-mytelu-custom { background: linear-gradient(105deg, var(--orange), var(--orange-dark)); padding: 8px 28px; border-radius: 40px; font-weight: 700; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
-    .btn-mytelu-custom:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(249,115,22,0.4); color: white; }
-    .user-avatar-small { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: white; }
+    .btn-mytelu-custom { background: #f97316; padding: 8px 28px; border-radius: 40px; font-weight: 700; color: white; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
+    .btn-mytelu-custom:hover { background: #ea580c; color: white; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3); }
+    .user-avatar-small { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
     .mobile-toggle { display: none; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 8px 14px; font-size: 1.4rem; color: white; cursor: pointer; }
 
     /* HERO SECTION */
@@ -163,15 +153,14 @@
 
     /* RESPONSIVE */
     @media (max-width: 768px) {
-      .navbar-glass { flex-direction: row; flex-wrap: wrap; padding: 12px 20px; }
-      .nav-links { display: none; width: 100%; flex-direction: column; margin-top: 12px; gap: 16px; align-items: flex-start; }
+      .navbar-glass { flex-direction: column; align-items: stretch; }
+      .nav-links { display: none; flex-direction: column; align-items: center; margin-top: 12px; gap: 16px; }
       .nav-links.open { display: flex !important; }
-      .mobile-toggle { display: block; }
+      .mobile-toggle { display: block; align-self: flex-end; }
       .hero-berita { padding: 120px 0 60px; }
       .hero-berita h1 { font-size: 2rem; }
-      .dropdown-menu-custom { position: static; opacity: 1; visibility: visible; transform: none; display: none; background: transparent; backdrop-filter: none; padding-left: 20px; border: none; }
-      .dropdown-menu-custom.show-mobile { display: block; }
-      .nav-item-dropdown .dropdown-toggle-icon { display: inline-block; }
+      
+
       .back-to-top { bottom: 20px; right: 20px; width: 40px; height: 40px; }
     }
   </style>
@@ -183,55 +172,7 @@
   <i class="fas fa-arrow-up"></i>
 </button>
 
-<header class="header-glass">
-  <div class="container-custom">
-    <div class="navbar-glass" id="navbar">
-      <div class="logo-area">
-        <div class="logo-icon"><i class="fas fa-palette"></i></div>
-        <div class="logo-text">
-          <h5>Unit Kemahasiswaan</h5>
-          <span>Fakultas Industri Kreatif</span>
-        </div>
-      </div>
-      
-      <div class="nav-links" id="navLinks">
-        <a href="<?= base_url('dashboard') ?>">Dashboard</a>
-        <a href="<?= base_url('berita') ?>" class="active">Informasi</a>
-        
-        <!-- Dropdown Layanan -->
-        <div class="nav-item-dropdown">
-          <a href="#">Layanan <i class="fas fa-chevron-down dropdown-toggle-icon"></i></a>
-          <div class="dropdown-menu-custom">
-            <a href="<?= base_url('layanan/beasiswa') ?>"><i class="fas fa-graduation-cap"></i> Pengajuan Beasiswa</a>
-            <a href="<?= base_url('layanan/sertifikat') ?>"><i class="fas fa-certificate"></i> Pengajuan Sertifikat</a>
-            <a href="<?= base_url('layanan/proposal') ?>"><i class="fas fa-file-alt"></i> Pengajuan Proposal</a>
-            <a href="<?= base_url('layanan/tak') ?>"><i class="fas fa-clipboard-list"></i> Pengajuan TAK</a>
-            <a href="<?= base_url('layanan/forum_alumni') ?>"><i class="fas fa-users"></i> Layanan Alumni</a>
-          </div>
-        </div>
-        
-        <a href="#">Forum Alumni</a>
-      </div>
-      
-      <?php if(isset($user_data) && $user_data && $user_data['logged_in']): ?>
-        <a href="<?= base_url('dashboard/profile') ?>" class="btn-mytelu-custom">
-          <?php if(!empty($user_data['foto'])): ?>
-            <img src="<?= base_url('uploads/users/' . $user_data['foto']) ?>" class="user-avatar-small">
-          <?php else: ?>
-            <i class="fas fa-user-circle"></i>
-          <?php endif; ?>
-          <?= htmlspecialchars($user_data['nama']) ?>
-        </a>
-      <?php else: ?>
-        <a href="<?= base_url('login') ?>" class="btn-mytelu-custom">
-          <i class="fas fa-sign-in-alt"></i> MyTeLU
-        </a>
-      <?php endif; ?>
-      
-      <button class="mobile-toggle" id="mobileNavBtn"><i class="fas fa-bars"></i></button>
-    </div>
-  </div>
-</header>
+<?php $this->load->view('partials/navbar', ['active_menu' => 'informasi']); ?>
 
 <main>
   <section class="hero-berita">
@@ -448,46 +389,6 @@
 <script>
   // Initialize AOS
   AOS.init({ duration: 800, once: true, offset: 50 });
-
-  // Mobile toggle
-  const mobileBtn = document.getElementById('mobileNavBtn');
-  const navLinks = document.getElementById('navLinks');
-  if(mobileBtn) {
-    mobileBtn.addEventListener('click', () => { 
-      navLinks.classList.toggle('open');
-      
-      // Handle mobile dropdown
-      if(navLinks.classList.contains('open')) {
-        const dropdown = document.querySelector('.nav-item-dropdown .dropdown-menu-custom');
-        if(dropdown) dropdown.classList.add('show-mobile');
-      } else {
-        const dropdown = document.querySelector('.nav-item-dropdown .dropdown-menu-custom');
-        if(dropdown) dropdown.classList.remove('show-mobile');
-      }
-    });
-  }
-
-  // Mobile dropdown toggle
-  if(window.innerWidth <= 768) {
-    const dropdownToggle = document.querySelector('.nav-item-dropdown > a');
-    if(dropdownToggle) {
-      dropdownToggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        const dropdownMenu = document.querySelector('.nav-item-dropdown .dropdown-menu-custom');
-        if(dropdownMenu) dropdownMenu.classList.toggle('show-mobile');
-      });
-    }
-  }
-
-  // Navbar scroll effect
-  window.addEventListener('scroll', () => {
-    const navbar = document.getElementById('navbar');
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-  });
 
   // Back to Top Button
   const backToTopBtn = document.getElementById('backToTopBtn');

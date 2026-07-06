@@ -108,105 +108,6 @@
             border-bottom-color: #f97316;
         }
 
-        /* Dropdown Layanan */
-        .dropdown-wrapper {
-            position: relative;
-        }
-
-        .dropdown-wrapper > a {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 0;
-        }
-
-        .dropdown-wrapper > a i {
-            font-size: 0.7rem;
-            transition: transform 0.3s ease;
-        }
-
-        .dropdown-wrapper.open > a i {
-            transform: rotate(180deg);
-        }
-
-        .dropdown-menu-custom {
-            position: absolute;
-            top: calc(100% + 16px);
-            left: 50%;
-            transform: translateX(-50%) translateY(-12px);
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(30px);
-            border-radius: 24px;
-            padding: 16px 20px;
-            min-width: 700px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 100;
-        }
-
-        .dropdown-wrapper.open .dropdown-menu-custom {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .dropdown-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-
-        .dropdown-item {
-            padding: 24px 16px;
-            text-align: center;
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: #1f2937;
-            background: rgba(249, 115, 22, 0.02);
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .dropdown-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px rgba(249, 115, 22, 0.15);
-            background: #fff7ed;
-        }
-
-        .dropdown-item .d-icon-wrapper {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto 12px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8fafc;
-        }
-
-        .dropdown-item .d-icon-wrapper i {
-            font-size: 1.6rem;
-            color: #f97316;
-        }
-
-        .dropdown-item .d-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .dropdown-item .d-desc {
-            font-size: 0.75rem;
-            color: #6b7280;
-        }
 
         .btn-mytelu-custom {
             background: #f97316;
@@ -863,17 +764,8 @@
             }
         }
         
-        @media (max-width: 1024px) {
-            .dropdown-menu-custom {
-                min-width: unset;
-                width: 90vw;
-                max-width: 600px;
-            }
-            .dropdown-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
+
+
         @media (max-width: 768px) {
             .navbar-glass {
                 flex-direction: column;
@@ -893,14 +785,7 @@
                 display: block;
                 align-self: flex-end;
             }
-            .dropdown-menu-custom {
-                left: 50%;
-                width: 95vw;
-                max-width: 380px;
-            }
-            .dropdown-grid {
-                grid-template-columns: 1fr;
-            }
+
             .forum-container {
                 padding: 80px 16px 40px;
             }
@@ -916,77 +801,7 @@
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header-glass">
-    <div class="container-custom">
-        <div class="navbar-glass">
-            <div class="logo-area">
-                <div class="logo-icon"><i class="fas fa-paintbrush-fine"></i></div>
-                <div class="logo-text">
-                    <h5>Unit Kemahasiswaan</h5>
-                    <span>Fakultas Industri Kreatif</span>
-                </div>
-            </div>
-            
-            <div class="mobile-toggle" id="mobileNavBtn">
-                <i class="fas fa-bars"></i>
-            </div>
-            
-            <div class="nav-links" id="navLinks">
-                <a href="<?= base_url() ?>">Dashboard</a>
-                <a href="<?= base_url('berita') ?>">Informasi</a>
-                
-                <!-- DROPDOWN LAYANAN -->
-                <div class="dropdown-wrapper" id="layananDropdown">
-                    <a href="#" id="layananToggle">
-                        Layanan <i class="fas fa-chevron-down"></i>
-                    </a>
-                    <div class="dropdown-menu-custom">
-                        <div class="dropdown-grid">
-                            <a href="<?= base_url('beasiswa') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-graduation-cap"></i></div>
-                                <div class="d-title">Pengajuan Beasiswa</div>
-                                <div class="d-desc">Ajukan beasiswa prestasi & bantuan pendidikan</div>
-                            </a>
-                            <a href="<?= base_url('sertifikat') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-certificate"></i></div>
-                                <div class="d-title">Pengajuan Sertifikat</div>
-                                <div class="d-desc">Cetak sertifikat prestasi mahasiswa & kegiatan</div>
-                            </a>
-                            <a href="<?= base_url('proposal') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-clipboard-list"></i></div>
-                                <div class="d-title">Pengajuan Proposal</div>
-                                <div class="d-desc">Ajukan proposal kegiatan, PKM, & penelitian</div>
-                            </a>
-                            <a href="<?= base_url('tak') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-file-alt"></i></div>
-                                <div class="d-title">Pengajuan TAK</div>
-                                <div class="d-desc">Ajukan pengakuan kegiatan & kompetensi mahasiswa</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <a href="<?= base_url('forum_alumni') ?>" class="active">Forum Alumni</a>
-            </div>
-            
-            <?php if (isset($user_data) && $user_data && $user_data['logged_in']): ?>
-                <a href="<?= base_url('dashboard/profile') ?>" class="btn-mytelu-custom">
-                    <?php if (!empty($user_data['foto'])): ?>
-                        <img src="<?= base_url('uploads/users/' . $user_data['foto']) ?>" class="user-avatar-small">
-                    <?php else: ?>
-                        <i class="fas fa-user-circle"></i>
-                    <?php endif; ?>
-                    <?= htmlspecialchars($user_data['nama']) ?>
-                </a>
-            <?php else: ?>
-                <a href="<?= base_url('login') ?>" class="btn-mytelu-custom">
-                    <i class="fas fa-sign-in-alt"></i> MyTeLU
-                </a>
-            <?php endif; ?>
-        </div>
-    </div>
-</header>
+<?php $this->load->view('partials/navbar', ['active_menu' => 'forum_alumni']); ?>
 
 <!-- MAIN CONTENT FORUM ALUMNI -->
 <div class="forum-container">
@@ -1177,35 +992,6 @@
 <script>
     let currentPostId = null;
     let currentLikesPostId = null;
-    
-    // Dropdown functionality
-    function initDropdown() {
-        const dropdownToggle = document.getElementById('layananToggle');
-        const dropdownWrapper = document.getElementById('layananDropdown');
-        
-        if (dropdownToggle && dropdownWrapper) {
-            dropdownToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                dropdownWrapper.classList.toggle('open');
-            });
-            document.addEventListener('click', function(e) {
-                if (!dropdownWrapper.contains(e.target)) {
-                    dropdownWrapper.classList.remove('open');
-                }
-            });
-        }
-    }
-    
-    // Mobile toggle
-    function initMobileToggle() {
-        const mobileBtn = document.getElementById('mobileNavBtn');
-        const navLinksDiv = document.getElementById('navLinks');
-        if(mobileBtn) {
-            mobileBtn.addEventListener('click', () => {
-                navLinksDiv.classList.toggle('open');
-            });
-        }
-    }
     
     // Toast notification
     function showToast(message, type = 'success') {
@@ -1604,10 +1390,6 @@
     
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
-        initDropdown();
-        initMobileToggle();
-        
-        // Test AJAX connection
         console.log('Forum Alumni page loaded successfully');
     });
 </script>
