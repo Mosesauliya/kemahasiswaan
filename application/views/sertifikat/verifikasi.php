@@ -84,6 +84,49 @@
         .footer-note {
             text-align: center; font-size: 0.75rem; color: #94a3b8; margin-top: 1rem;
         }
+
+        /* Responsive Styles */
+        @media (max-width: 576px) {
+            body {
+                padding: 1rem;
+            }
+            .card {
+                border-radius: 20px;
+            }
+            .card-header {
+                padding: 2rem 1.5rem 1.5rem;
+            }
+            .card-header h1 {
+                font-size: 1.4rem;
+            }
+            .card-body {
+                padding: 1.5rem 1.25rem 1.75rem;
+            }
+            .info-row {
+                flex-direction: column;
+                gap: 0.25rem;
+                align-items: flex-start;
+                padding: 0.8rem 0;
+            }
+            .info-label {
+                min-width: auto;
+                width: 100%;
+                font-size: 0.75rem;
+            }
+            .info-value {
+                width: 100%;
+                font-size: 0.9rem;
+            }
+            .nomor-badge {
+                font-size: 0.9rem;
+                padding: 4px 12px;
+                word-break: break-all;
+            }
+            .qr-section {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+        }
     </style>
 </head>
 <body>

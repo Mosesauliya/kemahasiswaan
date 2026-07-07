@@ -40,6 +40,16 @@ class Berita extends CI_Controller
         // Get stats
         $data['stats'] = $this->Berita_model->get_stats();
         
+        // Pagination
+        $page = $this->input->get('page') ?: 1;
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+        
+        $data['berita'] = $this->Berita_model->get_all_berita($limit, $offset, null, 'publish');
+        $data['total'] = $this->Berita_model->count_berita(null, 'publish');
+        $data['total_pages'] = ceil($data['total'] / $limit);
+        $data['current_page'] = $page;
+        
         // Data user dari session (jika login)
         $is_logged_in = $this->session->userdata('logged_in');
         if ($is_logged_in) {
@@ -233,13 +243,13 @@ class Berita extends CI_Controller
         
         $this->db->from('berita');
         $this->db->where('status', 'publish');
-        $this->db->where("DATE_FORMAT(published_at, '%Y-%m')", $year . '-' . $month);
+        $this->db->where("DATE_FORMAT(published_at, '%Y-%m') =", $year . '-' . $month);
         $total = $this->db->count_all_results();
         
         $this->db->select('id, judul, slug, kategori, ringkasan, gambar, published_at');
         $this->db->from('berita');
         $this->db->where('status', 'publish');
-        $this->db->where("DATE_FORMAT(published_at, '%Y-%m')", $year . '-' . $month);
+        $this->db->where("DATE_FORMAT(published_at, '%Y-%m') =", $year . '-' . $month);
         $this->db->order_by('published_at', 'DESC');
         $this->db->limit($limit, $offset);
         $query = $this->db->get();

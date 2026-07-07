@@ -909,7 +909,7 @@
                                         </tr>
                                         <tr>
                                             <th>Tanggal Kegiatan</th>
-                                            <td>${p.tanggal_kegiatan ? new Date(p.tanggal_kegiatan).toLocaleDateString('id-ID') : '-'}</td>
+                                            <td>${(p.tanggal_kegiatan && p.tanggal_kegiatan !== '0000-00-00') ? new Date(p.tanggal_kegiatan).toLocaleDateString('id-ID') : '-'}</td>
                                         </tr>
                                         <tr>
                                             <th>Lokasi</th>
@@ -937,10 +937,10 @@
                                         </tr>
                                         <tr>
                                             <th>Tanggal Pengajuan</th>
-                                            <td>${p.submitted_at ? new Date(p.submitted_at).toLocaleString('id-ID') : '-'}</td>
+                                            <td>${(p.submitted_at && p.submitted_at !== '0000-00-00 00:00:00') ? new Date(p.submitted_at).toLocaleString('id-ID') : '-'}</td>
                                         </tr>
-                                        ${p.approved_at ? `<tr><th>Tanggal Disetujui</th><td>${new Date(p.approved_at).toLocaleString('id-ID')}</td></tr>` : ''}
-                                        ${p.rejected_at ? `<tr><th>Tanggal Ditolak</th><td>${new Date(p.rejected_at).toLocaleString('id-ID')}</td></tr>` : ''}
+                                        ${(p.approved_at && p.approved_at !== '0000-00-00 00:00:00') ? `<tr><th>Tanggal Disetujui</th><td>${new Date(p.approved_at).toLocaleString('id-ID')}</td></tr>` : ''}
+                                        ${(p.rejected_at && p.rejected_at !== '0000-00-00 00:00:00') ? `<tr><th>Tanggal Ditolak</th><td>${new Date(p.rejected_at).toLocaleString('id-ID')}</td></tr>` : ''}
                                         <tr>
                                             <th>File Sertifikat</th>
                                             <td>

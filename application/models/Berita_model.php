@@ -140,7 +140,7 @@ class Berita_model extends CI_Model
      */
     public function update_views($id)
     {
-        $this->db->set('views', 'views+1', FALSE);
+        $this->db->set('views', 'COALESCE(views, 0) + 1', FALSE);
         $this->db->where('id', $id);
         return $this->db->update('berita');
     }
@@ -162,8 +162,14 @@ class Berita_model extends CI_Model
         
         $data['created_at'] = date('Y-m-d H:i:s');
         
-        $this->db->insert('berita', $data);
-        return $this->db->insert_id();
+        $this->db->select_max('id');
+        $query = $this->db->get('berita');
+        $row = $query->row();
+        $next_id = ($row->id) ? $row->id + 1 : 1;
+        $data['id'] = $next_id;
+        
+        $success = $this->db->insert('berita', $data);
+        return $success ? $next_id : false;
     }
 
     /**
@@ -380,7 +386,7 @@ class Berita_model extends CI_Model
         $this->db->select('id, judul, slug, views, published_at');
         $this->db->from('berita');
         $this->db->where('status', 'publish');
-        $this->db->order_by('views', 'DESC');
+        $this->db->order_by('CAST(views AS UNSIGNED)', 'DESC', FALSE);
         $this->db->order_by('published_at', 'DESC');
         $this->db->limit($limit);
         
@@ -396,7 +402,7 @@ class Berita_model extends CI_Model
         $this->db->select("DATE_FORMAT(published_at, '%Y-%m') as month, DATE_FORMAT(published_at, '%M %Y') as month_name, COUNT(*) as total");
         $this->db->from('berita');
         $this->db->where('status', 'publish');
-        $this->db->group_by('month');
+        $this->db->group_by(array("DATE_FORMAT(published_at, '%Y-%m')", "DATE_FORMAT(published_at, '%M %Y')"));
         $this->db->order_by('month', 'DESC');
         $this->db->limit(12);
         
@@ -441,8 +447,15 @@ class Berita_model extends CI_Model
     public function add_komentar($data)
     {
         $data['created_at'] = date('Y-m-d H:i:s');
-        $this->db->insert('berita_komentar', $data);
-        return $this->db->insert_id();
+        
+        $this->db->select_max('id');
+        $query = $this->db->get('berita_komentar');
+        $row = $query->row();
+        $next_id = ($row->id) ? $row->id + 1 : 1;
+        $data['id'] = $next_id;
+        
+        $success = $this->db->insert('berita_komentar', $data);
+        return $success ? $next_id : false;
     }
 
     /**

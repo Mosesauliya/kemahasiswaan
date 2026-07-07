@@ -410,11 +410,13 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.15);
             border-radius: 4px;
             overflow: hidden;
+            container-type: inline-size;
+            width: 100%;
+            max-width: 660px;
         }
 
         #cert-template-img {
             display: block;
-            max-width: 660px;
             width: 100%;
             height: auto;
         }
@@ -430,13 +432,13 @@
             pointer-events: none;
         }
 
-        .cert-intro  { font-size: 1vw; color: #374151; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; }
-        .cert-name   { font-size: 2.1vw; font-weight: 800; color: #1e3a5f; margin-bottom: 4px; font-family: 'Montserrat', sans-serif; text-align: center; }
-        .cert-nim    { font-size: 0.88vw; color: #6b7280; margin-bottom: 14px; font-family: 'Montserrat', sans-serif; }
-        .cert-desc   { font-size: 0.85vw; color: #374151; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; }
-        .cert-event  { font-size: 1.3vw; font-weight: 700; color: #1f2937; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; text-align: center; }
-        .cert-date   { font-size: 0.82vw; color: #6b7280; margin-bottom: 14px; font-family: 'Montserrat', sans-serif; }
-        .cert-nomor  { font-size: 0.72vw; color: #9ca3af; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; }
+        .cert-intro  { font-size: 1.8cqw; color: #374151; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; }
+        .cert-name   { font-size: 4.6cqw; font-weight: 800; color: #1e3a5f; margin-bottom: 4px; font-family: 'Montserrat', sans-serif; text-align: center; }
+        .cert-nim    { font-size: 1.9cqw; color: #6b7280; margin-bottom: 14px; font-family: 'Montserrat', sans-serif; }
+        .cert-desc   { font-size: 1.85cqw; color: #374151; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; }
+        .cert-event  { font-size: 2.8cqw; font-weight: 700; color: #1f2937; margin-bottom: 5px; font-family: 'Montserrat', sans-serif; text-align: center; }
+        .cert-date   { font-size: 1.8cqw; color: #6b7280; margin-bottom: 14px; font-family: 'Montserrat', sans-serif; }
+        .cert-nomor  { font-size: 1.6cqw; color: #9ca3af; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; }
 
         /* ── Signature block (Dean of School) ── */
         #cert-signature-wrap {
@@ -450,7 +452,7 @@
             margin-top: 10px;
         }
         #cert-signature-wrap .sig-role {
-            font-size: 0.82vw;
+            font-size: 1.8cqw;
             font-weight: 700;
             letter-spacing: 0.5px;
             color: #d35400;
@@ -472,14 +474,14 @@
             object-fit: contain;
         }
         #cert-signature-wrap .sig-name {
-            font-size: 0.85vw;
+            font-size: 1.85cqw;
             font-weight: 700;
             color: #2C3E50;
             white-space: nowrap;
             margin-top: 2px;
         }
         #cert-signature-wrap .sig-nip {
-            font-size: 0.68vw;
+            font-size: 1.5cqw;
             color: #6b7280;
             margin-top: 1px;
         }
@@ -835,25 +837,25 @@
                         <img id="cert-template-img" src="" alt="Template">
                         <div id="cert-text-overlay">
                             <!-- Judul CERTIFICATE di atas -->
-                            <div class="cert-title-main" style="font-size: 2.3vw; font-weight: 800; color: #d35400; letter-spacing: 2px; margin-bottom: 2px; text-transform: uppercase;">Certificate</div>
+                            <div class="cert-title-main" style="font-size: 5cqw; font-weight: 800; color: #d35400; letter-spacing: 2px; margin-bottom: 2px; text-transform: uppercase;">Certificate</div>
 
                             <!-- Nomor Sertifikat di bawah judul -->
-                            <div class="cert-nomor" id="prev-nomor" style="font-size: 0.72vw; font-weight: 700; color: #2C3E50; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase;">Certificate Number: 020/S-AKD05/IK-DEK/2026</div>
+                            <div class="cert-nomor" id="prev-nomor" style="font-size: 1.6cqw; font-weight: 700; color: #2C3E50; letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase;">Certificate Number: 020/S-AKD05/IK-DEK/2026</div>
 
                             <!-- Kalimat pembuka / partisipasi -->
-                            <div class="cert-intro" style="font-size: 0.8vw; font-style: italic; color: #7f8c8d; margin-bottom: 6px;">THIS CERTIFICATE IS PRESENT TO</div>
+                            <div class="cert-intro" style="font-size: 1.75cqw; font-style: italic; color: #7f8c8d; margin-bottom: 6px;">THIS CERTIFICATE IS PRESENT TO</div>
 
                             <!-- Nama Penerima besar dengan garis bawah -->
                             <div class="cert-name-container" style="border-bottom: 2px solid #E67E22; padding-bottom: 4px; margin-bottom: 12px; min-width: 280px; text-align: center;">
-                                <div class="cert-name" id="prev-nama" style="font-size: 1.8vw; font-weight: 800; color: #2C3E50; font-family: 'Montserrat', sans-serif;">TEGUH AKBAR, ST</div>
+                                <div class="cert-name" id="prev-nama" style="font-size: 4cqw; font-weight: 800; color: #2C3E50; font-family: 'Montserrat', sans-serif;">TEGUH AKBAR, ST</div>
                             </div>
 
                             <!-- Keterangan Partisipasi & Kegiatan -->
-                            <div class="cert-desc" id="prev-desc" style="font-size: 0.8vw; color: #7f8c8d; margin-bottom: 6px;">For the Participation as <strong style="color: #d35400;" id="prev-role">Committee</strong> at :</div>
-                            <div class="cert-event" id="prev-judul" style="font-size: 1.2vw; font-weight: 700; color: #2C3E50; text-transform: uppercase; margin-bottom: 6px; text-align: center;">BERWARA ADVERTISING EXHIBITION & AWARD</div>
+                            <div class="cert-desc" id="prev-desc" style="font-size: 1.75cqw; color: #7f8c8d; margin-bottom: 6px;">For the Participation as <strong style="color: #d35400;" id="prev-role">Committee</strong> at :</div>
+                            <div class="cert-event" id="prev-judul" style="font-size: 2.6cqw; font-weight: 700; color: #2C3E50; text-transform: uppercase; margin-bottom: 6px; text-align: center;">BERWARA ADVERTISING EXHIBITION & AWARD</div>
 
                             <!-- Waktu & Tempat -->
-                            <div class="cert-date" id="prev-tanggal" style="font-size: 0.72vw; color: #7f8c8d; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">HELD AT SCHOOL OF CREATIVE INDUSTRIES</div>
+                            <div class="cert-date" id="prev-tanggal" style="font-size: 1.6cqw; color: #7f8c8d; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">HELD AT SCHOOL OF CREATIVE INDUSTRIES</div>
 
                             <!-- Tanda tangan Dean of School, di tengah, di bawah tanggal -->
                             <div id="cert-signature-wrap">

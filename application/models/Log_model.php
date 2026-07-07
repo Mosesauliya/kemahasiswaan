@@ -32,6 +32,44 @@ class Log_model extends CI_Model {
     }
 
     /**
+     * Deteksi IP address asli pengunjung.
+     * Mendukung proxy/reverse proxy melalui header X-Forwarded-For & X-Real-IP.
+     */
+    private function _get_real_ip() {
+        // Cek header proxy terlebih dahulu (untuk hosting dengan Nginx/Apache proxy)
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            // X-Forwarded-For bisa berisi beberapa IP (chain), ambil yang pertama
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ip = trim($ips[0]);
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                return $ip;
+            }
+        }
+        if (!empty($_SERVER['HTTP_X_REAL_IP'])) {
+            $ip = trim($_SERVER['HTTP_X_REAL_IP']);
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                return $ip;
+            }
+        }
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = trim($_SERVER['HTTP_CLIENT_IP']);
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                return $ip;
+            }
+        }
+
+        // Gunakan IP koneksi langsung dari CodeIgniter
+        $ip = $this->input->ip_address();
+
+        // Jika masih loopback (localhost), kembalikan dengan label jelas
+        if ($ip === '::1' || $ip === '127.0.0.1') {
+            return '127.0.0.1 (localhost)';
+        }
+
+        return $ip;
+    }
+
+    /**
      * Insert log aktivitas baru
      */
     public function insert_log($user_id, $nama, $role, $action) {
@@ -40,7 +78,7 @@ class Log_model extends CI_Model {
             'nama'       => $nama,
             'role'       => $role,
             'action'     => $action,
-            'ip_address' => $this->input->ip_address(),
+            'ip_address' => $this->_get_real_ip(),
             'user_agent' => $this->input->user_agent(),
             'created_at' => date('Y-m-d H:i:s')
         );

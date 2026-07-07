@@ -369,7 +369,7 @@
                                     <a href="<?= base_url('berita/detail/' . $b['slug']) ?>" target="_blank" class="btn-action btn-view" title="Lihat">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="#" class="btn-action btn-delete" onclick="confirmDelete(<?= $b['id'] ?>, '<?= addslashes($b['judul']) ?>')" title="Hapus">
+                                    <a href="#" class="btn-action btn-delete" onclick="confirmDelete(<?= $b['id'] ?>, '<?= htmlspecialchars(addslashes($b['judul']), ENT_QUOTES, 'UTF-8') ?>')" title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>

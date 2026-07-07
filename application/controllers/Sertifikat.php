@@ -9,7 +9,9 @@ class Sertifikat extends CI_Controller
         $this->load->library(['session', 'form_validation', 'upload']);
         $this->load->helper(['url', 'form']);
 
-        if (!$this->session->userdata('logged_in')) {
+        // Terapkan login check kecuali untuk metode verifikasi (akses publik lewat QR Code)
+        $method = $this->router->fetch_method();
+        if ($method !== 'verifikasi' && !$this->session->userdata('logged_in')) {
             redirect('login');
         }
     }

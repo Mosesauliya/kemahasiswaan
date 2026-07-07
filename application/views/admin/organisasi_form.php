@@ -59,7 +59,7 @@
         /* ── Form Card ── */
         .form-card {
             background: white; border-radius: 16px; padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,.08); max-width: 760px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.08);
         }
         .form-card h4 { font-weight: 700; color: #2C3E50; margin-bottom: 1.5rem;
             padding-bottom: 1rem; border-bottom: 2px solid #f0f2f5; display: flex; align-items: center; gap: .6rem; }
@@ -80,26 +80,45 @@
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-        /* Logo Preview */
+        /* Logo Upload - Drag & Drop */
         .logo-upload-area {
-            border: 2px dashed #e0e3e7; border-radius: 12px; padding: 1.5rem;
-            text-align: center; cursor: pointer; transition: all .2s; position: relative;
+            border: 2.5px dashed #d0d4da; border-radius: 14px; padding: 2.5rem 1.5rem;
+            text-align: center; cursor: pointer; transition: all .25s; position: relative;
+            background: #fafbfc;
         }
-        .logo-upload-area:hover { border-color: #E67E22; background: rgba(230,126,34,.03); }
+        .logo-upload-area:hover,
+        .logo-upload-area.drag-over {
+            border-color: #E67E22;
+            background: rgba(230,126,34,.06);
+            transform: scale(1.01);
+        }
+        .logo-upload-area.drag-over .upload-icon i { color: #E67E22; transform: translateY(-4px); }
         .logo-upload-area input[type="file"] {
             position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
         }
-        .logo-upload-area .upload-icon { font-size: 2rem; color: #ccc; margin-bottom: .5rem; }
-        .logo-upload-area .upload-text { font-size: .85rem; color: #aaa; }
+        .logo-upload-area .upload-icon { font-size: 2.8rem; color: #c5cbd5; margin-bottom: .7rem; transition: all .25s; }
+        .logo-upload-area .upload-text { font-size: .95rem; color: #888; }
         .logo-upload-area .upload-text strong { color: #E67E22; }
-        .logo-upload-area .upload-hint { font-size: .75rem; color: #bbb; margin-top: .3rem; }
+        .logo-upload-area .upload-hint { font-size: .78rem; color: #bbb; margin-top: .4rem; }
 
-        #logoPreviewWrap { margin-top: 1rem; display: none; text-align: center; }
-        #logoPreviewWrap img {
-            max-width: 120px; max-height: 120px; border-radius: 12px;
-            object-fit: cover; border: 2px solid #e0e3e7; box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        #logoPreviewWrap { margin-top: 1rem; display: none; }
+        .preview-inner {
+            display: flex; align-items: center; gap: 1.5rem;
+            background: #f8f9fb; border-radius: 12px; padding: 1rem 1.5rem;
+            border: 1.5px solid #e8eaed;
         }
-        #logoPreviewWrap p { font-size: .78rem; color: #aaa; margin-top: .4rem; }
+        #logoPreviewWrap img {
+            width: 90px; height: 90px; border-radius: 12px;
+            object-fit: cover; border: 2px solid #e0e3e7; box-shadow: 0 4px 12px rgba(0,0,0,.08); flex-shrink: 0;
+        }
+        .preview-info { flex: 1; }
+        .preview-info .file-name { font-weight: 600; color: #2C3E50; font-size: .9rem; }
+        .preview-info .file-size { font-size: .8rem; color: #aaa; margin-top: .2rem; }
+        .preview-remove {
+            background: none; border: none; color: #e74c3c; font-size: 1.2rem;
+            cursor: pointer; padding: .3rem; border-radius: 6px; transition: background .2s;
+        }
+        .preview-remove:hover { background: rgba(231,76,60,.1); }
 
         /* Current logo */
         .current-logo-wrap { margin-bottom: .8rem; text-align: center; }
@@ -162,18 +181,67 @@
         }
         .btn-back:hover { background: #dde; color: #333; }
 
+        /* ── Mobile Responsive ── */
+        .hamburger-btn {
+            display: none; background: none; border: none;
+            font-size: 1.4rem; color: #2C3E50; cursor: pointer; padding: .3rem;
+        }
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,.45); z-index: 99; backdrop-filter: blur(2px);
+        }
+        .sidebar-overlay.show { display: block; }
+
         @media (max-width: 768px) {
-            .admin-sidebar { transform: translateX(-100%); }
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform .3s ease;
+                z-index: 100;
+            }
+            .admin-sidebar.open { transform: translateX(0); }
             .admin-main { margin-left: 0; padding: 1rem; }
+
+            .hamburger-btn { display: flex; align-items: center; }
+
+            .admin-header {
+                flex-wrap: wrap;
+                gap: .6rem;
+                padding-bottom: .8rem;
+                margin-bottom: 1.2rem;
+            }
+            .admin-header h1 { font-size: 1.2rem; flex: 1; }
+            .admin-header .user-info span { display: none; }
+            .logout-btn { padding: .4rem .9rem; font-size: .8rem; }
+
             .form-row { grid-template-columns: 1fr; }
+
+            .form-card { padding: 1.2rem; border-radius: 12px; }
+            .form-card h4 { font-size: 1rem; }
+
+            .form-footer { flex-direction: column; }
+            .btn-submit, .btn-back { width: 100%; justify-content: center; }
+
+            .logo-upload-area { padding: 1.5rem 1rem; }
+            .logo-upload-area .upload-icon { font-size: 2rem; }
+            .logo-upload-area .upload-text { font-size: .85rem; }
+
+            .preview-inner { flex-direction: column; text-align: center; }
+            #logoPreviewWrap img { width: 70px; height: 70px; }
+
+            .icon-grid { grid-template-columns: repeat(6, 1fr); }
+
+            .breadcrumb-bar { font-size: .78rem; }
         }
     </style>
 </head>
 <body>
 <div class="admin-wrapper">
 
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
     <!-- Sidebar -->
-    <div class="admin-sidebar">
+    <div class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-header">
             <h3>Admin FIK</h3>
             <p>Manajemen Proposal</p>
@@ -215,6 +283,9 @@
 
         <!-- Header -->
         <div class="admin-header">
+            <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
             <h1><i class="fas fa-<?= isset($org) ? 'edit' : 'plus-circle' ?>" style="color:#E67E22; font-size:1.4rem;"></i> <?= $title ?></h1>
             <div class="user-info">
                 <span><i class="fas fa-user-circle me-2" style="color: #E67E22;"></i> <?= $this->session->userdata('nama') ?></span>
@@ -298,17 +369,24 @@
                         </div>
                     <?php endif; ?>
 
-                    <div class="logo-upload-area" onclick="document.getElementById('logo').click()">
-                        <input type="file" id="logo" name="logo" accept="image/*"
-                               style="display:none;" onchange="previewLogo(this)">
+                    <div class="logo-upload-area" id="dropZone">
+                        <input type="file" id="logo" name="logo" accept="image/*" onchange="previewLogo(this.files[0])">
                         <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                        <div class="upload-text"><strong>Klik untuk pilih gambar</strong> atau seret ke sini</div>
-                        <div class="upload-hint">JPG, PNG, GIF, SVG, WebP &middot; Maks. 2MB &middot; Disimpan di assets/organisasi/</div>
+                        <div class="upload-text"><strong>Klik untuk pilih gambar</strong> atau <strong>seret & lepas</strong> di sini</div>
+                        <div class="upload-hint">JPG, PNG, GIF, SVG, WebP &middot; Maks. 2MB</div>
                     </div>
 
                     <div id="logoPreviewWrap">
-                        <img id="logoPreview" src="" alt="Preview">
-                        <p id="logoFileName"></p>
+                        <div class="preview-inner">
+                            <img id="logoPreview" src="" alt="Preview">
+                            <div class="preview-info">
+                                <div class="file-name" id="logoFileName"></div>
+                                <div class="file-size" id="logoFileSize"></div>
+                            </div>
+                            <button type="button" class="preview-remove" onclick="removeLogo()" title="Hapus foto">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -355,21 +433,72 @@
 </div>
 
 <script>
-// ── Logo Preview ──
-function previewLogo(input) {
-    const file = input.files[0];
+// ── Logo Preview & Drag & Drop ──
+function previewLogo(file) {
     if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+        alert('Ukuran file terlalu besar! Maks. 2MB.');
+        return;
+    }
     const wrap = document.getElementById('logoPreviewWrap');
     const img  = document.getElementById('logoPreview');
     const name = document.getElementById('logoFileName');
+    const size = document.getElementById('logoFileSize');
     const reader = new FileReader();
     reader.onload = e => {
         img.src = e.target.result;
-        name.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+        name.textContent = file.name;
+        size.textContent = (file.size / 1024).toFixed(1) + ' KB';
         wrap.style.display = 'block';
+        document.getElementById('dropZone').style.display = 'none';
     };
     reader.readAsDataURL(file);
 }
+
+function removeLogo() {
+    document.getElementById('logo').value = '';
+    document.getElementById('logoPreviewWrap').style.display = 'none';
+    document.getElementById('dropZone').style.display = 'block';
+    document.getElementById('logoPreview').src = '';
+}
+
+// Drag & Drop events
+const dropZone = document.getElementById('dropZone');
+
+['dragenter', 'dragover'].forEach(ev => {
+    dropZone.addEventListener(ev, e => {
+        e.preventDefault(); e.stopPropagation();
+        dropZone.classList.add('drag-over');
+    });
+});
+
+['dragleave', 'drop'].forEach(ev => {
+    dropZone.addEventListener(ev, e => {
+        e.preventDefault(); e.stopPropagation();
+        dropZone.classList.remove('drag-over');
+    });
+});
+
+dropZone.addEventListener('drop', e => {
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    // Masukkan file ke input supaya ikut ter-submit form
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    document.getElementById('logo').files = dt.files;
+    previewLogo(file);
+});
+
+// Klik pada dropzone buka file picker (kecuali klik di input sendiri)
+dropZone.addEventListener('click', e => {
+    if (e.target.tagName !== 'INPUT') {
+        document.getElementById('logo').click();
+    }
+});
+
+document.getElementById('logo').addEventListener('change', function() {
+    if (this.files[0]) previewLogo(this.files[0]);
+});
 
 // ── Icon Picker ──
 const ICONS = [
@@ -418,6 +547,16 @@ document.getElementById('aktif').addEventListener('change', function() {
         ? 'Aktif – Tampil di Dashboard'
         : 'Nonaktif – Tidak Tampil';
 });
+
+// ── Sidebar Toggle (Mobile) ──
+function toggleSidebar() {
+    document.getElementById('adminSidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar() {
+    document.getElementById('adminSidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+}
 </script>
 </body>
 </html>

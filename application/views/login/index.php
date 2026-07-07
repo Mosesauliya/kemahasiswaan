@@ -419,10 +419,10 @@
                 <i class="fas fa-eye pw-toggle" id="pw-toggle" onclick="togglePw()"></i>
             </div>
         </div>
-<!-- 
+
         <div class="form-group" style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
-            <div class="g-recaptcha" data-sitekey="MASUKKAN_SITE_KEY_ANDA_DI_SINI"></div>
-        </div> -->
+            <div class="g-recaptcha" data-sitekey="6LeVCkctAAAAAISExNoUzSY08rc1XlzJC_fQjT91"></div>
+        </div> 
         <button type="submit" class="btn-login">
             <i class="fas fa-sign-in-alt"></i> Masuk ke Portal
         </button>
