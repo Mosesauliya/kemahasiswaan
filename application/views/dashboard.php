@@ -1704,43 +1704,56 @@
               <div class="badge-icon-orange"><i class="fas fa-rocket"></i></div>
               <div><strong><?= htmlspecialchars($hero_text['card5_title'] ?? 'Karier') ?></strong><br><?= htmlspecialchars($hero_text['card5_sub'] ?? 'Persiapan dunia kerja') ?></div>
             </div>
-          
-  <div class="achievement-master-wrapper">
+          <div class="achievement-master-wrapper">
     <div class="container-custom" style="padding: 0;">
       <div class="achievement-master" id="achievementCard">
         <div class="achievement-title">
-          Mahasiswa Berprestasi <i class="fas fa-arrow-right"></i>
+          Rekap Data Pengajuan <i class="fas fa-chart-line"></i>
         </div>
         <div class="stats-three-col">
+          <!-- Proposal -->
           <div>
-            <div class="big-number" id="activeStudents">0</div>
-            <div>Mahasiswa Aktif<br>Berdasarkan MR 2025 ganjil<br>Keadaan Tanggal 30 Oktober 2025</div>
-            <div class="big-number mt-4" id="countryCount">0</div>
-            <div>Negara</div>
-          </div>
-          
-          <div class="winner-row">
-            <div class="winner-item-flex">
-              <div class="winner-avatar"><i class="fas fa-trophy"></i></div>
-              <div><?= htmlspecialchars($hero_text['winner1_text'] ?? '') ?></div>
+            <div class="mb-2" style="font-size: 1.2rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 8px;">Pengajuan Proposal</div>
+            <div class="d-flex align-items-center gap-3">
+              <div class="big-number" id="totalProposal">0</div>
+              <div style="line-height: 1.3; font-weight: 500; font-size: 1.1rem;">Total<br>Pengajuan</div>
             </div>
-            <div class="winner-item-flex">
-              <div class="winner-avatar"><i class="fas fa-camera-retro"></i></div>
-              <div><?= htmlspecialchars($hero_text['winner2_text'] ?? '') ?></div>
+            <div class="d-flex gap-4 mt-3">
+              <div><span class="fw-bold" style="font-size: 1.4rem;" id="approveProposal">0</span><br>Approve</div>
+              <div><span class="fw-bold" style="font-size: 1.4rem;" id="tolakProposal">0</span><br>Tolak</div>
             </div>
           </div>
           
+          <!-- TAK Kolektif -->
           <div>
-            <div class="big-number" id="alumniCount">0</div>
-            <div>Alumni<br>Berdasarkan MR 2024</div>
-            <div class="d-flex gap-5 mt-4">
-              <div><span class="big-number" id="teluDaerah">0</span><br>TelU Daerah</div>
-              <div><span class="big-number" id="teluLuar">0</span><br>TelU Luar Negeri</div>
+            <div class="mb-2" style="font-size: 1.2rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 8px;">Pengajuan TAK Kolektif</div>
+            <div class="d-flex align-items-center gap-3">
+              <div class="big-number" id="totalTak">0</div>
+              <div style="line-height: 1.3; font-weight: 500; font-size: 1.1rem;">Total<br>Pengajuan</div>
+            </div>
+            <div class="d-flex gap-4 mt-3">
+              <div><span class="fw-bold" style="font-size: 1.4rem;" id="approveTak">0</span><br>Approve</div>
+              <div><span class="fw-bold" style="font-size: 1.4rem;" id="revisiTak">0</span><br>Revisi</div>
+              <div><span class="fw-bold" style="font-size: 1.4rem;" id="tolakTak">0</span><br>Tolak</div>
+            </div>
+          </div>
+          
+          <!-- Sertifikat -->
+          <div>
+            <div class="mb-2" style="font-size: 1.2rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 8px;">Pengajuan Sertifikat</div>
+            <div class="d-flex align-items-center gap-3">
+              <div class="big-number" id="totalSertifikat">0</div>
+              <div style="line-height: 1.3; font-weight: 500; font-size: 1.1rem;">Total<br>Pengajuan</div>
+            </div>
+            <div class="d-flex gap-4 mt-3">
+              <div><span class="fw-bold" style="font-size: 1.4rem;" id="approveSertifikat">0</span><br>Approve</div>
+              <div><span class="fw-bold" style="font-size: 1.4rem;" id="tolakSertifikat">0</span><br>Tolak</div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
   </section>
 
   <!-- DIREKTORAT -->
@@ -2084,11 +2097,16 @@
 
   // ==================== ANIMASI ANGKA ====================
   const heroNumbers = {
-    activeStudents: <?= (int)($hero_text['active_students'] ?? 762918) ?>,
-    countryCount: <?= (int)($hero_text['country_count'] ?? 50) ?>,
-    alumniCount: <?= (int)($hero_text['alumni_count'] ?? 2156104) ?>,
-    teluDaerah: <?= (int)($hero_text['telu_daerah'] ?? 39) ?>,
-    teluLuar: <?= (int)($hero_text['telu_luar'] ?? 1) ?>
+    totalProposal: <?= (int)($total_proposal ?? 0) ?>,
+    approveProposal: <?= (int)($approve_proposal ?? 0) ?>,
+    tolakProposal: <?= (int)($tolak_proposal ?? 0) ?>,
+    totalTak: <?= (int)($total_tak ?? 0) ?>,
+    approveTak: <?= (int)($approve_tak ?? 0) ?>,
+    revisiTak: <?= (int)($revisi_tak ?? 0) ?>,
+    tolakTak: <?= (int)($tolak_tak ?? 0) ?>,
+    totalSertifikat: <?= (int)($total_sertifikat ?? 0) ?>,
+    approveSertifikat: <?= (int)($approve_sertifikat ?? 0) ?>,
+    tolakSertifikat: <?= (int)($tolak_sertifikat ?? 0) ?>
   };
 
   function animateNumber(element, finalValue, duration = 800) {
@@ -2122,11 +2140,18 @@
     const isVisible = rect.top < window.innerHeight - 100 && rect.bottom > 100;
     if (isVisible) {
       animationTriggered = true;
-      animateNumber(document.getElementById('activeStudents'), heroNumbers.activeStudents, 800);
-      animateNumber(document.getElementById('countryCount'), heroNumbers.countryCount, 600);
-      animateNumber(document.getElementById('alumniCount'), heroNumbers.alumniCount, 900);
-      animateNumber(document.getElementById('teluDaerah'), heroNumbers.teluDaerah, 500);
-      animateNumber(document.getElementById('teluLuar'), heroNumbers.teluLuar, 500);
+      animateNumber(document.getElementById('totalProposal'), heroNumbers.totalProposal, 800);
+      animateNumber(document.getElementById('approveProposal'), heroNumbers.approveProposal, 600);
+      animateNumber(document.getElementById('tolakProposal'), heroNumbers.tolakProposal, 600);
+      
+      animateNumber(document.getElementById('totalTak'), heroNumbers.totalTak, 800);
+      animateNumber(document.getElementById('approveTak'), heroNumbers.approveTak, 600);
+      animateNumber(document.getElementById('revisiTak'), heroNumbers.revisiTak, 600);
+      animateNumber(document.getElementById('tolakTak'), heroNumbers.tolakTak, 600);
+      
+      animateNumber(document.getElementById('totalSertifikat'), heroNumbers.totalSertifikat, 800);
+      animateNumber(document.getElementById('approveSertifikat'), heroNumbers.approveSertifikat, 600);
+      animateNumber(document.getElementById('tolakSertifikat'), heroNumbers.tolakSertifikat, 600);
     }
   }
 

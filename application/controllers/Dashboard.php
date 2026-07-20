@@ -78,6 +78,28 @@ public function index()
     $data['hero_img_version'] = file_exists($img_path) ? filemtime($img_path) : time();
     // ========================
 
+    // ==== FETCH STATS PRESTASI / REKAP DATA ====
+    $this->load->model('Proposal_model');
+    $this->load->model('Tak_model');
+    $this->load->model('Sertifikat_model');
+
+    $stats_proposal = $this->Proposal_model->count_by_status();
+    $data['total_proposal'] = array_sum($stats_proposal);
+    $data['approve_proposal'] = $stats_proposal['disetujui'] ?? 0;
+    $data['tolak_proposal'] = $stats_proposal['ditolak'] ?? 0;
+
+    $stats_tak = $this->Tak_model->get_admin_stats();
+    $data['total_tak'] = $stats_tak['total'] ?? 0;
+    $data['approve_tak'] = $stats_tak['disetujui'] ?? 0;
+    $data['revisi_tak'] = $stats_tak['diproses'] ?? 0;
+    $data['tolak_tak'] = $stats_tak['ditolak'] ?? 0;
+
+    $stats_sertifikat = $this->Sertifikat_model->get_stats();
+    $data['total_sertifikat'] = $stats_sertifikat['total'] ?? 0;
+    $data['approve_sertifikat'] = $stats_sertifikat['approved'] ?? 0;
+    $data['tolak_sertifikat'] = $stats_sertifikat['rejected'] ?? 0;
+    // ============================================
+
     if ($is_logged_in) {
          $data['user_data'] = [
         'user_id'   => $this->session->userdata('user_id'),
