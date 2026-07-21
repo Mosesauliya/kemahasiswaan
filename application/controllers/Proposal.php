@@ -395,7 +395,7 @@ class Proposal extends CI_Controller
         $pid   = (int)$this->input->post('proposal_id');
         $field = $this->input->post('field');
 
-        if (!in_array($field, ['file_ttd_ketua', 'file_lampiran'])) {
+        if (!in_array($field, ['file_ttd_ketua', 'file_lampiran', 'file_sertifikat'])) {
             return $this->_json(['status' => 'error', 'message' => 'Field tidak valid.']);
         }
 
@@ -404,7 +404,7 @@ class Proposal extends CI_Controller
 
         $config = [
             'upload_path'   => $path,
-            'allowed_types' => ($field === 'file_ttd_ketua') ? 'jpg|jpeg|png' : 'pdf|doc|docx|jpg|jpeg|png',
+            'allowed_types' => ($field === 'file_ttd_ketua' || $field === 'file_sertifikat') ? 'jpg|jpeg|png' : 'pdf|doc|docx|jpg|jpeg|png',
             'max_size'      => 5120,
             'encrypt_name'  => true,
         ];

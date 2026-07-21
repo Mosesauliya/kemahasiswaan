@@ -1365,15 +1365,19 @@
                         <div class="form-step" id="step-3">
                             <div class="form-section-title"><i class="fas fa-calendar-alt"></i> Waktu & Pelaksanaan</div>
                             <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label class="form-label">Tanggal <span class="required">*</span></label>
+                                <div class="col-md-3">
+                                    <label class="form-label">Tanggal Mulai <span class="required">*</span></label>
                                     <input type="date" class="form-control" id="f_tanggal">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
+                                    <label class="form-label">Tanggal Selesai</label>
+                                    <input type="date" class="form-control" id="f_tanggal_selesai">
+                                </div>
+                                <div class="col-md-3">
                                     <label class="form-label">Waktu Mulai <span class="required">*</span></label>
                                     <input type="time" class="form-control" id="f_waktu_mulai">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label">Waktu Selesai</label>
                                     <input type="time" class="form-control" id="f_waktu_selesai">
                                 </div>
@@ -1387,11 +1391,63 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Susunan Panitia <span class="required">*</span></label>
-                                    <textarea class="form-control" id="f_panitia" rows="4" placeholder="Ketua Panitia: (nama)&#10;Sekretaris: (nama)&#10;Bendahara: (nama)&#10;Divisi Acara: (nama)"></textarea>
+                                    <div class="info-box py-2 mb-2"><i class="fas fa-info-circle me-1"></i>Masukkan susunan panitia per kelompok/divisi (contoh: Penanggungjawab, Panitia Pengarah / SC, Pengurus Inti OC, Divisi Acara, Dll).</div>
+                                    <table class="table table-bordered align-middle w-100" style="font-size: 0.85rem;" id="panitia-table">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="220">Kelompok / Divisi</th>
+                                                <th width="180">Jabatan</th>
+                                                <th>Nama Panitia</th>
+                                                <th width="140">NIM</th>
+                                                <th width="40"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="panitia-rows"></tbody>
+                                    </table>
+                                    <button type="button" class="btn btn-sm btn-outline-primary btn-add-row mt-2" onclick="addPanitiaRow()"><i class="fas fa-plus me-1"></i>Tambah Panitia</button>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Susunan Acara (Rundown)</label>
-                                    <textarea class="form-control" id="f_rundown" rows="4" placeholder="08.00 - 09.00: Registrasi&#10;09.00 - 09.30: Pembukaan&#10;..."></textarea>
+                                    <table class="table table-bordered align-middle w-100" style="font-size: 0.85rem;" id="rundown-table">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="150">Jam</th>
+                                                <th width="100">Durasi</th>
+                                                <th>Kegiatan</th>
+                                                <th>Pengisi</th>
+                                                <th>Lokasi</th>
+                                                <th>Keterangan</th>
+                                                <th width="40"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rundown-rows"></tbody>
+                                    </table>
+                                    <button type="button" class="btn btn-sm btn-outline-primary btn-add-row mt-2" onclick="addRundownRow()"><i class="fas fa-plus me-1"></i>Tambah Acara</button>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label class="form-label">Manajemen Risiko</label>
+                                    <table class="table table-bordered align-middle w-100" style="font-size: 0.85rem;" id="risiko-table">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Uraian Kegiatan</th>
+                                                <th>Identifikasi Bahaya</th>
+                                                <th width="150">Tingkat Risiko</th>
+                                                <th>Pengendalian Risiko</th>
+                                                <th>Penanggungjawab</th>
+                                                <th width="40"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="risiko-rows"></tbody>
+                                    </table>
+                                    <button type="button" class="btn btn-sm btn-outline-primary btn-add-row mt-2" onclick="addRisikoRow()"><i class="fas fa-plus me-1"></i>Tambah Risiko</button>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label class="form-label">Tolak Ukur Keberhasilan</label>
+                                    <textarea class="form-control" id="f_tolak_ukur" rows="3" placeholder="Contoh: Kehadiran 90% anggota dari seluruh target peserta..."></textarea>
+                                </div>
+                                <div class="col-12 mt-3">
+                                    <label class="form-label">Monitoring Kegiatan</label>
+                                    <textarea class="form-control" id="f_monitoring" rows="3" placeholder="Rangkuman uraian monitoring kegiatan dari Pra-Event - Event - Pasca-Event..."></textarea>
                                 </div>
                             </div>
                         </div>
@@ -1424,20 +1480,44 @@
                             </table>
                             <button type="button" class="btn-add-row" onclick="addBudgetRow()"><i class="fas fa-plus me-2"></i>Tambah Baris</button>
 
+                            <div class="mt-4">
+                                <label class="form-label font-weight-bold">Sumber Dana & Pemasukan</label>
+                                <table class="table table-bordered align-middle w-100" style="font-size: 0.85rem;" id="sumber-dana-table">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Sumber Dana</th>
+                                            <th>Detail / Keterangan</th>
+                                            <th width="200">Nominal (Rp)</th>
+                                            <th width="40"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sumber-dana-rows"></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="2" class="text-end">Total Pemasukan</th>
+                                            <th id="sumber-dana-total" class="budget-total">Rp 0</th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                <button type="button" class="btn btn-sm btn-outline-primary btn-add-row mt-2" onclick="addSumberDanaRow()"><i class="fas fa-plus me-1"></i>Tambah Sumber Dana</button>
+                            </div>
                             <div class="row g-3 mt-3">
                                 <div class="col-md-6">
-                                    <label class="form-label">Sumber Dana</label>
-                                    <select class="form-select" id="f_sumber_dana">
-                                        <option value="">-- Pilih Sumber --</option>
-                                        <option>Dana Kemahasiswaan FIK</option>
-                                        <option>Iuran Peserta / Tiket</option>
-                                        <option>Sponsorship Eksternal</option>
-                                        <option>Gabungan</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Dana yang Diajukan ke Kemahasiswaan (Rp)</label>
+                                    <label class="form-label">Dana yang Diajukan ke Kemahasiswaan (Rp) <span class="required">*</span></label>
                                     <input type="text" class="form-control" id="f_dana_ajukan" placeholder="0" oninput="formatRupiah(this)">
+                                </div>
+                            </div>
+                            <div class="card mt-4 p-3" style="border: 1px dashed var(--orange); background: var(--orange-light);">
+                                <label class="form-label font-weight-bold"><i class="fas fa-image me-2 text-primary"></i>Desain Sertifikat Kegiatan (Mockup)</label>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="file" class="form-control w-auto" id="upload_sertifikat_file" accept="image/*" onchange="uploadSertifikatFile(this)">
+                                    <input type="hidden" id="f_file_sertifikat">
+                                    <div id="sertifikat-preview-container" style="display:none;">
+                                        <a href="" id="sertifikat-preview-link" target="_blank">
+                                            <img id="sertifikat-preview-img" src="" alt="Desain Sertifikat" style="max-height:80px; border-radius:8px; border: 1px solid var(--border);">
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1610,7 +1690,7 @@
                     height: 300,
                     menubar: false,
                     plugins: 'lists link image preview',
-                    toolbar: 'undo redo | bold italic underline | bullist numlist | removeformat',
+                    toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | removeformat',
                     branding: false,
                     promotion: false,
                     setup: function (editor) {
@@ -1950,7 +2030,7 @@
             const requiredFields = {
                 1: ['f_ormawa', 'f_tahun', 'f_nama_kegiatan', 'f_jenis'],
                 2: ['f_latar_belakang', 'f_tujuan', 'f_sasaran'],
-                3: ['f_tanggal', 'f_waktu_mulai', 'f_lokasi', 'f_panitia'],
+                3: ['f_tanggal', 'f_waktu_mulai', 'f_lokasi'],
                 4: [], 5: []
             };
             
@@ -2009,6 +2089,19 @@
                     } else if (el) {
                         el.classList.remove('is-invalid');
                     }
+                }
+            }
+
+            if (step === 3 && isValid) {
+                let hasPanitia = false;
+                document.querySelectorAll('#panitia-rows tr').forEach(row => {
+                    if (row.querySelector('.panitia-nama')?.value.trim() || row.querySelector('.panitia-jabatan')?.value.trim()) {
+                        hasPanitia = true;
+                    }
+                });
+                if (!hasPanitia) {
+                    showToast('Harap isi minimal 1 susunan panitia (Nama / Jabatan)', 'error');
+                    isValid = false;
                 }
             }
 
@@ -2078,6 +2171,182 @@
             }
         }
 
+        // ==================== DYNAMIC TABLES FOR RUNDOWN, RISIKO, SUMBER DANA ====================
+        let rundownRowCount = 0;
+        function addRundownRow(item = null) {
+            rundownRowCount++;
+            const row = document.createElement('tr');
+            row.id = `rrow-${rundownRowCount}`;
+            row.innerHTML = `
+                <td><input type="text" class="form-control form-control-sm rundown-jam" placeholder="08.00 - 09.00" value="${escapeHtml(item?.jam || '')}"></td>
+                <td><input type="text" class="form-control form-control-sm rundown-durasi" placeholder="60'" value="${escapeHtml(item?.durasi || '')}"></td>
+                <td><input type="text" class="form-control form-control-sm rundown-kegiatan" placeholder="Registrasi..." value="${escapeHtml(item?.kegiatan || '')}"></td>
+                <td><input type="text" class="form-control form-control-sm rundown-pengisi" placeholder="Panitia..." value="${escapeHtml(item?.pengisi || '')}"></td>
+                <td><input type="text" class="form-control form-control-sm rundown-lokasi" placeholder="Aula..." value="${escapeHtml(item?.lokasi || '')}"></td>
+                <td><input type="text" class="form-control form-control-sm rundown-keterangan" placeholder="Keterangan..." value="${escapeHtml(item?.keterangan || '')}"></td>
+                <td class="text-center"><button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="this.closest('tr').remove()"><i class="fas fa-trash"></i></button></td>
+            `;
+            document.getElementById('rundown-rows').appendChild(row);
+        }
+
+        let risikoRowCount = 0;
+        function addRisikoRow(item = null) {
+            risikoRowCount++;
+            const row = document.createElement('tr');
+            row.id = `risikorow-${risikoRowCount}`;
+            row.innerHTML = `
+                <td><input type="text" class="form-control form-control-sm risiko-uraian" placeholder="Persiapan..." value="${escapeHtml(item?.uraian_kegiatan || item?.uraian || '')}"></td>
+                <td><input type="text" class="form-control form-control-sm risiko-bahaya" placeholder="Keterlambatan..." value="${escapeHtml(item?.bahaya || '')}"></td>
+                <td>
+                    <select class="form-select form-select-sm risiko-tingkat">
+                        <option value="Rendah" ${item?.tingkat === 'Rendah' ? 'selected' : ''}>Rendah</option>
+                        <option value="Sedang" ${item?.tingkat === 'Sedang' ? 'selected' : ''}>Sedang</option>
+                        <option value="Tinggi" ${item?.tingkat === 'Tinggi' ? 'selected' : ''}>Tinggi</option>
+                    </select>
+                </td>
+                <td><input type="text" class="form-control form-control-sm risiko-pengendalian" placeholder="Reminder berkala..." value="${escapeHtml(item?.pengendalian || '')}"></td>
+                <td><input type="text" class="form-control form-control-sm risiko-penanggungjawab" placeholder="Ketua..." value="${escapeHtml(item?.penanggungjawab || '')}"></td>
+                <td class="text-center"><button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="this.closest('tr').remove()"><i class="fas fa-trash"></i></button></td>
+            `;
+            document.getElementById('risiko-rows').appendChild(row);
+        }
+
+        let panitiaRowCount = 0;
+        function addPanitiaRow(item = null) {
+            panitiaRowCount++;
+            const row = document.createElement('tr');
+            row.id = `prow-${panitiaRowCount}`;
+            
+            const kelompokVal = item?.kelompok || item?.divisi || '';
+            const jabatanVal = item?.jabatan || '';
+            const namaVal = item?.nama || '';
+            const nimVal = item?.nim || '';
+
+            row.innerHTML = `
+                <td>
+                    <input type="text" class="form-control form-control-sm panitia-kelompok" list="kelompok-list" placeholder="Divisi / Kelompok..." value="${escapeHtml(kelompokVal)}">
+                    <datalist id="kelompok-list">
+                        <option value="Penanggungjawab">
+                        <option value="Panitia Pengarah (SC)">
+                        <option value="Ketua Pelaksana / Pengurus Inti">
+                        <option value="Divisi Acara">
+                        <option value="Divisi Humas">
+                        <option value="Divisi Logistik & Peralatan">
+                        <option value="Divisi Konsumsi">
+                        <option value="Divisi Pubdekdok">
+                        <option value="Divisi Sponsorship & Dana">
+                        <option value="Divisi Keamanan / Kesehatan">
+                    </datalist>
+                </td>
+                <td><input type="text" class="form-control form-control-sm panitia-jabatan" placeholder="Jabatan..." value="${escapeHtml(jabatanVal)}"></td>
+                <td><input type="text" class="form-control form-control-sm panitia-nama" placeholder="Nama Lengkap..." value="${escapeHtml(namaVal)}"></td>
+                <td><input type="text" class="form-control form-control-sm panitia-nim" placeholder="NIM..." value="${escapeHtml(nimVal)}"></td>
+                <td class="text-center"><button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="this.closest('tr').remove()"><i class="fas fa-trash"></i></button></td>
+            `;
+            document.getElementById('panitia-rows').appendChild(row);
+        }
+
+        function addPanitiaDefaultRows() {
+            addPanitiaRow();
+        }
+
+        let sumberDanaRowCount = 0;
+        function addSumberDanaRow(item = null) {
+            sumberDanaRowCount++;
+            const row = document.createElement('tr');
+            row.id = `srow-${sumberDanaRowCount}`;
+            
+            const nominal = item?.nominal ? parseFloat(item.nominal) || 0 : 0;
+            const formattedNominal = nominal ? nominal.toLocaleString('id-ID') : '';
+
+            row.innerHTML = `
+                <td>
+                    <select class="form-select form-select-sm s-dana-nama">
+                        <option value="Dana Kemahasiswaan FIK" ${item?.sumber === 'Dana Kemahasiswaan FIK' ? 'selected' : ''}>Dana Kemahasiswaan FIK</option>
+                        <option value="Iuran Peserta / Tiket" ${item?.sumber === 'Iuran Peserta / Tiket' ? 'selected' : ''}>Iuran Peserta / Tiket</option>
+                        <option value="Sponsorship Eksternal" ${item?.sumber === 'Sponsorship Eksternal' ? 'selected' : ''}>Sponsorship Eksternal</option>
+                        <option value="Dana Usaha Mandiri" ${item?.sumber === 'Dana Usaha Mandiri' ? 'selected' : ''}>Dana Usaha Mandiri</option>
+                        <option value="Lainnya" ${item?.sumber === 'Lainnya' ? 'selected' : ''}>Lainnya</option>
+                    </select>
+                </td>
+                <td><input type="text" class="form-control form-control-sm s-dana-keterangan" placeholder="Keterangan..." value="${escapeHtml(item?.keterangan || '')}"></td>
+                <td><input type="text" class="form-control form-control-sm s-dana-nominal text-end" placeholder="0" oninput="calcSumberDanaTotal(); formatRupiah(this)" value="${formattedNominal}"></td>
+                <td class="text-center"><button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="this.closest('tr').remove(); calcSumberDanaTotal()"><i class="fas fa-trash"></i></button></td>
+            `;
+            document.getElementById('sumber-dana-rows').appendChild(row);
+            calcSumberDanaTotal();
+        }
+
+        function calcSumberDanaTotal() {
+            let total = 0;
+            document.querySelectorAll('#sumber-dana-rows tr').forEach(row => {
+                const nominalRaw = row.querySelector('.s-dana-nominal')?.value || '0';
+                const nominal = parseFloat(nominalRaw.replace(/\./g, '')) || 0;
+                total += nominal;
+            });
+            const totalEl = document.getElementById('sumber-dana-total');
+            if (totalEl) totalEl.textContent = 'Rp ' + total.toLocaleString('id-ID');
+        }
+
+        // Upload sertifikat function
+        function uploadSertifikatFile(input) {
+            if (!input.files || !input.files[0]) return;
+            if (!editingId) {
+                showToast('Harap isi Nama Kegiatan dan simpan draft terlebih dahulu sebelum mengunggah file.', 'warning');
+                input.value = '';
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('proposal_id', editingId);
+            formData.append('field', 'file_sertifikat');
+            formData.append('file', input.files[0]);
+
+            showLoading(true);
+
+            fetch(BASE_URL + 'proposal/upload_file', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                showLoading(false);
+                if (result.status === 'success') {
+                    showToast('Desain sertifikat berhasil diunggah', 'success');
+                    document.getElementById('f_file_sertifikat').value = result.file_name;
+                    
+                    const container = document.getElementById('sertifikat-preview-container');
+                    const img = document.getElementById('sertifikat-preview-img');
+                    const link = document.getElementById('sertifikat-preview-link');
+                    
+                    if (container && img && link) {
+                        img.src = result.file_url;
+                        link.href = result.file_url;
+                        container.style.display = 'block';
+                    }
+                } else {
+                    showToast(result.message || 'Gagal mengunggah file', 'error');
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                showToast('Koneksi bermasalah', 'error');
+            });
+        }
+
+        // ==================== FORM HELPERS ====================
+        function setTinyMCEContent(id, content) {
+            if (typeof tinymce !== 'undefined' && tinymce.get(id)) {
+                tinymce.get(id).setContent(content || '');
+            } else {
+                const el = document.getElementById(id);
+                if (el) el.value = content || '';
+            }
+        }
+
         function fillFormData(p) {
             const setVal = (id, val) => {
                 const el = document.getElementById(id);
@@ -2093,13 +2362,15 @@
             setTinyMCEContent('f_tujuan', p.tujuan);
             setTinyMCEContent('f_sasaran', p.sasaran);
             setVal('f_tanggal', p.tanggal);
+            setVal('f_tanggal_selesai', p.tanggal_selesai);
             setVal('f_waktu_mulai', p.waktu_mulai);
             setVal('f_waktu_selesai', p.waktu_selesai);
             setVal('f_lokasi', p.lokasi);
             setVal('f_peserta', p.peserta);
             setVal('f_panitia', p.panitia);
-            setVal('f_rundown', p.rundown);
-            setVal('f_sumber_dana', p.sumber_dana);
+            setVal('f_tolak_ukur', p.tolak_ukur_keberhasilan);
+            setVal('f_monitoring', p.monitoring_kegiatan);
+            setVal('f_file_sertifikat', p.file_sertifikat || '');
             
             // Format dana diajukan properly
             if (p.dana_diajukan) {
@@ -2107,6 +2378,70 @@
                 setVal('f_dana_ajukan', num.toLocaleString('id-ID'));
             } else {
                 setVal('f_dana_ajukan', '0');
+            }
+
+            // Populate Rundown
+            document.getElementById('rundown-rows').innerHTML = '';
+            rundownRowCount = 0;
+            try {
+                const rundownArr = p.rundown ? JSON.parse(p.rundown) : [];
+                if (Array.isArray(rundownArr) && rundownArr.length > 0) {
+                    rundownArr.forEach(item => addRundownRow(item));
+                } else {
+                    addRundownRow();
+                }
+            } catch (e) {
+                addRundownRow({ kegiatan: p.rundown });
+            }
+
+            // Populate Panitia
+            document.getElementById('panitia-rows').innerHTML = '';
+            panitiaRowCount = 0;
+            try {
+                const panitiaArr = p.panitia ? JSON.parse(p.panitia) : [];
+                if (Array.isArray(panitiaArr) && panitiaArr.length > 0) {
+                    panitiaArr.forEach(item => addPanitiaRow(item));
+                } else {
+                    addPanitiaDefaultRows();
+                }
+            } catch (e) {
+                if (p.panitia && typeof p.panitia === 'string' && p.panitia.trim()) {
+                    const lines = p.panitia.split('\n');
+                    lines.forEach(l => {
+                        if (l.trim()) addPanitiaRow({ kelompok: 'Panitia Pelaksana', jabatan: 'Anggota', nama: l.trim() });
+                    });
+                } else {
+                    addPanitiaDefaultRows();
+                }
+            }
+
+            // Populate Sumber Dana
+            document.getElementById('sumber-dana-rows').innerHTML = '';
+            sumberDanaRowCount = 0;
+            try {
+                const sdArr = p.sumber_dana ? JSON.parse(p.sumber_dana) : [];
+                if (Array.isArray(sdArr) && sdArr.length > 0) {
+                    sdArr.forEach(item => addSumberDanaRow(item));
+                } else {
+                    addSumberDanaRow();
+                }
+            } catch (e) {
+                addSumberDanaRow({ sumber: p.sumber_dana || 'Dana Kemahasiswaan FIK', nominal: p.dana_diajukan });
+            }
+
+            // Populate Sertifikat Preview
+            const certContainer = document.getElementById('sertifikat-preview-container');
+            const certImg = document.getElementById('sertifikat-preview-img');
+            const certLink = document.getElementById('sertifikat-preview-link');
+            if (p.file_sertifikat) {
+                const url = BASE_URL + p.file_sertifikat;
+                if (certImg && certLink && certContainer) {
+                    certImg.src = url;
+                    certLink.href = url;
+                    certContainer.style.display = 'block';
+                }
+            } else {
+                if (certContainer) certContainer.style.display = 'none';
             }
 
             // Populate Budget (RAB) Table Rows
@@ -2146,9 +2481,9 @@
 
         function resetForm() {
             const ids = ['f_ormawa', 'f_tahun', 'f_tema', 'f_jenis', 'f_nama_kegiatan', 'f_balai',
-                         'f_latar_belakang', 'f_tujuan', 'f_sasaran', 'f_tanggal', 'f_waktu_mulai',
-                         'f_waktu_selesai', 'f_lokasi', 'f_peserta', 'f_panitia', 'f_rundown',
-                         'f_sumber_dana', 'f_dana_ajukan'];
+                         'f_latar_belakang', 'f_tujuan', 'f_sasaran', 'f_tanggal', 'f_tanggal_selesai',
+                         'f_waktu_mulai', 'f_waktu_selesai', 'f_lokasi', 'f_peserta', 'f_panitia', 
+                         'f_tolak_ukur', 'f_monitoring', 'f_dana_ajukan', 'f_file_sertifikat'];
             ids.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
@@ -2167,6 +2502,22 @@
                     }
                 });
             }
+            
+            document.getElementById('rundown-rows').innerHTML = '';
+            document.getElementById('risiko-rows').innerHTML = '';
+            document.getElementById('panitia-rows').innerHTML = '';
+            document.getElementById('sumber-dana-rows').innerHTML = '';
+            rundownRowCount = 0;
+            risikoRowCount = 0;
+            panitiaRowCount = 0;
+            sumberDanaRowCount = 0;
+            addRundownRow();
+            addRisikoRow();
+            addPanitiaDefaultRows();
+            addSumberDanaRow();
+            document.getElementById('sumber-dana-total').textContent = 'Rp 0';
+            document.getElementById('sertifikat-preview-container').style.display = 'none';
+
             const budgetRows = document.getElementById('budget-rows');
             if (budgetRows) budgetRows.innerHTML = '';
             budgetRowCount = 0;
@@ -2212,7 +2563,7 @@
 
         function updateBudgetTotal() {
             let grand = 0;
-            document.querySelectorAll('.row-total').forEach(el => {
+            document.querySelectorAll('#budget-rows .row-total').forEach(el => {
                 const val = parseFloat(el.textContent.replace('Rp ', '').replace(/\./g, '')) || 0;
                 grand += val;
             });
@@ -2245,6 +2596,63 @@
                 });
             });
 
+            // Collect Rundown
+            const rundownArr = [];
+            document.querySelectorAll('#rundown-rows tr').forEach(row => {
+                const jam = row.querySelector('.rundown-jam')?.value || '';
+                const kegiatan = row.querySelector('.rundown-kegiatan')?.value || '';
+                if (!jam && !kegiatan) return;
+                rundownArr.push({
+                    jam: jam,
+                    durasi: row.querySelector('.rundown-durasi')?.value || '',
+                    kegiatan: kegiatan,
+                    pengisi: row.querySelector('.rundown-pengisi')?.value || '',
+                    lokasi: row.querySelector('.rundown-lokasi')?.value || '',
+                    keterangan: row.querySelector('.rundown-keterangan')?.value || ''
+                });
+            });
+
+            // Collect Risiko
+            const risikoArr = [];
+            document.querySelectorAll('#risiko-rows tr').forEach(row => {
+                const uraian = row.querySelector('.risiko-uraian')?.value || '';
+                const bahaya = row.querySelector('.risiko-bahaya')?.value || '';
+                if (!uraian && !bahaya) return;
+                risikoArr.push({
+                    uraian: risikoArr.length + 1,
+                    uraian_kegiatan: uraian,
+                    bahaya: bahaya,
+                    tingkat: row.querySelector('.risiko-tingkat')?.value || 'Rendah',
+                    pengendalian: row.querySelector('.risiko-pengendalian')?.value || '',
+                    penanggungjawab: row.querySelector('.risiko-penanggungjawab')?.value || ''
+                });
+            });
+
+            // Collect Panitia
+            const panitiaArr = [];
+            document.querySelectorAll('#panitia-rows tr').forEach(row => {
+                const kelompok = row.querySelector('.panitia-kelompok')?.value.trim() || '';
+                const jabatan = row.querySelector('.panitia-jabatan')?.value.trim() || '';
+                const nama = row.querySelector('.panitia-nama')?.value.trim() || '';
+                const nim = row.querySelector('.panitia-nim')?.value.trim() || '';
+                if (nama || jabatan) {
+                    panitiaArr.push({ kelompok, jabatan, nama, nim });
+                }
+            });
+
+            // Collect Sumber Dana
+            const sdArr = [];
+            document.querySelectorAll('#sumber-dana-rows tr').forEach(row => {
+                const sumber = row.querySelector('.s-dana-nama')?.value || '';
+                const nominalRaw = row.querySelector('.s-dana-nominal')?.value || '0';
+                const nominal = parseFloat(nominalRaw.replace(/\./g, '')) || 0;
+                sdArr.push({
+                    sumber: sumber,
+                    keterangan: row.querySelector('.s-dana-keterangan')?.value || '',
+                    nominal: nominal
+                });
+            });
+
             return {
                 proposal_id: editingId,
                 tipe_proposal: currentProposalType === 'ormawa' ? 'himpunan' : 'bemdpm',
@@ -2263,16 +2671,20 @@
                 peserta: document.getElementById('f_peserta')?.value || '',
                 penyelenggara: document.getElementById('f_ormawa')?.value || '',
                 tanggal_kegiatan: document.getElementById('f_tanggal')?.value || '',
+                tanggal_selesai: document.getElementById('f_tanggal_selesai')?.value || document.getElementById('f_tanggal')?.value || '',
                 waktu_mulai: document.getElementById('f_waktu_mulai')?.value || '',
                 waktu_selesai: document.getElementById('f_waktu_selesai')?.value || '',
                 lokasi_kegiatan: document.getElementById('f_lokasi')?.value || '',
-                jadwal_detail: document.getElementById('f_rundown')?.value || '',
-                susunan_acara: document.getElementById('f_rundown')?.value || '',
-                susunan_panitia: document.getElementById('f_panitia')?.value || '',
+                susunan_acara: rundownArr,
+                susunan_panitia: panitiaArr,
+                manajemen_risiko: risikoArr,
+                tolak_ukur_keberhasilan: document.getElementById('f_tolak_ukur')?.value || '',
+                monitoring_kegiatan: document.getElementById('f_monitoring')?.value || '',
                 penutup: '',
                 sasaran_kegiatan: (typeof tinymce !== 'undefined' && tinymce.get('f_sasaran')) ? tinymce.get('f_sasaran').getContent() : (document.getElementById('f_sasaran')?.value || ''),
-                sumber_dana: document.getElementById('f_sumber_dana')?.value || '',
+                sumber_dana: sdArr,
                 dana_diajukan: (document.getElementById('f_dana_ajukan')?.value || '0').replace(/\./g, ''),
+                file_sertifikat: document.getElementById('f_file_sertifikat')?.value || '',
                 rab_items: rabItems
             };
         }
@@ -2367,6 +2779,7 @@
                         tahun: p.tahun_kegiatan,
                         tema: p.tema_kegiatan,
                         tanggal: p.tanggal_kegiatan,
+                        tanggal_selesai: p.tanggal_selesai,
                         waktu_mulai: p.waktu_mulai,
                         waktu_selesai: p.waktu_selesai,
                         lokasi: p.lokasi_kegiatan,
@@ -2381,6 +2794,10 @@
                         balai: p.balai_divisi,
                         panitia: p.susunan_panitia,
                         rundown: p.susunan_acara,
+                        manajemen_risiko: p.manajemen_risiko,
+                        tolak_ukur_keberhasilan: p.tolak_ukur_keberhasilan,
+                        monitoring_kegiatan: p.monitoring_kegiatan,
+                        file_sertifikat: p.file_sertifikat,
                         catatan_admin: p.catatan_admin,
                         status: p.status || 'draft',
                         rab_items: p.rab_items || [],
@@ -2417,12 +2834,106 @@
             const st = statusMap[status] || { cls: 'status-draft', label: status };
 
             const catatanBlock = (status === 'ditolak' && p.catatan_admin)
-                ? `<div class="detail-catatan-rejection"><i class="fas fa-exclamation-circle me-2"></i><strong>Catatan Admin:</strong> ${escapeHtml(p.catatan_admin)}</div>`
+                ? `<div class="alert alert-danger p-3 mb-3" style="border-radius: 12px; font-size: 0.85rem;">
+                     <i class="fas fa-exclamation-circle me-2"></i><strong>Alasan Penolakan / Catatan Revisi:</strong><br>
+                     <div class="mt-1" style="white-space: pre-wrap;">${escapeHtml(p.catatan_admin)}</div>
+                   </div>`
                 : '';
 
             const pdfInfo = status === 'disetujui'
                 ? `<div class="detail-pdf-available"><i class="fas fa-check-circle me-2"></i>PDF proposal tersedia.</div>`
                 : `<div class="detail-pdf-pending"><i class="fas fa-clock me-2"></i>PDF akan tersedia setelah proposal disetujui.</div>`;
+
+            const tglMulai = p.tanggal ? formatDate(p.tanggal) : '-';
+            const tglSelesai = p.tanggal_selesai ? formatDate(p.tanggal_selesai) : '';
+            const tglString = tglSelesai && tglSelesai !== tglMulai ? `${tglMulai} s.d. ${tglSelesai}` : tglMulai;
+
+            let sumberDanaHtml = '';
+            try {
+                const sdArr = p.sumber_dana ? JSON.parse(p.sumber_dana) : [];
+                if (Array.isArray(sdArr) && sdArr.length > 0) {
+                    sumberDanaHtml = sdArr.map(x => `&bull; ${escapeHtml(x.sumber)}: Rp ${(x.nominal || 0).toLocaleString('id-ID')}`).join('<br>');
+                } else {
+                    sumberDanaHtml = escapeHtml(p.sumber_dana || '-');
+                }
+            } catch (e) {
+                sumberDanaHtml = escapeHtml(p.sumber_dana || '-');
+            }
+
+            // Rundown Table HTML
+            let rundownTableHtml = '<p class="text-muted" style="font-size:0.85rem;">Tidak ada susunan acara.</p>';
+            try {
+                const rundownArr = p.rundown ? JSON.parse(p.rundown) : [];
+                if (Array.isArray(rundownArr) && rundownArr.length > 0) {
+                    rundownTableHtml = `
+                        <table class="table table-sm table-bordered mt-2" style="font-size:0.8rem;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Jam</th>
+                                    <th>Durasi</th>
+                                    <th>Kegiatan</th>
+                                    <th>Pengisi</th>
+                                    <th>Lokasi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rundownArr.map(x => `
+                                    <tr>
+                                        <td>${escapeHtml(x.jam || '-')}</td>
+                                        <td>${escapeHtml(x.durasi || '-')}</td>
+                                        <td>${escapeHtml(x.kegiatan || '-')}</td>
+                                        <td>${escapeHtml(x.pengisi || '-')}</td>
+                                        <td>${escapeHtml(x.lokasi || '-')}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } catch (e) {}
+
+            // Risiko Table HTML
+            let risikoTableHtml = '<p class="text-muted" style="font-size:0.85rem;">Tidak ada manajemen risiko.</p>';
+            try {
+                const risikoArr = p.manajemen_risiko ? JSON.parse(p.manajemen_risiko) : [];
+                if (Array.isArray(risikoArr) && risikoArr.length > 0) {
+                    risikoTableHtml = `
+                        <table class="table table-sm table-bordered mt-2" style="font-size:0.8rem;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Uraian Kegiatan</th>
+                                    <th>Identifikasi Bahaya</th>
+                                    <th>Tingkat</th>
+                                    <th>Pengendalian</th>
+                                    <th>Penanggungjawab</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${risikoArr.map(x => `
+                                    <tr>
+                                        <td>${escapeHtml(x.uraian_kegiatan || x.uraian || '-')}</td>
+                                        <td>${escapeHtml(x.bahaya || '-')}</td>
+                                        <td><span class="badge bg-${x.tingkat === 'Tinggi' ? 'danger' : (x.tingkat === 'Sedang' ? 'warning' : 'secondary')}">${escapeHtml(x.tingkat || 'Rendah')}</span></td>
+                                        <td>${escapeHtml(x.pengendalian || '-')}</td>
+                                        <td>${escapeHtml(x.penanggungjawab || '-')}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } catch (e) {}
+
+            const certMockupHtml = p.file_sertifikat
+                ? `<div class="detail-section">
+                        <div class="detail-section-title"><i class="fas fa-image"></i> Desain Sertifikat Mockup</div>
+                        <div class="text-center mt-2">
+                            <a href="${BASE_URL}${p.file_sertifikat}" target="_blank">
+                                <img src="${BASE_URL}${p.file_sertifikat}" alt="Sertifikat Mockup" style="max-height:150px; border-radius:8px; border:1px solid var(--border);">
+                            </a>
+                        </div>
+                   </div>`
+                : '';
 
             const modalBody = document.getElementById('detail-modal-body');
             if (modalBody) {
@@ -2441,7 +2952,7 @@
                     <div class="detail-section">
                         <div class="detail-section-title"><i class="fas fa-calendar-alt"></i> Waktu & Tempat</div>
                         <div class="detail-grid">
-                            <div class="detail-item"><span class="detail-label">Tanggal</span><span class="detail-value">${formatDate(p.tanggal)}</span></div>
+                            <div class="detail-item"><span class="detail-label">Tanggal</span><span class="detail-value">${tglString}</span></div>
                             <div class="detail-item"><span class="detail-label">Waktu</span><span class="detail-value">${p.waktu_mulai || '-'} – ${p.waktu_selesai || '-'}</span></div>
                             <div class="detail-item"><span class="detail-label">Lokasi</span><span class="detail-value">${escapeHtml(p.lokasi || '-')}</span></div>
                             <div class="detail-item"><span class="detail-label">Estimasi Peserta</span><span class="detail-value">${p.peserta ? p.peserta + ' orang' : '-'}</span></div>
@@ -2453,15 +2964,28 @@
                         <div class="detail-text-block">${escapeHtml(p.latar_belakang || '-').replace(/\n/g, '<br>')}</div>
                         <div class="detail-label mt-3 mb-1">Tujuan & Manfaat</div>
                         <div class="detail-text-block">${escapeHtml(p.tujuan || '-').replace(/\n/g, '<br>')}</div>
+                        ${p.sasaran ? `
+                            <div class="detail-label mt-3 mb-1">Sasaran Kegiatan</div>
+                            <div class="detail-text-block">${escapeHtml(p.sasaran || '-').replace(/\n/g, '<br>')}</div>
+                        ` : ''}
                     </div>
                     <div class="detail-section">
-                        <div class="detail-section-title"><i class="fas fa-coins"></i> Anggaran</div>
+                        <div class="detail-section-title"><i class="fas fa-list-ul"></i> Susunan Acara & Manajemen Risiko</div>
+                        <div class="detail-label mb-1">Susunan Acara (Rundown)</div>
+                        ${rundownTableHtml}
+                        <div class="detail-label mt-3 mb-1">Rencana Manajemen Risiko</div>
+                        ${risikoTableHtml}
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-section-title"><i class="fas fa-coins"></i> Anggaran & Sumber Dana</div>
                         <div class="detail-grid">
                             <div class="detail-item"><span class="detail-label">Total RAB</span><span class="detail-value">${p.total_rab ? 'Rp ' + Number(p.total_rab).toLocaleString('id-ID') : '-'}</span></div>
-                            <div class="detail-item"><span class="detail-label">Sumber Dana</span><span class="detail-value">${escapeHtml(p.sumber_dana || '-')}</span></div>
                             <div class="detail-item"><span class="detail-label">Dana Diajukan</span><span class="detail-value">${p.dana_diajukan ? 'Rp ' + Number(p.dana_diajukan).toLocaleString('id-ID') : '-'}</span></div>
                         </div>
+                        <div class="detail-label mt-3 mb-1">Rincian Sumber Pemasukan</div>
+                        <div class="detail-text-block" style="font-size:0.85rem;">${sumberDanaHtml}</div>
                     </div>
+                    ${certMockupHtml}
                 `;
             }
 

@@ -17,7 +17,7 @@ class Proposal_model extends CI_Model {
     }
 
     public function get_my_proposals($user_id, $tipe = null) {
-        $this->db->select('p.*, u.nama AS nama_pengaju, u.nim, u.program_studi');
+        $this->db->select('p.*, u.nama AS nama_pengaju, u.nim, u.program_studi, u.no_hp');
         $this->db->from('proposal p');
         $this->db->join('users u', 'u.id = p.dibuat_oleh', 'left');
         $this->db->where('p.dibuat_oleh', $user_id);
@@ -29,7 +29,7 @@ class Proposal_model extends CI_Model {
 
     public function get_all_proposals($tipe = null, $status = null, $search = null)
 {
-    $this->db->select('p.*, u.nama AS nama_pengaju, u.nim, u.program_studi');
+    $this->db->select('p.*, u.nama AS nama_pengaju, u.nim, u.program_studi, u.no_hp');
     $this->db->from('proposal p');
     $this->db->join('users u', 'u.id = p.dibuat_oleh', 'left');
     $this->db->where('p.deleted_at IS NULL', NULL, FALSE);
@@ -57,7 +57,7 @@ class Proposal_model extends CI_Model {
 
     public function get_by_id($id, $owner_id = null)
 {
-    $this->db->select('p.*, u.nama AS nama_pengaju, u.nim, u.program_studi, u.email AS email_pengaju');
+    $this->db->select('p.*, u.nama AS nama_pengaju, u.nim, u.program_studi, u.no_hp, u.email AS email_pengaju');
     $this->db->from('proposal p');
     $this->db->join('users u', 'u.id = p.dibuat_oleh', 'left');
     $this->db->where('p.id', $id);
@@ -310,32 +310,56 @@ class Proposal_model extends CI_Model {
     ───────────────────────────────────────────── */
 
     public function sanitize($raw) {
+        $sumber_dana_val = $raw['sumber_dana'] ?? '';
+        if (is_array($sumber_dana_val)) {
+            $sumber_dana_val = json_encode($sumber_dana_val);
+        }
+
+        $susunan_acara_val = $raw['susunan_acara'] ?? '';
+        if (is_array($susunan_acara_val)) {
+            $susunan_acara_val = json_encode($susunan_acara_val);
+        }
+
+        $manajemen_risiko_val = $raw['manajemen_risiko'] ?? '';
+        if (is_array($manajemen_risiko_val)) {
+            $manajemen_risiko_val = json_encode($manajemen_risiko_val);
+        }
+
+        $susunan_panitia_val = $raw['susunan_panitia'] ?? '';
+        if (is_array($susunan_panitia_val)) {
+            $susunan_panitia_val = json_encode($susunan_panitia_val);
+        }
+
         return [
-            'tipe_proposal'      => in_array($raw['tipe_proposal'] ?? '', ['himpunan','bemdpm'])
-                                        ? $raw['tipe_proposal'] : 'himpunan',
-            'nama_kegiatan'      => trim($raw['nama_kegiatan']      ?? ''),
-            'nama_ormawa'        => trim($raw['nama_ormawa']        ?? ''),
-            'tahun_kegiatan'     => trim($raw['tahun_kegiatan']     ?? ''),
-            'tema_kegiatan'      => trim($raw['tema_kegiatan']      ?? ''),
-            'jenis_kegiatan'     => trim($raw['jenis_kegiatan']     ?? ''),
-            'balai_divisi'       => trim($raw['balai_divisi']       ?? ''),
-            'latar_belakang'     => trim($raw['latar_belakang']     ?? ''),
-            'tujuan_manfaat'     => trim($raw['tujuan_manfaat']     ?? ''),
-            'sasaran_kegiatan'   => trim($raw['sasaran_kegiatan'] ?? ''),
-            'peserta'            => (trim($raw['peserta'] ?? '') !== '') ? (int)trim($raw['peserta']) : null,
-            'tanggal_kegiatan'   => (trim($raw['tanggal_kegiatan'] ?? '') !== '') ? $raw['tanggal_kegiatan'] : null,
-            'waktu_mulai'        => (trim($raw['waktu_mulai'] ?? '') !== '') ? $raw['waktu_mulai'] : null,
-            'waktu_selesai'      => (trim($raw['waktu_selesai'] ?? '') !== '') ? $raw['waktu_selesai'] : null,
-            'lokasi_kegiatan'    => trim($raw['lokasi_kegiatan']    ?? ''),
-            'susunan_acara'      => trim($raw['susunan_acara']      ?? ''),
-            'susunan_panitia'    => trim($raw['susunan_panitia']    ?? ''),
-            'sumber_dana'        => trim($raw['sumber_dana']        ?? ''),
-            'dana_diajukan'      => (float)str_replace(['.', ','], ['', '.'], $raw['dana_diajukan'] ?? '0'),
+            'tipe_proposal'          => in_array($raw['tipe_proposal'] ?? '', ['himpunan','bemdpm'])
+                                            ? $raw['tipe_proposal'] : 'himpunan',
+            'nama_kegiatan'          => trim($raw['nama_kegiatan']          ?? ''),
+            'nama_ormawa'            => trim($raw['nama_ormawa']            ?? ''),
+            'tahun_kegiatan'         => trim($raw['tahun_kegiatan']         ?? ''),
+            'tema_kegiatan'          => trim($raw['tema_kegiatan']          ?? ''),
+            'jenis_kegiatan'         => trim($raw['jenis_kegiatan']         ?? ''),
+            'balai_divisi'           => trim($raw['balai_divisi']           ?? ''),
+            'latar_belakang'         => trim($raw['latar_belakang']         ?? ''),
+            'tujuan_manfaat'         => trim($raw['tujuan_manfaat']         ?? ''),
+            'sasaran_kegiatan'       => trim($raw['sasaran_kegiatan']       ?? ''),
+            'peserta'                => (trim($raw['peserta'] ?? '') !== '') ? (int)trim($raw['peserta']) : null,
+            'tanggal_kegiatan'       => (trim($raw['tanggal_kegiatan'] ?? '') !== '') ? $raw['tanggal_kegiatan'] : null,
+            'tanggal_selesai'        => (trim($raw['tanggal_selesai'] ?? '') !== '') ? $raw['tanggal_selesai'] : null,
+            'waktu_mulai'            => (trim($raw['waktu_mulai'] ?? '') !== '') ? $raw['waktu_mulai'] : null,
+            'waktu_selesai'          => (trim($raw['waktu_selesai'] ?? '') !== '') ? $raw['waktu_selesai'] : null,
+            'lokasi_kegiatan'        => trim($raw['lokasi_kegiatan']        ?? ''),
+            'susunan_acara'          => trim($susunan_acara_val),
+            'susunan_panitia'        => trim($susunan_panitia_val),
+            'manajemen_risiko'       => trim($manajemen_risiko_val),
+            'tolak_ukur_keberhasilan'=> trim($raw['tolak_ukur_keberhasilan']?? ''),
+            'monitoring_kegiatan'    => trim($raw['monitoring_kegiatan']    ?? ''),
+            'sumber_dana'            => trim($sumber_dana_val),
+            'dana_diajukan'          => (float)str_replace(['.', ','], ['', '.'], $raw['dana_diajukan'] ?? '0'),
         ];
     }
 
     public function save_file($id, $field, $path) {
-        $allowed = ['file_ttd_ketua', 'file_lampiran', 'file_pdf_output'];
+        $allowed = ['file_ttd_ketua', 'file_lampiran', 'file_pdf_output', 'file_sertifikat'];
         if (!in_array($field, $allowed)) return false;
         return $this->db->where('id', $id)->update('proposal', [
             $field       => $path,

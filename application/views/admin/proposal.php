@@ -1286,13 +1286,13 @@
 
             // Tampilkan loading
             document.getElementById('detailBody').innerHTML = `
-        <div class="text-center py-4">
-            <div class="spinner-border text-warning" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-2">Memuat data...</p>
-        </div>
-    `;
+                <div class="text-center py-4">
+                    <div class="spinner-border text-warning" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Memuat data...</p>
+                </div>
+            `;
 
             // Sembunyikan tombol approve/reject dulu
             document.getElementById('modalApproveBtn').style.display = 'none';
@@ -1318,6 +1318,16 @@
                 .then(data => {
                     if (data.status === 'success') {
                         const p = data.data;
+
+                        const escapeHtml = (str) => {
+                            if (!str) return '';
+                            return str.toString()
+                                .replace(/&/g, "&amp;")
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;")
+                                .replace(/"/g, "&quot;")
+                                .replace(/'/g, "&#039;");
+                        };
 
                         // Format tanggal
                         const fmtDate = (d) => {
@@ -1346,18 +1356,18 @@
                         if (p.catatan_admin && p.catatan_admin.trim() !== '') {
                             if (p.status == 'ditolak') {
                                 catatanHtml = `
-                        <div class="alert alert-danger mb-3">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            <strong>Catatan Penolakan:</strong> ${p.catatan_admin}
-                        </div>
-                    `;
+                                    <div class="alert alert-danger mb-3">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        <strong>Catatan Penolakan:</strong> ${escapeHtml(p.catatan_admin)}
+                                    </div>
+                                `;
                             } else if (p.status == 'disetujui') {
                                 catatanHtml = `
-                        <div class="alert alert-success mb-3">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <strong>Catatan:</strong> ${p.catatan_admin}
-                        </div>
-                    `;
+                                    <div class="alert alert-success mb-3">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong>Catatan:</strong> ${escapeHtml(p.catatan_admin)}
+                                    </div>
+                                `;
                             }
                         }
 
@@ -1367,95 +1377,201 @@
                         const jenisKegiatan = p.jenis_kegiatan || '-';
                         const tipeProposal = p.tipe_proposal == 'himpunan' ? 'Ormawa / Himpunan' : 'BEM / DPM';
 
+                        // Range Tanggal
+                        const tglMulai = fmtDate(p.tanggal_kegiatan);
+                        const tglSelesai = fmtDate(p.tanggal_selesai);
+                        const tglString = (tglSelesai && tglSelesai !== tglMulai) ? `${tglMulai} s.d. ${tglSelesai}` : tglMulai;
+
+                        let sumberDanaHtml = '';
+                        try {
+                            const sdArr = p.sumber_dana ? JSON.parse(p.sumber_dana) : [];
+                            if (Array.isArray(sdArr) && sdArr.length > 0) {
+                                sumberDanaHtml = sdArr.map(x => `&bull; ${escapeHtml(x.sumber)}: Rp ${(x.nominal || 0).toLocaleString('id-ID')}`).join('<br>');
+                            } else {
+                                sumberDanaHtml = escapeHtml(p.sumber_dana || '-');
+                            }
+                        } catch (e) {
+                            sumberDanaHtml = escapeHtml(p.sumber_dana || '-');
+                        }
+
+                        // Rundown Table HTML
+                        let rundownTableHtml = '<p class="text-muted" style="font-size:0.85rem;">Tidak ada susunan acara.</p>';
+                        try {
+                            const rundownArr = p.susunan_acara ? JSON.parse(p.susunan_acara) : [];
+                            if (Array.isArray(rundownArr) && rundownArr.length > 0) {
+                                rundownTableHtml = `
+                                    <table class="table table-sm table-bordered mt-2" style="font-size:0.8rem;">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Jam</th>
+                                                <th>Durasi</th>
+                                                <th>Kegiatan</th>
+                                                <th>Pengisi</th>
+                                                <th>Lokasi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${rundownArr.map(x => `
+                                                <tr>
+                                                    <td>${escapeHtml(x.jam || '-')}</td>
+                                                    <td>${escapeHtml(x.durasi || '-')}</td>
+                                                    <td>${escapeHtml(x.kegiatan || '-')}</td>
+                                                    <td>${escapeHtml(x.pengisi || '-')}</td>
+                                                    <td>${escapeHtml(x.lokasi || '-')}</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                `;
+                            }
+                        } catch (e) {}
+
+                        // Risiko Table HTML
+                        let risikoTableHtml = '<p class="text-muted" style="font-size:0.85rem;">Tidak ada manajemen risiko.</p>';
+                        try {
+                            const risikoArr = p.manajemen_risiko ? JSON.parse(p.manajemen_risiko) : [];
+                            if (Array.isArray(risikoArr) && risikoArr.length > 0) {
+                                risikoTableHtml = `
+                                    <table class="table table-sm table-bordered mt-2" style="font-size:0.8rem;">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Uraian Kegiatan</th>
+                                                <th>Identifikasi Bahaya</th>
+                                                <th>Tingkat</th>
+                                                <th>Pengendalian</th>
+                                                <th>Penanggungjawab</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${risikoArr.map(x => `
+                                                <tr>
+                                                    <td>${escapeHtml(x.uraian_kegiatan || x.uraian || '-')}</td>
+                                                    <td>${escapeHtml(x.bahaya || '-')}</td>
+                                                    <td><span class="badge bg-${x.tingkat === 'Tinggi' ? 'danger' : (x.tingkat === 'Sedang' ? 'warning' : 'secondary')}">${escapeHtml(x.tingkat || 'Rendah')}</span></td>
+                                                    <td>${escapeHtml(x.pengendalian || '-')}</td>
+                                                    <td>${escapeHtml(x.penanggungjawab || '-')}</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                `;
+                            }
+                        } catch (e) {}
+
+                        const certMockupHtml = p.file_sertifikat
+                            ? `<div class="detail-section">
+                                    <div class="detail-section-title"><i class="fas fa-image"></i> Desain Sertifikat Mockup</div>
+                                    <div class="text-center mt-2">
+                                        <a href="<?= base_url() ?>${p.file_sertifikat}" target="_blank">
+                                            <img src="<?= base_url() ?>${p.file_sertifikat}" alt="Sertifikat Mockup" style="max-height:150px; border-radius:8px; border:1px solid #ddd;">
+                                        </a>
+                                    </div>
+                               </div>`
+                            : '';
+
                         document.getElementById('detailBody').innerHTML = `
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                        <h5 class="mb-1">${p.nama_kegiatan || '-'}</h5>
-                        <small class="text-muted">${p.kode_proposal || '-'} • ${p.nama_ormawa || '-'}</small>
-                    </div>
-                    ${statusBadge}
-                </div>
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="mb-1">${p.nama_kegiatan || '-'}</h5>
+                                    <small class="text-muted">${p.kode_proposal || '-'} • ${p.nama_ormawa || '-'}</small>
+                                </div>
+                                ${statusBadge}
+                            </div>
 
-                ${catatanHtml}
+                            ${catatanHtml}
 
-                <div class="detail-section">
-                    <div class="detail-section-title"><i class="fas fa-id-card"></i> Identitas</div>
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <div class="label">Pengaju</div>
-                            <div class="value">${namaPengaju}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">NIM</div>
-                            <div class="value">${nim}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">Jenis Kegiatan</div>
-                            <div class="value">${jenisKegiatan}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">Tipe Proposal</div>
-                            <div class="value">${tipeProposal}</div>
-                        </div>
-                    </div>
-                </div>
+                            <div class="detail-section">
+                                <div class="detail-section-title"><i class="fas fa-id-card"></i> Identitas</div>
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <div class="label">Pengaju</div>
+                                        <div class="value">${namaPengaju}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">NIM</div>
+                                        <div class="value">${nim}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Jenis Kegiatan</div>
+                                        <div class="value">${jenisKegiatan}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Tipe Proposal</div>
+                                        <div class="value">${tipeProposal}</div>
+                                    </div>
+                                </div>
+                            </div>
 
-                <div class="detail-section">
-                    <div class="detail-section-title"><i class="fas fa-calendar-alt"></i> Waktu & Tempat</div>
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <div class="label">Tanggal Kegiatan</div>
-                            <div class="value">${fmtDate(p.tanggal_kegiatan)}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">Waktu</div>
-                            <div class="value">${p.waktu_mulai || '-'} – ${p.waktu_selesai || '-'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">Lokasi</div>
-                            <div class="value">${p.lokasi_kegiatan || '-'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">Estimasi Peserta</div>
-                            <div class="value">${p.peserta || '-'} orang</div>
-                        </div>
-                    </div>
-                </div>
+                            <div class="detail-section">
+                                <div class="detail-section-title"><i class="fas fa-calendar-alt"></i> Waktu & Tempat</div>
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <div class="label">Tanggal Kegiatan</div>
+                                        <div class="value">${tglString}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Waktu</div>
+                                        <div class="value">${p.waktu_mulai || '-'} – ${p.waktu_selesai || '-'}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Lokasi</div>
+                                        <div class="value">${p.lokasi_kegiatan || '-'}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Estimasi Peserta</div>
+                                        <div class="value">${p.peserta || '-'} orang</div>
+                                    </div>
+                                </div>
+                            </div>
 
-                <div class="detail-section">
-                    <div class="detail-section-title"><i class="fas fa-scroll"></i> Pendahuluan</div>
-                    <div class="mb-2"><strong>Latar Belakang</strong></div>
-                    <div class="detail-text-block mb-3" id="admin-latar-belakang"></div>
-                    <div class="mb-2"><strong>Tujuan & Manfaat</strong></div>
-                    <div class="detail-text-block" id="admin-tujuan"></div>
-                </div>
+                            <div class="detail-section">
+                                <div class="detail-section-title"><i class="fas fa-scroll"></i> Pendahuluan</div>
+                                <div class="mb-2"><strong>Latar Belakang</strong></div>
+                                <div class="detail-text-block mb-3" id="admin-latar-belakang"></div>
+                                <div class="mb-2"><strong>Tujuan & Manfaat</strong></div>
+                                <div class="detail-text-block mb-3" id="admin-tujuan"></div>
+                                ${p.sasaran_kegiatan ? `
+                                    <div class="mb-2"><strong>Target Sasaran</strong></div>
+                                    <div class="detail-text-block" style="background:#f9f9f9; padding:8px; border-radius:6px; font-size:0.85rem;">${escapeHtml(p.sasaran_kegiatan)}</div>
+                                ` : ''}
+                            </div>
 
-                <div class="detail-section">
-                    <div class="detail-section-title"><i class="fas fa-coins"></i> Anggaran</div>
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <div class="label">Total RAB</div>
-                            <div class="value">${fmtRp(p.total_rab)}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">Dana Diajukan</div>
-                            <div class="value" style="color: #E67E22;">${fmtRp(p.dana_diajukan)}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="label">Sumber Dana</div>
-                            <div class="value">${p.sumber_dana || '-'}</div>
-                        </div>
-                    </div>
-                </div>
+                            <div class="detail-section">
+                                <div class="detail-section-title"><i class="fas fa-list-ul"></i> Susunan Acara & Manajemen Risiko</div>
+                                <div class="mb-2"><strong>Susunan Acara (Rundown)</strong></div>
+                                ${rundownTableHtml}
+                                <div class="mt-3 mb-2"><strong>Rencana Manajemen Risiko</strong></div>
+                                ${risikoTableHtml}
+                            </div>
 
-                <div class="detail-section">
-                    <div class="detail-section-title"><i class="fas fa-history"></i> Riwayat</div>
-                    <div class="detail-item">
-                        <div class="label">Tanggal Pengajuan</div>
-                        <div class="value">${p.created_at ? new Date(p.created_at).toLocaleString('id-ID') : '-'}</div>
-                    </div>
-                </div>
-            `;
+                            <div class="detail-section">
+                                <div class="detail-section-title"><i class="fas fa-coins"></i> Anggaran & Sumber Dana</div>
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <div class="label">Total RAB</div>
+                                        <div class="value">${fmtRp(p.total_rab)}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Dana Diajukan</div>
+                                        <div class="value" style="color: #E67E22;">${fmtRp(p.dana_diajukan)}</div>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <div class="label">Rincian Sumber Pemasukan</div>
+                                    <div class="value" style="font-size:0.85rem; line-height:1.4;">${sumberDanaHtml}</div>
+                                </div>
+                            </div>
+
+                            ${certMockupHtml}
+
+                            <div class="detail-section">
+                                <div class="detail-section-title"><i class="fas fa-history"></i> Riwayat</div>
+                                <div class="detail-item">
+                                    <div class="label">Tanggal Pengajuan</div>
+                                    <div class="value">${p.created_at ? new Date(p.created_at).toLocaleString('id-ID') : '-'}</div>
+                                </div>
+                            </div>
+                        `;
 
                         // Render HTML dari TinyMCE
                         (function() {
@@ -1537,23 +1653,34 @@
                 })
                 .then(data => {
                     if (data.status === 'success') {
-                        // Tutup modal approve
-                        bootstrap.Modal.getInstance(document.getElementById('modalApprove')).hide();
-
-                        // Tampilkan pesan sukses
-                        alert('Proposal berhasil disetujui!');
-
-                        // Reload halaman
-                        location.reload();
+                        const modalEl = document.getElementById('modalApprove');
+                        if (modalEl && bootstrap.Modal.getInstance(modalEl)) {
+                            bootstrap.Modal.getInstance(modalEl).hide();
+                        }
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Proposal Disetujui',
+                                text: 'Status proposal berhasil disetujui.',
+                                timer: 1200,
+                                showConfirmButton: false
+                            }).then(() => location.reload());
+                        } else {
+                            location.reload();
+                        }
                     } else {
-                        alert('Error: ' + data.message);
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire('Gagal', data.message || 'Gagal menyetujui proposal', 'error');
+                        }
                         btn.innerHTML = originalText;
                         btn.disabled = false;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan koneksi');
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire('Error', 'Terjadi kesalahan koneksi', 'error');
+                    }
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 });
@@ -1606,23 +1733,34 @@
                 })
                 .then(data => {
                     if (data.status === 'success') {
-                        // Tutup modal reject
-                        bootstrap.Modal.getInstance(document.getElementById('modalReject')).hide();
-
-                        // Tampilkan pesan sukses
-                        alert('Proposal telah ditolak');
-
-                        // Reload halaman
-                        location.reload();
+                        const modalEl = document.getElementById('modalReject');
+                        if (modalEl && bootstrap.Modal.getInstance(modalEl)) {
+                            bootstrap.Modal.getInstance(modalEl).hide();
+                        }
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Proposal Ditolak',
+                                text: 'Catatan penolakan telah dikirimkan.',
+                                timer: 1200,
+                                showConfirmButton: false
+                            }).then(() => location.reload());
+                        } else {
+                            location.reload();
+                        }
                     } else {
-                        alert('Error: ' + data.message);
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire('Gagal', data.message || 'Gagal menolak proposal', 'error');
+                        }
                         btn.innerHTML = originalText;
                         btn.disabled = false;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan koneksi');
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire('Error', 'Terjadi kesalahan koneksi', 'error');
+                    }
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 });
