@@ -201,19 +201,27 @@
         </div>
 
         <div class="col-lg-4">
+            <!-- Unified Sidebar Card -->
             <div class="sidebar-card" data-aos="fade-left">
-                <div class="share-title"><i class="fas fa-share-alt me-2" style="color: var(--orange);"></i> Bagikan Halaman</div>
-                <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode(current_url()) ?>" target="_blank" class="share-btn"><i class="fab fa-facebook-f"></i> Facebook</a>
-                <a href="https://twitter.com/intent/tweet?url=<?= urlencode(current_url()) ?>&text=<?= urlencode($direktorat ? $direktorat->judul : 'Direktorat') ?>" target="_blank" class="share-btn"><i class="fab fa-twitter"></i> Twitter</a>
-                <a href="https://wa.me/?text=<?= urlencode(($direktorat ? $direktorat->judul : 'Direktorat') . ' - ' . current_url()) ?>" target="_blank" class="share-btn"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-                <a href="#" class="share-btn" id="copyLinkBtnSidebar"><i class="fas fa-link"></i> Salin Link</a>
-            </div>
-
-            <div class="sidebar-card" data-aos="fade-left" data-aos-delay="100">
-                <h4><i class="fas fa-building me-2" style="color: var(--orange);"></i> Tentang Direktorat</h4>
-                <p class="text-muted" style="font-size: 0.88rem; line-height: 1.7;">
+                <h4 style="color: #1e3a8a; border-bottom: 2px solid var(--orange); padding-bottom: 12px; margin-bottom: 16px; font-weight: 700; font-size: 1.1rem;">
+                    <i class="fas fa-building me-2" style="color: var(--orange);"></i> Tentang Direktorat
+                </h4>
+                
+                <div class="dir-text-wrap" style="font-size: 0.92rem; line-height: 1.8; color: #4b5563; text-align: justify; max-height: 350px; overflow-y: auto; padding-right: 8px; margin-bottom: 20px;">
                     <?= ($direktorat && !empty(trim($direktorat->link))) ? nl2br(htmlspecialchars($direktorat->link)) : 'Direktorat Kemahasiswaan, Karier dan Alumni (KKA) berperan dalam mengelola prestasi, kegiatan mahasiswa, pengembangan karakter, kesejahteraan mahasiswa, pengembangan karier dan kontribusi alumni di lingkungan Fakultas Industri Kreatif Telkom University.' ?>
-                </p>
+                </div>
+
+                <div style="border-top: 1px dashed #e2e8f0; padding-top: 16px;">
+                    <div class="share-title" style="font-size: 0.85rem; font-weight: 700; color: #64748b; margin-bottom: 12px;">
+                        <i class="fas fa-share-alt me-2" style="color: var(--orange);"></i> Bagikan Halaman:
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode(current_url()) ?>" target="_blank" class="share-pill" title="Facebook" style="background: #eff6ff; color: #1877f2; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.2s;"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com/intent/tweet?url=<?= urlencode(current_url()) ?>&text=<?= urlencode($direktorat ? $direktorat->judul : 'Direktorat') ?>" target="_blank" class="share-pill" title="Twitter" style="background: #f0f9ff; color: #1da1f2; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.2s;"><i class="fab fa-twitter"></i></a>
+                        <a href="https://wa.me/?text=<?= urlencode(($direktorat ? $direktorat->judul : 'Direktorat') . ' - ' . current_url()) ?>" target="_blank" class="share-pill" title="WhatsApp" style="background: #f0fdf4; color: #25d366; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.2s;"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="share-pill" id="copyLinkBtnSidebar" title="Salin Link" style="background: #fff7ed; color: var(--orange); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.2s;"><i class="fas fa-link"></i></a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

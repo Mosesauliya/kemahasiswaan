@@ -869,7 +869,7 @@
 
                 <a href="<?= base_url('admin/forum_alumni') ?>">
                     <i class="fas fa-comments"></i>
-                    <span>Forum Alumni</span>
+                    <span>Ikatan Alumni</span>
                     <?php 
                     $CI =& get_instance();
                     $pending_posts = $CI->db->where('status', 'pending')->count_all_results('forum_alumni_posts');

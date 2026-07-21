@@ -1682,27 +1682,27 @@
 
       
       <div class="floating-card badge-abs-1">
-              <div class="badge-icon-orange"><i class="fas fa-chalkboard"></i></div>
-              <div><strong><?= htmlspecialchars($hero_text['card1_title'] ?? 'Complete chapters') ?></strong><br><?= htmlspecialchars($hero_text['card1_sub'] ?? 'to earn certificates') ?></div>
+              <div class="badge-icon-orange"><i class="fas fa-certificate"></i></div>
+              <div><strong><?= htmlspecialchars($hero_text['card1_title'] ?? 'Pengajuan Sertifikat') ?></strong><br><?= htmlspecialchars($hero_text['card1_sub'] ?? 'Cetak sertifikat & prestasi') ?></div>
             </div>
 
             <div class="floating-card badge-abs-2">
-              <div class="badge-icon-orange"><i class="fas fa-lightbulb"></i></div>
-              <div><strong><?= htmlspecialchars($hero_text['card2_title'] ?? 'Beasiswa') ?></strong><br><?= htmlspecialchars($hero_text['card2_sub'] ?? 'Jaringan profesional') ?></div>
+              <div class="badge-icon-orange"><i class="fas fa-users"></i></div>
+              <div><strong><?= htmlspecialchars($hero_text['card2_title'] ?? 'Ikatan Alumni') ?></strong><br><?= htmlspecialchars($hero_text['card2_sub'] ?? 'Jaringan profesional & karir') ?></div>
             </div>
       <div class="floating-card badge-abs-3">
-              <div class="badge-icon-orange"><i class="fas fa-chalkboard"></i></div>
-              <div><strong><?= htmlspecialchars($hero_text['card3_title'] ?? 'MyTeLU') ?></strong><br><?= htmlspecialchars($hero_text['card3_sub'] ?? 'Dashboard interaktif') ?></div>
+              <div class="badge-icon-orange"><i class="fas fa-sign-in-alt"></i></div>
+              <div><strong><?= htmlspecialchars($hero_text['card3_title'] ?? 'Log in') ?></strong><br><?= htmlspecialchars($hero_text['card3_sub'] ?? 'Dashboard interaktif') ?></div>
             </div>
 
             <div class="floating-card badge-abs-4">
-              <div class="badge-icon-orange"><i class="fas fa-lightbulb"></i></div>
-              <div><strong><?= htmlspecialchars($hero_text['card4_title'] ?? 'Beasiswa') ?></strong><br><?= htmlspecialchars($hero_text['card4_sub'] ?? 'Peluang bantuan biaya') ?></div>
+              <div class="badge-icon-orange"><i class="fas fa-clipboard-list"></i></div>
+              <div><strong><?= htmlspecialchars($hero_text['card4_title'] ?? 'Pengajuan Proposal') ?></strong><br><?= htmlspecialchars($hero_text['card4_sub'] ?? 'Layanan kegiatan & PKM') ?></div>
             </div>
 
             <div class="floating-card badge-abs-5">
               <div class="badge-icon-orange"><i class="fas fa-rocket"></i></div>
-              <div><strong><?= htmlspecialchars($hero_text['card5_title'] ?? 'Karier') ?></strong><br><?= htmlspecialchars($hero_text['card5_sub'] ?? 'Persiapan dunia kerja') ?></div>
+              <div><strong><?= htmlspecialchars($hero_text['card5_title'] ?? 'Jenjang Karier') ?></strong><br><?= htmlspecialchars($hero_text['card5_sub'] ?? 'Persiapan dunia kerja') ?></div>
             </div>
           <div class="achievement-master-wrapper">
     <div class="container-custom" style="padding: 0;">

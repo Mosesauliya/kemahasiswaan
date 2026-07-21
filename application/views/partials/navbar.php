@@ -15,7 +15,7 @@ if (isset($user_data) && is_array($user_data) && isset($user_data['logged_in']) 
     $user_foto = $user->foto ?? '';
 }
 
-$nav_logo_file = 'logo-fik.jpeg';
+$nav_logo_file = 'nav-logo1.jpeg';
 $hero_json_path = FCPATH . 'assets/hero_setting.json';
 if (file_exists($hero_json_path)) {
     $hero_json_data = json_decode(file_get_contents($hero_json_path), true);
@@ -268,7 +268,8 @@ if ($is_logged_in) {
   border-radius: 14px;
   display: flex;
   align-items: center; justify-content: center;
-  padding: 4px;
+  padding: 2px;
+  overflow: hidden;
 }
 .logo-text h5 { font-size: 0.9rem; font-weight: 800; color: white; margin: 0; line-height: 1.2; }
 .logo-text span { font-size: 0.7rem; color: rgba(255,255,255,0.85); }
@@ -589,9 +590,9 @@ if ($is_logged_in) {
     <div class="container-custom">
         <div class="navbar-glass" id="navbar">
             <div class="logo-area">
-                    <div class="logo-icon"><img src="<?= base_url('assets/' . $nav_logo_file) . '?v=' . $nav_logo_version ?>" alt="Logo" style="width:100%;height:100%;object-fit:contain;border-radius:10px;"></div>                <div class="logo-text">
-                    <h5>Unit Kemahasiswaan</h5>
-                    <span>Fakultas Industri Kreatif</span>
+                    <div class="logo-icon"><img src="<?= base_url('assets/' . $nav_logo_file) . '?v=' . $nav_logo_version ?>" alt="Logo" style="width:100%;height:100%;object-fit:cover;transform:scale(1.35);border-radius:10px;"></div>                <div class="logo-text">
+                    <h5>Fakultas Industri Kreatif</h5>
+                    <span>Kemahasiswaan FIK</span>
                 </div>
             </div>
 
@@ -606,36 +607,36 @@ if ($is_logged_in) {
                     </a>
                     <div class="dropdown-menu-custom">
                         <div class="dropdown-grid">
-                            <a href="<?= base_url('beasiswa') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-graduation-cap"></i></div>
-                                <div class="d-title">Pengajuan Beasiswa</div>
-                                <div class="d-desc">Ajukan beasiswa prestasi & bantuan pendidikan</div>
-                            </a>
-                            <a href="<?= base_url('sertifikat') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-certificate"></i></div>
-                                <div class="d-title">Pengajuan Sertifikat</div>
-                                <div class="d-desc">Cetak sertifikat prestasi mahasiswa & kegiatan</div>
-                            </a>
+                            <!-- a) Pengajuan Proposal -->
                             <a href="<?= base_url('proposal') ?>" class="dropdown-item">
                                 <div class="d-icon-wrapper"><i class="fas fa-clipboard-list"></i></div>
                                 <div class="d-title">Pengajuan Proposal</div>
                                 <div class="d-desc">Ajukan proposal kegiatan, PKM, & penelitian</div>
                             </a>
+                            <!-- b) Pengajuan Sertifikat -->
+                            <a href="<?= base_url('sertifikat') ?>" class="dropdown-item">
+                                <div class="d-icon-wrapper"><i class="fas fa-certificate"></i></div>
+                                <div class="d-title">Pengajuan Sertifikat</div>
+                                <div class="d-desc">Cetak sertifikat prestasi mahasiswa & kegiatan</div>
+                            </a>
+                            <!-- c) Pengajuan TAK Kolektif -->
                             <a href="<?= base_url('tak') ?>" class="dropdown-item">
                                 <div class="d-icon-wrapper"><i class="fas fa-file-alt"></i></div>
-                                <div class="d-title">Pengajuan TAK</div>
+                                <div class="d-title">Pengajuan TAK Kolektif</div>
                                 <div class="d-desc">Ajukan pengakuan kegiatan & kompetensi mahasiswa</div>
                             </a>
-                            <a href="<?= base_url('forum_alumni') ?>" class="dropdown-item">
-                                <div class="d-icon-wrapper"><i class="fas fa-users"></i></div>
-                                <div class="d-title">Layanan Alumni</div>
-                                <div class="d-desc">Forum alumni, tracer study, & jejaring karir</div>
+                            <!-- d) Pengajuan Beasiswa (Dihide/Comment Out Sementara)
+                            <a href="<?= base_url('beasiswa') ?>" class="dropdown-item">
+                                <div class="d-icon-wrapper"><i class="fas fa-graduation-cap"></i></div>
+                                <div class="d-title">Pengajuan Beasiswa</div>
+                                <div class="d-desc">Ajukan beasiswa prestasi & bantuan pendidikan</div>
                             </a>
+                            -->
                         </div>
                     </div>
                 </div>
 
-                <a href="<?= base_url('forum_alumni') ?>" class="<?= $active_menu == 'forum_alumni' ? 'active' : '' ?>">Forum Alumni</a>
+                <a href="<?= base_url('forum_alumni') ?>" class="<?= $active_menu == 'forum_alumni' ? 'active' : '' ?>">Ikatan Alumni</a>
                 <a href="<?= base_url('tentangkami') ?>" class="<?= $active_menu == 'tentangkami' ? 'active' : '' ?>">Tentang Kami</a>
 
                 <?php if ($is_logged_in): ?>
@@ -649,7 +650,7 @@ if ($is_logged_in) {
                     </a>
                 <?php else: ?>
                     <a href="<?= base_url('login') ?>" class="btn-mytelu-custom sidebar-account">
-                        <i class="fas fa-sign-in-alt"></i> MyTeLU
+                        <i class="fas fa-sign-in-alt"></i> Log in
                     </a>
                 <?php endif; ?>
             </div>
@@ -754,7 +755,7 @@ if ($is_logged_in) {
             </div>
             <?php else: ?>
                 <a href="<?= base_url('login') ?>" class="btn-mytelu-custom desktop-account">
-                    <i class="fas fa-sign-in-alt"></i> MyTeLU
+                    <i class="fas fa-sign-in-alt"></i> Log in
                 </a>
             <?php endif; ?>
 
