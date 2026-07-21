@@ -46,7 +46,21 @@ class Forum_alumni extends CI_Controller {
             $display_name = $user_nama . ' (Admin)';
         }
         
-        $data['title'] = 'Forum Alumni';
+        $json_path = FCPATH . 'assets/ikatan_alumni_setting.json';
+        $default_ikatan_alumni = [
+            'nama_organisasi' => 'Ikatan Alumni Fakultas Industri Kreatif',
+            'singkatan'       => 'IKA FIK Telkom University',
+            'logo'            => 'logo-fik.jpeg',
+            'nama_ketua'      => 'Ahmad Rizky Pratama, S.Des.',
+            'jabatan_ketua'   => 'Ketua Ikatan Alumni FIK',
+            'periode_ketua'   => '2024 - 2028',
+            'foto_ketua'      => '',
+            'sambutan_ketua'  => 'Wadah silaturahmi, sinergi, dan kolaborasi bagi seluruh alumni Fakultas Industri Kreatif Telkom University untuk terus berkarya, berinovasi, dan berdampak bagi masyarakat.'
+        ];
+        $ikatan_alumni = file_exists($json_path) ? array_merge($default_ikatan_alumni, json_decode(file_get_contents($json_path), true) ?: []) : $default_ikatan_alumni;
+        $data['ikatan_alumni'] = $ikatan_alumni;
+
+        $data['title'] = 'Ikatan Alumni Fakultas Industri Kreatif';
         $data['posts'] = $this->ForumAlumniModel->get_posts(20);
         $data['user_data'] = array(
             'user_id' => $user_id,

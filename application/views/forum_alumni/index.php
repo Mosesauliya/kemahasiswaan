@@ -38,9 +38,186 @@
 
         /* Forum Styles */
         .forum-container {
-            max-width: 680px;
+            max-width: 720px;
             margin: 0 auto;
-            padding: 100px 20px 40px;
+            padding: 0 20px 60px;
+        }
+
+        /* ========== HERO IKATAN ALUMNI (ORANGE THEME) ========== */
+        .ikatan-alumni-hero {
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 50%, #fdba74 100%);
+            color: white;
+            padding: 130px 0 80px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+        }
+
+        .ikatan-alumni-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.22) 2px, transparent 2.5px);
+            background-size: 32px 32px;
+            pointer-events: none;
+        }
+
+        .badge-alumni {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+        }
+
+        .logo-alumni-hero-wrapper {
+            width: 58px;
+            height: 58px;
+            border-radius: 14px;
+            background: #ffffff;
+            padding: 5px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo-alumni-hero {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .hero-title {
+            font-size: 2.3rem;
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.12);
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.6;
+        }
+
+        .btn-hero-primary {
+            background: #ffffff;
+            color: #ea580c;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+            color: #c2410c;
+            background: #fff7ed;
+        }
+
+        .btn-hero-outline {
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-hero-outline:hover {
+            background: rgba(255, 255, 255, 0.32);
+            color: white;
+        }
+
+        .ketua-card-glass {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .ketua-avatar-wrapper {
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            padding: 3px;
+            background: #ffffff;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .ketua-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .badge-ketua {
+            display: inline-block;
+            background: #ffffff;
+            color: #ea580c;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .ketua-nama {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .ketua-periode {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.9);
+            display: block;
+            margin-top: 2px;
+        }
+
+        .ketua-quote {
+            background: rgba(0, 0, 0, 0.12);
+            border-radius: 16px;
+            padding: 14px 16px;
+            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-style: italic;
+            position: relative;
+        }
+
+        .quote-icon {
+            color: #ffffff;
+            margin-right: 6px;
+            font-size: 0.9rem;
         }
         
         .create-post-card {
@@ -728,8 +905,66 @@
 
 <?php $this->load->view('partials/navbar', ['active_menu' => 'forum_alumni']); ?>
 
+<!-- HERO HEADER IKATAN ALUMNI -->
+<section class="ikatan-alumni-hero">
+    <div class="container-custom">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <?php if (!empty($ikatan_alumni['logo'])): ?>
+                        <div class="logo-alumni-hero-wrapper">
+                            <img src="<?= base_url($ikatan_alumni['logo']) ?>" alt="Logo Ikatan Alumni" class="logo-alumni-hero">
+                        </div>
+                    <?php endif; ?>
+                    <div>
+                        <div class="badge-alumni">
+                            <i class="fas fa-graduation-cap me-2"></i> <?= htmlspecialchars($ikatan_alumni['singkatan'] ?? 'IKA FIK Telkom University') ?>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="hero-title mb-3">
+                    <?= htmlspecialchars($ikatan_alumni['nama_organisasi'] ?? 'Ikatan Alumni Fakultas Industri Kreatif') ?>
+                </h1>
+                <p class="hero-desc mb-0">
+                    <?= htmlspecialchars($ikatan_alumni['sambutan_ketua'] ?? 'Wadah silaturahmi, sinergi, dan kolaborasi bagi seluruh alumni Fakultas Industri Kreatif Telkom University untuk terus berkarya, berinovasi, dan berdampak bagi masyarakat.') ?>
+                </p>
+            </div>
+            <div class="col-lg-5">
+                <div class="ketua-card-glass">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="ketua-avatar-wrapper">
+                            <?php 
+                            $foto_k = !empty($ikatan_alumni['foto_ketua']) ? base_url($ikatan_alumni['foto_ketua']) : (!empty($ikatan_alumni['logo']) ? base_url($ikatan_alumni['logo']) : base_url('assets/logo-fik.jpeg'));
+                            ?>
+                            <img src="<?= $foto_k ?>" alt="Foto Ketua / Logo Ikatan Alumni" class="ketua-avatar">
+                        </div>
+                        <div>
+                            <span class="badge-ketua mb-1"><?= htmlspecialchars($ikatan_alumni['jabatan_ketua'] ?? 'Ketua Ikatan Alumni FIK') ?></span>
+                            <h3 class="ketua-nama m-0"><?= htmlspecialchars($ikatan_alumni['nama_ketua'] ?? 'Ahmad Rizky Pratama, S.Des.') ?></h3>
+                            <span class="ketua-periode"><i class="fas fa-calendar-alt me-1"></i> Periode <?= htmlspecialchars($ikatan_alumni['periode_ketua'] ?? '2024 - 2028') ?></span>
+                        </div>
+                    </div>
+                    <div class="ketua-quote">
+                        <i class="fas fa-quote-left quote-icon"></i>
+                        <p class="mb-0">"Mempererat jejaring alumni FIK, menyalurkan potensi & sinergi karya kreatif untuk almamater dan Indonesia."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- MAIN CONTENT FORUM ALUMNI -->
 <div class="forum-container">
+    <div class="section-title-box mb-4 text-center">
+        <h2 style="font-size: 1.45rem; font-weight: 800; color: #0f172a; margin-bottom: 6px;">
+            <i class="fas fa-comments me-2" style="color: var(--orange);"></i> Forum Diskusi & Ruang Berbagi Alumni
+        </h2>
+        <p style="color: #64748b; font-size: 0.92rem; margin-bottom: 0;">
+            Sampaikan gagasan, peluang karir, informasi kegiatan, atau kisah inspiratif antar sesama alumni FIK
+        </p>
+    </div>
+
     <!-- Create Post Card -->
     <div class="create-post-card" id="createPostCard">
         <form action="<?= base_url('forum_alumni/create_post') ?>" method="POST" enctype="multipart/form-data" id="createPostForm">

@@ -170,6 +170,47 @@
             }
             .table-stackable td:last-child { border-bottom: 0; justify-content: flex-end; }
         }
+
+        /* ── Drag & Drop Zone ── */
+        .admin-drop-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 14px;
+            padding: 16px 12px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .admin-drop-zone:hover,
+        .admin-drop-zone.dragover {
+            border-color: #f97316;
+            background: #fff7ed;
+        }
+
+        .admin-drop-zone .drop-icon {
+            font-size: 2rem;
+            color: #f97316;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .admin-drop-zone .drop-text {
+            font-size: 0.82rem;
+            color: #475569;
+            margin: 0;
+        }
+
+        .img-preview-box {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 3px solid #f97316;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 6px;
+        }
     </style>
 </head>
 <body>
@@ -290,10 +331,12 @@
         <!-- Main Content -->
         <main class="admin-main">
             <header class="admin-header">
-                <h1>Moderasi Postingan Forum Alumni</h1>
+                <h1>Kelola Ikatan Alumni & Moderasi Forum</h1>
                 <div class="user-info">
-                    <span>Selamat datang, <strong><?= htmlspecialchars($nama_user) ?></strong> (<?= htmlspecialchars($role) ?>)</span>
-                    <a href="<?= base_url('logout') ?>" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <span><i class="fas fa-user-circle me-2" style="color: #E67E22;"></i> <?= htmlspecialchars($nama_user) ?></span>
+                    <a href="<?= base_url('logout') ?>" class="logout-btn">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
                 </div>
             </header>
 
@@ -303,6 +346,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>
+
+            <div class="d-flex justify-content-end mb-3">
+                <button type="button" class="btn btn-warning text-white font-weight-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#modalEditIkatanAlumni" style="border-radius: 10px; padding: 0.6rem 1.2rem;">
+                    <i class="fas fa-user-shield me-2"></i> Edit Profil & Ketua Ikatan Alumni
+                </button>
+            </div>
 
             <div class="table-card">
                 <!-- Tabs Navigation -->
@@ -603,6 +652,92 @@
         </div>
     </div>
 
+    <!-- Modal Edit Ikatan Alumni -->
+    <div class="modal fade" id="modalEditIkatanAlumni" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                <form action="<?= base_url('admin/edit_ikatan_alumni') ?>" method="POST" enctype="multipart/form-data">
+                    <div class="modal-header border-bottom-0 pb-0">
+                        <h5 class="modal-title font-weight-bold" style="color: #2C3E50;">
+                            <i class="fas fa-edit text-warning me-2"></i> Edit Informasi & Ketua Ikatan Alumni
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label font-weight-bold text-secondary">Nama Organisasi</label>
+                                <input type="text" name="nama_organisasi" class="form-control" value="<?= htmlspecialchars($ikatan_alumni['nama_organisasi'] ?? 'Ikatan Alumni Fakultas Industri Kreatif') ?>" required style="border-radius: 8px;">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label font-weight-bold text-secondary">Singkatan / Label</label>
+                                <input type="text" name="singkatan" class="form-control" value="<?= htmlspecialchars($ikatan_alumni['singkatan'] ?? 'IKA FIK Telkom University') ?>" style="border-radius: 8px;">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label font-weight-bold text-secondary">Upload Logo Ikatan Alumni</label>
+                                <div class="admin-drop-zone" id="logoDropZone" onclick="document.getElementById('logoInput').click()">
+                                    <input type="file" name="logo" id="logoInput" accept="image/*" class="d-none" onchange="handlePreview(this, 'logoPreview', 'logoFileName')">
+                                    <div id="logoPreviewContainer">
+                                        <?php if (!empty($ikatan_alumni['logo'])): ?>
+                                            <img src="<?= base_url($ikatan_alumni['logo']) ?>" id="logoPreview" class="img-preview-box">
+                                        <?php else: ?>
+                                            <img id="logoPreview" class="img-preview-box d-none">
+                                            <i class="fas fa-cloud-upload-alt drop-icon" id="logoDefaultIcon"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                    <p class="drop-text" id="logoFileName"><strong>Tarik & lepas Logo</strong> atau <u>Pilih Berkas</u></p>
+                                    <small class="text-muted d-block" style="font-size:0.75rem;">PNG, JPG, WEBP (Kosongkan jika tak diubah)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label font-weight-bold text-secondary">Upload Foto Ketua Ikatan Alumni</label>
+                                <div class="admin-drop-zone" id="fotoKetuaDropZone" onclick="document.getElementById('fotoKetuaInput').click()">
+                                    <input type="file" name="foto_ketua" id="fotoKetuaInput" accept="image/*" class="d-none" onchange="handlePreview(this, 'fotoKetuaPreview', 'fotoKetuaFileName')">
+                                    <div id="fotoKetuaPreviewContainer">
+                                        <?php if (!empty($ikatan_alumni['foto_ketua'])): ?>
+                                            <img src="<?= base_url($ikatan_alumni['foto_ketua']) ?>" id="fotoKetuaPreview" class="img-preview-box">
+                                        <?php else: ?>
+                                            <img id="fotoKetuaPreview" class="img-preview-box d-none">
+                                            <i class="fas fa-user-circle drop-icon" id="fotoKetuaDefaultIcon"></i>
+                                        <?php endif; ?>
+                                    </div>
+                                    <p class="drop-text" id="fotoKetuaFileName"><strong>Tarik & lepas Foto Ketua</strong> atau <u>Pilih Berkas</u></p>
+                                    <small class="text-muted d-block" style="font-size:0.75rem;">PNG, JPG, WEBP (Kosongkan jika tak diubah)</small>
+                                </div>
+                            </div>
+
+                            <hr class="my-2" style="opacity: 0.1;">
+
+                            <div class="col-md-6">
+                                <label class="form-label font-weight-bold text-secondary">Nama Ketua Sekarang</label>
+                                <input type="text" name="nama_ketua" class="form-control" value="<?= htmlspecialchars($ikatan_alumni['nama_ketua'] ?? '') ?>" placeholder="Misal: Ahmad Rizky Pratama, S.Des." style="border-radius: 8px;">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label font-weight-bold text-secondary">Periode Jabatan</label>
+                                <input type="text" name="periode_ketua" class="form-control" value="<?= htmlspecialchars($ikatan_alumni['periode_ketua'] ?? '') ?>" placeholder="Misal: Periode 2024 - 2028" style="border-radius: 8px;">
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label font-weight-bold text-secondary">Jabatan / Gelar Ketua</label>
+                                <input type="text" name="jabatan_ketua" class="form-control" value="<?= htmlspecialchars($ikatan_alumni['jabatan_ketua'] ?? 'Ketua Ikatan Alumni FIK') ?>" style="border-radius: 8px;">
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label font-weight-bold text-secondary">Deskripsi / Sambutan Ringkas</label>
+                                <textarea name="sambutan_ketua" class="form-control" rows="3" style="border-radius: 8px; resize: vertical;"><?= htmlspecialchars($ikatan_alumni['sambutan_ketua'] ?? '') ?></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 8px;">Batal</button>
+                        <button type="submit" class="btn btn-warning text-white font-weight-bold" style="border-radius: 8px;"><i class="fas fa-save me-1"></i> Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function toggleSidebar() {
@@ -730,6 +865,62 @@
             const confirmModal = new bootstrap.Modal(modalEl);
             confirmModal.show();
         }
+
+        // Preview & Drag-and-Drop for Admin Modal
+        function handlePreview(input, previewId, labelId) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgEl = document.getElementById(previewId);
+                    imgEl.src = e.target.result;
+                    imgEl.classList.remove('d-none');
+                    
+                    const container = imgEl.parentElement;
+                    const icon = container.querySelector('.drop-icon');
+                    if (icon) icon.classList.add('d-none');
+                    
+                    document.getElementById(labelId).innerHTML = '<span class="text-success font-weight-bold"><i class="fas fa-check-circle me-1"></i>' + escapeHtml(file.name) + '</span>';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function setupDragDrop(zoneId, inputId, previewId, labelId) {
+            const zone = document.getElementById(zoneId);
+            const input = document.getElementById(inputId);
+            if (!zone || !input) return;
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                zone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    zone.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    zone.classList.remove('dragover');
+                }, false);
+            });
+
+            zone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length > 0) {
+                    input.files = files;
+                    handlePreview(input, previewId, labelId);
+                }
+            }, false);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDragDrop('logoDropZone', 'logoInput', 'logoPreview', 'logoFileName');
+            setupDragDrop('fotoKetuaDropZone', 'fotoKetuaInput', 'fotoKetuaPreview', 'fotoKetuaFileName');
+        });
     </script>
 </body>
 </html>
