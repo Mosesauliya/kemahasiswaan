@@ -794,42 +794,7 @@
 </section>
 
 <!-- ========== FOOTER ========== -->
-<footer class="footer">
-    <div class="container-custom">
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <h4 class="mb-3" style="color: var(--orange);">Fakultas Industri Kreatif</h4>
-                <p style="opacity: 0.8;">Menjadi pusat unggulan pendidikan industri kreatif yang menghasilkan lulusan berdaya saing global.</p>
-                <div class="d-flex gap-3 mt-3">
-                    <a href="#"><i class="fab fa-instagram fa-lg"></i></a>
-                    <a href="#"><i class="fab fa-twitter fa-lg"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in fa-lg"></i></a>
-                    <a href="#"><i class="fab fa-youtube fa-lg"></i></a>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <h4 class="mb-3" style="color: var(--orange);">Tautan Cepat</h4>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="<?= base_url('dashboard') ?>">Dashboard</a></li>
-                    <li class="mb-2"><a href="<?= base_url('berita') ?>">Berita</a></li>
-                    <li class="mb-2"><a href="#">Layanan Mahasiswa</a></li>
-                    <li class="mb-2"><a href="#">Forum Alumni</a></li>
-                </ul>
-            </div>
-            <div class="col-md-4 mb-4">
-                <h4 class="mb-3" style="color: var(--orange);">Kontak</h4>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> Bandung, Jawa Barat</li>
-                    <li class="mb-2"><i class="fas fa-envelope me-2"></i> fik@telkomuniversity.ac.id</li>
-                    <li class="mb-2"><i class="fas fa-phone me-2"></i> (022) 756 5923</li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p class="mb-0">&copy; <?= date('Y') ?> Fakultas Industri Kreatif - Telkom University. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
+<?php $this->load->view('partials/footer'); ?>
 
 <!-- ========== SCRIPTS ========== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

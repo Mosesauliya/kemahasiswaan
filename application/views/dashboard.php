@@ -46,8 +46,11 @@
     }
 
     .container-custom {
-      width: min(100% - 3rem, 1280px);
-      margin-inline: auto;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
     }
 
     /* HEADER */
@@ -160,7 +163,7 @@
 
     /* HERO SECTION — relative agar floating-card absolute terikat di dalamnya */
     .hero-wrap {
-      min-height: 100vh;
+      min-height: 85vh;
       padding-top: 160px;
       padding-bottom: 0;
       position: relative;
@@ -172,6 +175,8 @@
       justify-content: space-between;
       align-items: center;
       gap: 40px;
+      position: relative;
+      min-height: 480px;
     }
 
     .hero-title h1 {
@@ -184,24 +189,27 @@
     }
 
     .hero-image-area {
-      width: 53%;
-      background: transparent;
-      backdrop-filter: none;
-      border-radius: 0px;
-      min-height: 550px;
+      position: absolute;
+      bottom: 0;
+      left: 67%;
+      transform: translateX(-25%);
+      width: 480px;
+      max-width: 42vw;
+      height: 440px;
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
-      border: none;
-      overflow: hidden;
-      position: relative;
+      z-index: 5;
+      pointer-events: none;
     }
 
     .hero-image-area img {
-      width: 100%;
-      height: auto;
-      max-height: 550px;
+      width: auto;
+      height: 100%;
+      max-height: 440px;
+      max-width: 100%;
       object-fit: contain;
+      object-position: bottom center;
       transition: transform 0.3s ease;
       border-radius: 0px;
     }
@@ -227,23 +235,26 @@
       position: absolute;
       background: white;
       border-radius: 24px;
-      padding: 14px 24px;
+      padding: 10px 18px;
       display: flex;
-      gap: 16px;
+      gap: 12px;
       align-items: center;
-      margin-bottom: 16px;
-      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+      box-shadow: 0 16px 30px -10px rgba(0,0,0,0.18);
       z-index: 15;
       transition: transform 0.3s ease;
+      width: max-content !important;
+      max-width: 260px !important;
     }
 
     .floating-card:hover {
       transform: scale(1.03);
     }
 
-    .badge-abs-1 { top: 15%; left: 52%; }
-    .badge-abs-2 { top: 32%; right: 2%; }
-    .badge-abs-3 { top: 44%; left: 46%; }
+    .badge-abs-1 { top: 8%; left: 59%; }
+    .badge-abs-2 { top: 8%; right: 8%; }
+    .badge-abs-3 { top: 46%; left: 38%; }
+    .badge-abs-4 { top: 34%; right: 2%; }
+    .badge-abs-5 { top: 70%; right: 3%; }
 
     .badge-icon-orange {
       width: 52px;
@@ -266,7 +277,7 @@
       color: white;
       box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
       position: relative;
-      z-index: 10;
+      z-index: 6;
     }
 
     .achievement-title {
@@ -588,9 +599,28 @@
       background: #f97316;
     }
 
-    /* ORGANISASI SECTION */
+    /* ALL SECTIONS FULL WIDTH EDGE-TO-EDGE */
+    .hero-wrap,
+    .berita-section,
+    .org-bg-orange,
+    .recognition-section,
+    .alumni-quote-section,
+    .partner-section,
+    footer.footer,
+    footer {
+      width: 100% !important;
+      max-width: 100% !important;
+      position: relative !important;
+      left: 0 !important;
+      right: 0 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      box-sizing: border-box !important;
+    }
+
     .org-bg-orange {
-      position: relative;
       padding: 80px 0;
       color: white;
       overflow: hidden;
@@ -1250,18 +1280,67 @@
       box-shadow: 0 8px 20px rgba(249, 115, 22, 0.25);
     }
 
-    footer {
-      background: linear-gradient(135deg, #f97316 0%, #fdba74 100%);
-      height: 80px;
+    footer, .footer {
+      background: linear-gradient(135deg, #152b4e 0%, #0f172a 100%) !important;
+      height: auto !important;
+      min-height: auto !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      display: block !important;
+      position: relative !important;
+      left: 0 !important;
+      right: 0 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding: 60px 0 40px !important;
+      box-sizing: border-box !important;
     }
 
     @media (max-width: 1024px) {
-  .hero-wrap { overflow-x: hidden; }
+  .hero-wrap { overflow-x: hidden; padding-top: 130px; }
   .stats-three-col { grid-template-columns: 1fr; gap: 28px; }
   .direktorat-card { grid-template-columns: 1fr; }
-  .hero-image-area { position: static; display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin-top: 20px; }
-  .hero-image-area img { max-height: 300px; }
-  .floating-card { position: static; transform: none !important; width: 100%; border-radius: 16px; padding: 12px 16px; }
+  .hero-flex { flex-direction: column; text-align: center; justify-content: center; }
+  .hero-title h1 { text-align: center; margin: 0 auto 20px auto; font-size: clamp(2.2rem, 6vw, 3.5rem); }
+  .hero-image-area { 
+    position: static !important; 
+    left: auto !important; 
+    transform: none !important; 
+    width: 100% !important; 
+    max-width: 380px !important; 
+    height: auto !important; 
+    margin: 10px auto 25px auto !important; 
+    display: flex !important; 
+    justify-content: center !important; 
+    align-items: center !important; 
+    pointer-events: auto !important;
+  }
+  .hero-image-area img { 
+    width: 100% !important; 
+    height: auto !important; 
+    max-height: 380px !important; 
+    object-fit: contain !important; 
+    margin: 0 auto !important; 
+  }
+  .floating-card { 
+    position: static !important; 
+    top: auto !important; 
+    left: auto !important; 
+    right: auto !important; 
+    bottom: auto !important; 
+    transform: none !important; 
+    width: 92% !important; 
+    max-width: 340px !important; 
+    margin: 0 auto 12px auto !important; 
+    border-radius: 18px !important; 
+    padding: 12px 18px !important; 
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: flex-start !important; 
+    gap: 14px !important; 
+    background: #ffffff !important; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08) !important; 
+  }
   .floating-card:hover { transform: none !important; }
   .badge-icon-orange { width: 40px; height: 40px; font-size: 1.2rem; flex-shrink: 0; }
   .org-layout { flex-direction: column; gap: 30px; }
@@ -1278,16 +1357,14 @@
   .partner-layout { flex-direction: column; text-align: center; }
   .partner-content { text-align: center; }
   .partner-content h2 { text-align: center; }
-  .hero-flex { flex-direction: column; text-align: center; }
-  .hero-title h1 { text-align: center; margin: 0 auto; }
-  .hero-image-area { width: 80%; margin: 0 auto; min-height: 350px; }
   .achievement-master { border-radius: 32px; margin-top: 30px; }
   .recognition-logos { gap: 20px; }
   .recognition-item { padding: 15px 20px; min-width: 130px; }
 }
 
     @media (max-width: 768px) {
-      .hero-image-area { width: 100%; margin-top: 20px; min-height: 280px; }
+      .hero-image-area { width: 100% !important; max-width: 340px !important; margin: 10px auto 20px auto !important; }
+      .hero-image-area img { max-height: 340px !important; }
       .achievement-master { margin-top: 30px; padding: 32px 24px; }
       .hero-title h1 { font-weight: 500; }
       .org-grid-one { gap: 14px; }
@@ -1669,7 +1746,7 @@
         <img id="heroStudentImage" 
             src="<?= base_url('assets/mahasiswa.png') . '?v=' . ($hero_img_version ?? time()) ?>" 
             alt="Foto Mahasiswa" 
-            style="width:80%; height:80%; object-fit:cover; border-radius:0px;"
+            style="width:100%; height:auto; max-height:580px; object-fit:contain; object-position:bottom right;"
             onerror="this.onerror=null; this.style.display='none'; document.getElementById('heroFallback').style.display='flex';">
 
         <div id="heroFallback" class="hero-image-placeholder" style="display:none; flex-direction:column; align-items:center;">
@@ -1768,6 +1845,7 @@
         <a href="<?= base_url('dashboard/direktorat') ?>" class="btn btn-outline-dark rounded-pill px-4">Selengkapnya <i class="fas fa-arrow-right"></i></a>
       </div>
     </div>
+  </div>
 
 <!-- BERITA SECTION -->
 <section class="berita-section">
@@ -1816,14 +1894,9 @@
             </button>
             <button class="carousel-nav next" id="nextBerita">
                 <i class="fas fa-chevron-right"></i>
-            </button>
-            <a href="<?= base_url('berita') ?>" class="btn btn-outline-dark rounded-pill px-4">Berita Selengkapnya <i class="fas fa-arrow-right"></i></a>
-            <!-- Dots Indicator -->
-            <!-- <div class="carousel-dots">
-                <?php foreach ($berita_list as $index => $item): ?>
-                <button class="dot <?= $index == 0 ? 'active' : '' ?>" data-index="<?= $index ?>"></button>
-                <?php endforeach; ?>
-            </div> -->
+        </div>
+        <div class="text-center mt-4" data-aos="fade-up">
+            <a href="<?= base_url('berita') ?>" class="btn btn-outline-dark rounded-pill px-4 py-2" style="font-weight: 600;">Berita Selengkapnya <i class="fas fa-arrow-right ms-1"></i></a>
         </div>
         <?php else: ?>
         <div class="text-center py-5">
@@ -1967,7 +2040,7 @@
     </div>
   </section>
 
-  <footer></footer>
+  <?php $this->load->view('partials/footer'); ?>
 </main>
 
 <script>
