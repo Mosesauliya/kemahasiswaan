@@ -1069,9 +1069,19 @@
                             <h6>Surat Pengajuan</h6>
                             <small><?= $pengajuan->file_surat_pengajuan ?></small>
                         </div>
-                        <a href="<?= base_url('uploads/surat_pengajuan/' . $pengajuan->file_surat_pengajuan) ?>" class="btn-download" download>
-                            <i class="fas fa-download"></i>
-                        </a>
+                        <div class="d-flex gap-2">
+                            <?php 
+                                $surat_ext = pathinfo($pengajuan->file_surat_pengajuan ?? '', PATHINFO_EXTENSION); 
+                                $surat_url = base_url('uploads/surat_pengajuan/' . $pengajuan->file_surat_pengajuan);
+                                $surat_preview = (strtolower($surat_ext) === 'pdf') ? $surat_url : 'https://docs.google.com/viewer?url=' . urlencode($surat_url) . '&embedded=true';
+                            ?>
+                            <a href="<?= $surat_url ?>" class="btn-download" download="Surat_Pengajuan_TAK.<?= $surat_ext ?>" title="Download">
+                                <i class="fas fa-download"></i>
+                            </a>
+                            <a href="<?= $surat_preview ?>" class="btn-download" target="_blank" title="Lihat">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
                     </div>
                     
                     <div class="file-card">
@@ -1080,9 +1090,19 @@
                             <h6>Excel Peserta</h6>
                             <small><?= $pengajuan->file_excel_peserta ?></small>
                         </div>
-                        <a href="<?= base_url('uploads/excel_peserta/' . $pengajuan->file_excel_peserta) ?>" class="btn-download" download>
-                            <i class="fas fa-download"></i>
-                        </a>
+                        <div class="d-flex gap-2">
+                            <?php 
+                                $excel_ext = pathinfo($pengajuan->file_excel_peserta ?? '', PATHINFO_EXTENSION); 
+                                $excel_url = base_url('uploads/excel_peserta/' . $pengajuan->file_excel_peserta);
+                                $excel_preview = 'https://docs.google.com/viewer?url=' . urlencode($excel_url) . '&embedded=true';
+                            ?>
+                            <a href="<?= $excel_url ?>" class="btn-download" download="Data_Peserta_TAK.<?= $excel_ext ?>" title="Download">
+                                <i class="fas fa-download"></i>
+                            </a>
+                            <a href="<?= $excel_preview ?>" class="btn-download" target="_blank" title="Lihat">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
                     </div>
                     
                     <div class="file-card">

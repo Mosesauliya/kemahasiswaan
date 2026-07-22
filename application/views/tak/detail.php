@@ -717,9 +717,22 @@
                         <i class="fas fa-file-pdf"></i> Surat Pengajuan
                     </div>
                     <div class="detail-value">
-                        <a href="<?= base_url('uploads/surat_pengajuan/' . ($pengajuan->file_surat_pengajuan ?? '')) ?>" download class="file-badge">
+                        <?php 
+                            $surat_ext = strtolower(pathinfo($pengajuan->file_surat_pengajuan ?? '', PATHINFO_EXTENSION)); 
+                            $surat_url = base_url('uploads/surat_pengajuan/' . ($pengajuan->file_surat_pengajuan ?? ''));
+                            if ($surat_ext === 'pdf') {
+                                $surat_preview = $surat_url;
+                            } else {
+                                $surat_preview = 'https://view.officeapps.live.com/op/view.aspx?src=' . urlencode($surat_url);
+                            }
+                        ?>
+                        <a href="<?= base_url('tak/download_berkas/' . $pengajuan->id . '/surat') ?>" class="file-badge">
                             <i class="fas fa-download"></i>
-                            Download Surat Pengajuan
+                            Download
+                        </a>
+                        <a href="<?= $surat_preview ?>" target="_blank" class="file-badge ms-2" style="background: var(--orange-light); color: var(--orange);">
+                            <i class="fas fa-eye"></i>
+                            Lihat (Preview)
                         </a>
                     </div>
                 </div>
@@ -728,16 +741,38 @@
                         <i class="fas fa-file-excel"></i> Excel Peserta
                     </div>
                     <div class="detail-value">
-                        <a href="<?= base_url('uploads/excel_peserta/' . ($pengajuan->file_excel_peserta ?? '')) ?>" download class="file-badge">
+                        <?php 
+                            $excel_ext = strtolower(pathinfo($pengajuan->file_excel_peserta ?? '', PATHINFO_EXTENSION)); 
+                            $excel_url = base_url('uploads/excel_peserta/' . ($pengajuan->file_excel_peserta ?? ''));
+                            if ($excel_ext === 'csv') {
+                                $excel_preview = 'https://docs.google.com/viewer?url=' . urlencode($excel_url) . '&embedded=true';
+                            } else {
+                                $excel_preview = 'https://view.officeapps.live.com/op/view.aspx?src=' . urlencode($excel_url);
+                            }
+                        ?>
+                        <a href="<?= base_url('tak/download_berkas/' . $pengajuan->id . '/excel') ?>" class="file-badge">
                             <i class="fas fa-download"></i>
-                            Download Data Peserta
+                            Download
+                        </a>
+                        <a href="<?= $excel_preview ?>" target="_blank" class="file-badge ms-2" style="background: var(--orange-light); color: var(--orange);">
+                            <i class="fas fa-eye"></i>
+                            Lihat (Preview)
                         </a>
                     </div>
                 </div>
             </div>
 
             <!-- Catatan Verifikator -->
-            <?php if(isset($pengajuan->catatan_admin) && !empty($pengajuan->catatan_admin)): ?>
+            <?php if(isset($pengajuan->catatan) && !empty($pengajuan->catatan)): ?>
+            <div class="mb-4">
+                <h3 class="section-title">
+                    <i class="fas fa-comment me-2"></i> Catatan Verifikator
+                </h3>
+                <div class="catatan-box">
+                    <p><?= nl2br($pengajuan->catatan) ?></p>
+                </div>
+            </div>
+            <?php elseif(isset($pengajuan->catatan_admin) && !empty($pengajuan->catatan_admin)): ?>
             <div class="mb-4">
                 <h3 class="section-title">
                     <i class="fas fa-comment me-2"></i> Catatan Verifikator
@@ -760,7 +795,42 @@
 </div>
 
 <!-- ========== FOOTER ========== -->
-<?php $this->load->view('partials/footer'); ?>
+<footer class="footer">
+    <div class="container-custom">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h4 class="mb-3" style="color: var(--orange);">Fakultas Industri Kreatif</h4>
+                <p style="opacity: 0.8;">Menjadi pusat unggulan pendidikan industri kreatif yang menghasilkan lulusan berdaya saing global.</p>
+                <div class="d-flex gap-3 mt-3">
+                    <a href="#"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                    <a href="#"><i class="fab fa-youtube fa-lg"></i></a>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h4 class="mb-3" style="color: var(--orange);">Tautan Cepat</h4>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="<?= base_url('dashboard') ?>">Dashboard</a></li>
+                    <li class="mb-2"><a href="<?= base_url('berita') ?>">Berita</a></li>
+                    <li class="mb-2"><a href="#">Layanan Mahasiswa</a></li>
+                    <li class="mb-2"><a href="#">Forum Alumni</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h4 class="mb-3" style="color: var(--orange);">Kontak</h4>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> Bandung, Jawa Barat</li>
+                    <li class="mb-2"><i class="fas fa-envelope me-2"></i> fik@telkomuniversity.ac.id</li>
+                    <li class="mb-2"><i class="fas fa-phone me-2"></i> (022) 756 5923</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="mb-0">&copy; <?= date('Y') ?> Fakultas Industri Kreatif - Telkom University. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
 
 <!-- ========== SCRIPTS ========== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

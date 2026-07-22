@@ -90,7 +90,7 @@ if ($is_logged_in) {
 
 
         // Merge all arrays
-        $merged_notifs = array_merge($sertifikat_notifs, $proposal_notifs, $forum_notifs);
+        $merged_notifs = array_merge($sertifikat_notifs, $proposal_notifs, $forum_notifs, $tak_notifs);
 
         // Sort by updated_at / created_at DESC
         usort($merged_notifs, function($a, $b) {
@@ -850,6 +850,8 @@ section, .org-bg-orange, .alumni-quote-section, .partner-section, .recognition-s
                                             $notif_url = base_url('forum_alumni');
                                         } elseif ($notif['notif_type'] === 'proposal') {
                                             $notif_url = base_url('proposal');
+                                        } elseif ($notif['notif_type'] === 'tak') {
+                                            $notif_url = base_url('tak/detail/' . ($notif['id'] ?? ''));
                                         } else {
                                             $notif_url = base_url('sertifikat');
                                         }
@@ -880,6 +882,14 @@ section, .org-bg-orange, .alumni-quote-section, .partner-section, .recognition-s
                                                         Proposal <strong><?= htmlspecialchars($notif['judul']) ?></strong> telah disetujui oleh admin.
                                                     <?php else: ?>
                                                         Proposal <strong><?= htmlspecialchars($notif['judul']) ?></strong> ditolak, silakan perbaiki dan ajukan ulang.
+                                                    <?php endif; ?>
+                                                <?php elseif ($notif['notif_type'] === 'tak'): ?>
+                                                    <?php if ($notif['status'] === 'pending' || $notif['status'] === 'diproses'): ?>
+                                                        Pengajuan TAK Kolektif <strong><?= htmlspecialchars($notif['judul']) ?></strong> sedang <?= $notif['status'] === 'diproses' ? 'diproses' : 'ditinjau' ?> oleh admin.
+                                                    <?php elseif ($notif['status'] === 'disetujui'): ?>
+                                                        Pengajuan TAK Kolektif <strong><?= htmlspecialchars($notif['judul']) ?></strong> telah disetujui oleh admin.
+                                                    <?php else: ?>
+                                                        Pengajuan TAK Kolektif <strong><?= htmlspecialchars($notif['judul']) ?></strong> ditolak/direvisi, silakan cek catatan admin.
                                                     <?php endif; ?>
                                                 <?php else: ?>
                                                     <?php if ($notif['status'] === 'submitted'): ?>

@@ -964,11 +964,11 @@
                     </div>
                     <p class="text-muted mb-3">Download dan lengkapi template berikut sebelum mengupload:</p>
                     <div class="template-buttons">
-                        <a href="<?= base_url('tak/download_template/surat') ?>" class="btn-template">
+                        <a href="https://docs.google.com/document/d/1Zjo6NTAHuE6Rc1EHMXrzKB3_HJ9-xShR/export?format=docx" target="_blank" class="btn-template">
                             <i class="fas fa-file-word"></i>
                             Template Surat Pengajuan TAK Kolektif
                         </a>
-                        <a href="<?= base_url('tak/download_template/excel') ?>" class="btn-template">
+                        <a href="https://docs.google.com/spreadsheets/d/1ZizSQdg-QqNhmE94qy_W3Uy2PH7MTV76/export?format=xlsx" target="_blank" class="btn-template">
                             <i class="fas fa-file-excel"></i>
                             Template Data Excel Peserta
                         </a>
@@ -1086,7 +1086,42 @@
 </section>
 
 <!-- ========== FOOTER ========== -->
-<?php $this->load->view('partials/footer'); ?>
+<footer class="footer">
+    <div class="container-custom">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h4 class="mb-3" style="color: var(--orange);">Fakultas Industri Kreatif</h4>
+                <p style="opacity: 0.8;">Menjadi pusat unggulan pendidikan industri kreatif yang menghasilkan lulusan berdaya saing global.</p>
+                <div class="d-flex gap-3 mt-3">
+                    <a href="#"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                    <a href="#"><i class="fab fa-youtube fa-lg"></i></a>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h4 class="mb-3" style="color: var(--orange);">Tautan Cepat</h4>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="<?= base_url('dashboard') ?>">Dashboard</a></li>
+                    <li class="mb-2"><a href="<?= base_url('berita') ?>">Berita</a></li>
+                    <li class="mb-2"><a href="#">Layanan Mahasiswa</a></li>
+                    <li class="mb-2"><a href="#">Forum Alumni</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h4 class="mb-3" style="color: var(--orange);">Kontak</h4>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> Bandung, Jawa Barat</li>
+                    <li class="mb-2"><i class="fas fa-envelope me-2"></i> fik@telkomuniversity.ac.id</li>
+                    <li class="mb-2"><i class="fas fa-phone me-2"></i> (022) 756 5923</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="mb-0">&copy; <?= date('Y') ?> Fakultas Industri Kreatif - Telkom University. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
 
 <!-- ========== SCRIPTS ========== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -1157,7 +1192,7 @@
         Swal.fire({
             icon: type === 'success' ? 'success' : 'error',
             title: type === 'success' ? 'Berhasil!' : 'Perhatian!',
-            html: message,
+            text: message,
             confirmButtonColor: '#f97316',
             timer: 3000,
             showConfirmButton: true

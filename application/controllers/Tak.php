@@ -74,9 +74,18 @@ class Tak extends CI_Controller
 
         // Upload Surat Pengajuan
         $config['upload_path'] = $upload_path_surat;
-        $config['allowed_types'] = 'pdf|doc|docx';
+        $config['allowed_types'] = '*'; // Bypass MIME check, we do manual extension check
         $config['max_size'] = 5120; // 5MB
         $config['encrypt_name'] = TRUE;
+
+        // Manual extension check for security
+        if (!empty($_FILES['surat_pengajuan']['name'])) {
+            $ext = strtolower(pathinfo($_FILES['surat_pengajuan']['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, ['pdf', 'doc', 'docx'])) {
+                $this->session->set_flashdata('error', 'Upload surat gagal: The filetype you are attempting to upload is not allowed.');
+                redirect('tak');
+            }
+        }
 
         $this->upload->initialize($config);
 
@@ -90,9 +99,18 @@ class Tak extends CI_Controller
 
         // Upload Excel Peserta
         $config_excel['upload_path'] = $upload_path_excel;
-        $config_excel['allowed_types'] = 'xlsx|xls|csv';
+        $config_excel['allowed_types'] = '*'; // Bypass MIME check
         $config_excel['max_size'] = 2048; // 2MB
         $config_excel['encrypt_name'] = TRUE;
+
+        // Manual extension check for security
+        if (!empty($_FILES['excel_peserta']['name'])) {
+            $ext = strtolower(pathinfo($_FILES['excel_peserta']['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, ['xlsx', 'xls', 'csv'])) {
+                $this->session->set_flashdata('error', 'Upload excel gagal: The filetype you are attempting to upload is not allowed.');
+                redirect('tak');
+            }
+        }
 
         $this->upload->initialize($config_excel);
 
@@ -250,6 +268,47 @@ class Tak extends CI_Controller
         } else {
             $this->session->set_flashdata('error', 'File template tidak ditemukan');
             redirect('tak');
+        }
+    }
+
+    /**
+     * Download berkas pengajuan (Surat / Excel)
+     */
+    public function download_berkas($id, $type)
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login');
+        }
+
+        $nim = $this->session->userdata('nim');
+        $pengajuan = $this->Tak_model->get_pengajuan_by_id($id, $nim);
+
+        if (empty($pengajuan)) {
+            show_404();
+        }
+
+        $judul_bersih = preg_replace('/[^a-zA-Z0-9]/', '_', $pengajuan->judul_kegiatan);
+
+        if ($type == 'surat') {
+            $file_name = $pengajuan->file_surat_pengajuan;
+            $ext = pathinfo($file_name, PATHINFO_EXTENSION);
+            $download_name = 'Surat_Pengajuan_TAK_' . $judul_bersih . '.' . $ext;
+            $file_path = FCPATH . 'uploads/surat_pengajuan/' . $file_name;
+        } elseif ($type == 'excel') {
+            $file_name = $pengajuan->file_excel_peserta;
+            $ext = pathinfo($file_name, PATHINFO_EXTENSION);
+            $download_name = 'Data_Peserta_TAK_' . $judul_bersih . '.' . $ext;
+            $file_path = FCPATH . 'uploads/excel_peserta/' . $file_name;
+        } else {
+            show_404();
+        }
+
+        if (file_exists($file_path)) {
+            $this->load->helper('download');
+            force_download($download_name, file_get_contents($file_path));
+        } else {
+            $this->session->set_flashdata('error', 'File tidak ditemukan di server.');
+            redirect('tak/detail/' . $id);
         }
     }
 

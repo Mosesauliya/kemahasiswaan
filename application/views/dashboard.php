@@ -704,6 +704,8 @@
       position: relative;
       height: 550px;
       overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
     }
 
     .org-col-right {
@@ -711,6 +713,8 @@
       position: relative;
       height: 550px;
       overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
     }
 
     .org-scroll-up-wrapper {
@@ -2053,14 +2057,21 @@
 <script>
   // ==================== DATA ORGANISASI (UKM) – diambil dari database ====================
 
-  function renderGrid(containerId, dataArray, isDuplicated = true) {
+function renderGrid(containerId, dataArray, shouldAnimate = true) {
     const container = document.getElementById(containerId);
     if (!container) return;
     container.innerHTML = '';
 
     let itemsToRender = [...dataArray];
-    if (isDuplicated && dataArray.length > 0) {
+    if (shouldAnimate && dataArray.length > 0) {
       itemsToRender = [...dataArray, ...dataArray];
+      container.style.animation = ''; // Restore CSS animation
+      container.style.top = '';
+      container.style.transform = '';
+    } else {
+      container.style.animation = 'none'; // Disable animation if too few
+      container.style.top = '50%';
+      container.style.transform = 'translateY(-50%)';
     }
 
     const gridDiv = document.createElement('div');
@@ -2097,11 +2108,15 @@
       const organizations = (json.status === 'success' && json.data.length > 0) ? json.data : [];
       const isMobile = window.innerWidth <= 1024;
       if (isMobile) {
-        renderGrid('orgLeftContent', organizations, true);
+        const shouldAnimate = organizations.length > 5;
+        renderGrid('orgLeftContent', organizations, shouldAnimate);
       } else {
         const mid = Math.ceil(organizations.length / 2);
-        renderGrid('orgLeftContent', organizations.slice(0, mid), true);
-        renderGrid('orgRightContent', organizations.slice(mid), true);
+        const leftArr = organizations.slice(0, mid);
+        const rightArr = organizations.slice(mid);
+        
+        renderGrid('orgLeftContent', leftArr, leftArr.length > 5);
+        renderGrid('orgRightContent', rightArr, rightArr.length > 5);
       }
     } catch (e) {
       console.warn('Gagal memuat data organisasi dari server:', e);
