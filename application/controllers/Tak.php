@@ -76,7 +76,7 @@ class Tak extends CI_Controller
         $config['upload_path'] = $upload_path_surat;
         $config['allowed_types'] = '*'; // Bypass MIME check, we do manual extension check
         $config['max_size'] = 5120; // 5MB
-        $config['encrypt_name'] = TRUE;
+        $config['encrypt_name'] = FALSE; // Keep original filename
 
         // Manual extension check for security
         if (!empty($_FILES['surat_pengajuan']['name'])) {
@@ -101,7 +101,7 @@ class Tak extends CI_Controller
         $config_excel['upload_path'] = $upload_path_excel;
         $config_excel['allowed_types'] = '*'; // Bypass MIME check
         $config_excel['max_size'] = 2048; // 2MB
-        $config_excel['encrypt_name'] = TRUE;
+        $config_excel['encrypt_name'] = FALSE; // Keep original filename
 
         // Manual extension check for security
         if (!empty($_FILES['excel_peserta']['name'])) {
@@ -287,17 +287,13 @@ class Tak extends CI_Controller
             show_404();
         }
 
-        $judul_bersih = preg_replace('/[^a-zA-Z0-9]/', '_', $pengajuan->judul_kegiatan);
-
         if ($type == 'surat') {
             $file_name = $pengajuan->file_surat_pengajuan;
-            $ext = pathinfo($file_name, PATHINFO_EXTENSION);
-            $download_name = 'Surat_Pengajuan_TAK_' . $judul_bersih . '.' . $ext;
+            $download_name = $file_name; // Use the stored filename (which will now be the original name)
             $file_path = FCPATH . 'uploads/surat_pengajuan/' . $file_name;
         } elseif ($type == 'excel') {
             $file_name = $pengajuan->file_excel_peserta;
-            $ext = pathinfo($file_name, PATHINFO_EXTENSION);
-            $download_name = 'Data_Peserta_TAK_' . $judul_bersih . '.' . $ext;
+            $download_name = $file_name; // Use the stored filename (which will now be the original name)
             $file_path = FCPATH . 'uploads/excel_peserta/' . $file_name;
         } else {
             show_404();
