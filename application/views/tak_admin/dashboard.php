@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
     
     <style>
         * {
@@ -1003,7 +1005,7 @@
                             <i class="fas fa-pie-chart"></i>
                             Status Pengajuan
                         </h5>
-                        <canvas id="statusChart" style="width:100%; max-height:250px; height:250px;"></canvas>
+                        <div id="statusChartContainer" style="width:100%; max-height:250px; height:250px;"></div>
                     </div>
                 </div>
                 
@@ -1318,35 +1320,52 @@
                     });
                 }
                 
-                // Status Chart
-                const ctx2 = document.getElementById('statusChart');
-                if (ctx2) {
-                    new Chart(ctx2.getContext('2d'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Pending', 'Diproses', 'Disetujui', 'Ditolak'],
-                            datasets: [{
-                                data: [
-                                    <?= (int)$pending_count ?>, 
-                                    <?= (int)$diproses_count ?>, 
-                                    <?= (int)$disetujui_count ?>, 
-                                    <?= (int)$ditolak_count ?>
-                                ],
-                                backgroundColor: ['#856404', '#004085', '#155724', '#721c24'],
-                                borderWidth: 0
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: true,
-                            plugins: { 
-                                legend: { 
-                                    position: 'bottom',
-                                    labels: { boxWidth: 12, font: { size: 11 } }
-                                } 
+                // Status Chart (3D Pie with Highcharts)
+                const statusContainer = document.getElementById('statusChartContainer');
+                if (statusContainer) {
+                    Highcharts.chart('statusChartContainer', {
+                        chart: {
+                            type: 'pie',
+                            options3d: {
+                                enabled: true,
+                                alpha: 45,
+                                beta: 0
                             },
-                            cutout: '65%'
-                        }
+                            backgroundColor: 'transparent',
+                            margin: [0, 0, 0, 0],
+                            spacing: [0, 0, 0, 0]
+                        },
+                        title: { text: null },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.y}</b>'
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                depth: 35,
+                                dataLabels: {
+                                    enabled: false
+                                },
+                                showInLegend: true
+                            }
+                        },
+                        legend: {
+                            itemStyle: { fontSize: '11px', fontWeight: 'normal' },
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        },
+                        series: [{
+                            name: 'Jumlah Pengajuan',
+                            data: [
+                                { name: 'Pending', y: <?= (int)$pending_count ?>, color: '#f39c12' },
+                                { name: 'Diproses', y: <?= (int)$diproses_count ?>, color: '#3498db' },
+                                { name: 'Disetujui', y: <?= (int)$disetujui_count ?>, color: '#2ecc71' },
+                                { name: 'Ditolak', y: <?= (int)$ditolak_count ?>, color: '#e74c3c' }
+                            ]
+                        }],
+                        credits: { enabled: false }
                     });
                 }
             }, 100);
